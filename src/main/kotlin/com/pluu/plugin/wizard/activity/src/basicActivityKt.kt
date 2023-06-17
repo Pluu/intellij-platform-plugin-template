@@ -1,4 +1,4 @@
-package com.pluu.wizard.activity.src
+package com.pluu.plugin.wizard.activity.src
 
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.escapeKotlinIdentifier
@@ -6,9 +6,9 @@ import com.android.tools.idea.wizard.template.getMaterialComponentName
 import com.android.tools.idea.wizard.template.impl.activities.common.importViewBindingClass
 import com.android.tools.idea.wizard.template.impl.activities.common.layoutToViewBindingClass
 import com.android.tools.idea.wizard.template.renderIf
-import com.pluu.wizard.common.ViewBindingType
-import com.pluu.wizard.common.importDataBinding
-import com.pluu.wizard.common.viewmodel.importActivityViewModel
+import com.pluu.plugin.wizard.common.ViewBindingType
+import com.pluu.plugin.wizard.common.importDataBinding
+import com.pluu.plugin.wizard.common.viewmodel.importActivityViewModel
 
 fun basicActivityKt(
     isNewProject: Boolean,

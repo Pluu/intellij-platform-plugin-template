@@ -1,4 +1,4 @@
-package com.pluu.wizard.fragment.src
+package com.pluu.plugin.wizard.fragment.src
 
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.escapeKotlinIdentifier
@@ -6,8 +6,8 @@ import com.android.tools.idea.wizard.template.getMaterialComponentName
 import com.android.tools.idea.wizard.template.impl.activities.common.importViewBindingClass
 import com.android.tools.idea.wizard.template.impl.activities.common.layoutToViewBindingClass
 import com.android.tools.idea.wizard.template.renderIf
-import com.pluu.wizard.common.ViewBindingType
-import com.pluu.wizard.common.viewmodel.importFragmentViewModel
+import com.pluu.plugin.wizard.common.ViewBindingType
+import com.pluu.plugin.wizard.common.viewmodel.importFragmentViewModel
 
 fun basicFragmentKt(
     applicationPackage: String?,

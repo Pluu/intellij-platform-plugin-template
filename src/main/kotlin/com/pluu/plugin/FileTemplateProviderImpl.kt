@@ -1,11 +1,11 @@
-package com.pluu.wizard
+package com.pluu.plugin
 
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory
 import icons.StudioIcons
 
-class FileTemplateProvider : FileTemplateGroupDescriptorFactory {
+class FileTemplateProviderImpl : FileTemplateGroupDescriptorFactory {
     override fun getFileTemplatesDescriptor(): FileTemplateGroupDescriptor {
         val group = FileTemplateGroupDescriptor("Pluu", StudioIcons.Common.ANDROID_HEAD)
         group.addTemplate(

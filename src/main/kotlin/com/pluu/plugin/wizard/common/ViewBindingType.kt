@@ -1,4 +1,4 @@
-package com.pluu.wizard.common
+package com.pluu.plugin.wizard.common
 
 enum class ViewBindingType(private val desc: String) {
     None("Unused Binding"),

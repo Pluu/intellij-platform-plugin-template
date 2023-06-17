@@ -18,17 +18,17 @@
     </description>
 
     <extensions defaultExtensionNs="com.android.tools.idea.wizard.template">
-        <wizardTemplateProvider implementation="com.pluu.wizard.WizardTemplateProviderImpl" />
+        <wizardTemplateProvider implementation="com.pluu.plugin.WizardTemplateProviderImpl" />
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
-        <fileTemplateGroup implementation="com.pluu.wizard.FileTemplateProvider" />
+        <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl" />
     </extensions>
 
     <actions>
-        <group id="com.pluu.wizard" popup="true" text="Pluu Template" icon="StudioIcons.Common.ANDROID_HEAD">
-            <action class="com.pluu.wizard.action.ViewModelCreateFileFromTemplateAction"
+        <group id="com.pluu.plugin.wizard" popup="true" text="Pluu Template" icon="StudioIcons.Common.ANDROID_HEAD">
+            <action class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"
                 icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
-                id="com.pluu.wizard.action.viewmodel" />
+                id="com.pluu.plugin.wizard.action.viewmodel" />
             <add-to-group anchor="after" group-id="NewGroup" relative-to-action="NewDir" />
         </group>
     </actions>

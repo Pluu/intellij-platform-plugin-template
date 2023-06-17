@@ -1,4 +1,4 @@
-package com.pluu.wizard.fragment
+package com.pluu.plugin.wizard.fragment
 
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
@@ -7,10 +7,10 @@ import com.android.tools.idea.wizard.template.impl.activities.common.addAllKotli
 import com.android.tools.idea.wizard.template.impl.activities.common.addLifecycleDependencies
 import com.android.tools.idea.wizard.template.impl.activities.common.addMaterialDependency
 import com.android.tools.idea.wizard.template.impl.fragments.blankFragment.res.layout.fragmentBlankXml
-import com.pluu.wizard.common.ViewBindingType
-import com.pluu.wizard.common.generateDataBindingSimpleXml
-import com.pluu.wizard.common.viewmodel.viewModelKt
-import com.pluu.wizard.fragment.src.basicFragmentKt
+import com.pluu.plugin.wizard.common.ViewBindingType
+import com.pluu.plugin.wizard.common.generateDataBindingSimpleXml
+import com.pluu.plugin.wizard.common.viewmodel.viewModelKt
+import com.pluu.plugin.wizard.fragment.src.basicFragmentKt
 
 fun RecipeExecutor.sampleFragmentSetup(
     moduleData: ModuleTemplateData,

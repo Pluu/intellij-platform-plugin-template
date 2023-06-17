@@ -1,4 +1,4 @@
-package com.pluu.wizard.common
+package com.pluu.plugin.wizard.common
 
 fun generateDataBindingSimpleXml(
     activityClass: String,

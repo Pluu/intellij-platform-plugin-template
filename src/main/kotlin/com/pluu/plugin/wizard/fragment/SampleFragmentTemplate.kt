@@ -1,4 +1,4 @@
-package com.pluu.wizard.activity
+package com.pluu.plugin.wizard.fragment
 
 import com.android.tools.idea.wizard.template.Category
 import com.android.tools.idea.wizard.template.CheckBoxWidget
@@ -14,48 +14,46 @@ import com.android.tools.idea.wizard.template.Separator
 import com.android.tools.idea.wizard.template.StringParameter
 import com.android.tools.idea.wizard.template.TextFieldWidget
 import com.android.tools.idea.wizard.template.WizardUiContext
-import com.android.tools.idea.wizard.template.activityToLayout
 import com.android.tools.idea.wizard.template.booleanParameter
 import com.android.tools.idea.wizard.template.enumParameter
+import com.android.tools.idea.wizard.template.fragmentToLayout
 import com.android.tools.idea.wizard.template.impl.activities.common.MIN_API
 import com.android.tools.idea.wizard.template.impl.defaultPackageNameParameter
-import com.android.tools.idea.wizard.template.layoutToActivity
+import com.android.tools.idea.wizard.template.layoutToFragment
 import com.android.tools.idea.wizard.template.stringParameter
 import com.android.tools.idea.wizard.template.template
-import com.pluu.wizard.common.ViewBindingType
-import com.pluu.wizard.common.viewmodel.viewToViewModel
+import com.pluu.plugin.wizard.common.ViewBindingType
+import com.pluu.plugin.wizard.common.viewmodel.viewToViewModel
 import java.io.File
 
-val sampleActivitySetupTemplate
+val sampleFragmentSetupTemplate
     get() = template {
-        name = "[Pluu] Activity with ViewModel"
+        name = "[Pluu] Fragment with ViewModel"
         minApi = MIN_API
-        description = "Creates a Activity with a ViewModel"
+        description = "Creates a Fragment with a ViewModel"
 
-        category = Category.Activity
+        category = Category.Fragment
         formFactor = FormFactor.Mobile
 
         screens = listOf(
-            WizardUiContext.ActivityGallery,
-            WizardUiContext.MenuEntry,
-            WizardUiContext.NewProject,
-            WizardUiContext.NewModule
+            WizardUiContext.FragmentGallery,
+            WizardUiContext.MenuEntry
         )
 
-        lateinit var activityClass: StringParameter
+        lateinit var fragmentClass: StringParameter
         val layoutName = stringParameter {
             name = "Layout Name"
-            default = "activity_main"
-            suggest = { activityToLayout(activityClass.value) }
-            help = "The name of the layout to create for the activity"
+            default = "fragment_blank"
+            suggest = { fragmentToLayout(fragmentClass.value) }
+            help = "The name of the layout to create for the fragment"
             constraints = listOf(LAYOUT, UNIQUE, NONEMPTY)
         }
 
-        activityClass = stringParameter {
-            name = "Activity Name"
-            default = "MainActivity"
-            suggest = { layoutToActivity(layoutName.value) }
-            help = "The name of the activity class to create"
+        fragmentClass = stringParameter {
+            name = "Fragment Name"
+            default = "BlankFragment"
+            suggest = { layoutToFragment(layoutName.value) }
+            help = "The name of the fragment class to create"
             constraints = listOf(CLASS, UNIQUE, NONEMPTY)
         }
 
@@ -70,36 +68,47 @@ val sampleActivitySetupTemplate
             default = true
             help = "(기본값 true), ViewModel 생성 여부"
         }
+        val isActivityViewModel = booleanParameter {
+            name = "Use Shared ViewModel"
+            visible = { isViewModel.value }
+            default = false
+            help = "If true, parent activity's view model class to create"
+        }
+
         val viewModelClass = stringParameter {
             name = "ViewModel Name"
             default = "MainViewModel"
-            constraints = listOf(CLASS, UNIQUE, NONEMPTY)
+            suggest = { viewToViewModel(fragmentClass.value) }
             visible = { isViewModel.value }
             help = "The name of the view model class to create"
-            suggest = { viewToViewModel(activityClass.value) }
+            constraints = listOf(CLASS, UNIQUE, NONEMPTY)
         }
 
         val packageNameParam = defaultPackageNameParameter
 
         widgets(
-            TextFieldWidget(activityClass),
+            TextFieldWidget(fragmentClass),
             TextFieldWidget(layoutName),
             CheckBoxWidget(isViewModel),
             TextFieldWidget(viewModelClass),
+            CheckBoxWidget(isActivityViewModel),
             EnumWidget(useBinding),
             Separator,
             PackageNameWidget(packageNameParam)
         )
 
-        thumb { File("template_empty_activity.png") }
+        thumb {
+            File("template_blank_fragment.png")
+        }
 
         recipe = { data ->
-            sampleActivitySetup(
+            sampleFragmentSetup(
                 moduleData = data as ModuleTemplateData,
                 packageName = packageNameParam.value,
-                activityClass = activityClass.value,
+                fragmentClass = fragmentClass.value,
                 layoutName = layoutName.value,
                 isUsedViewModel = isViewModel.value,
+                isUsedSharedViewModel = isActivityViewModel.value,
                 viewModelClass = viewModelClass.value,
                 viewBindingType = useBinding.value
             )

@@ -1,4 +1,4 @@
-package com.pluu.wizard.common
+package com.pluu.plugin.wizard.common
 
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.renderIf

@@ -1,4 +1,4 @@
-package com.pluu.wizard.activity
+package com.pluu.plugin.wizard.activity
 
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
@@ -8,10 +8,10 @@ import com.android.tools.idea.wizard.template.impl.activities.common.addLifecycl
 import com.android.tools.idea.wizard.template.impl.activities.common.addMaterialDependency
 import com.android.tools.idea.wizard.template.impl.activities.common.generateManifest
 import com.android.tools.idea.wizard.template.impl.activities.common.generateSimpleLayout
-import com.pluu.wizard.activity.src.basicActivityKt
-import com.pluu.wizard.common.ViewBindingType
-import com.pluu.wizard.common.generateDataBindingSimpleXml
-import com.pluu.wizard.common.viewmodel.viewModelKt
+import com.pluu.plugin.wizard.activity.src.basicActivityKt
+import com.pluu.plugin.wizard.common.ViewBindingType
+import com.pluu.plugin.wizard.common.generateDataBindingSimpleXml
+import com.pluu.plugin.wizard.common.viewmodel.viewModelKt
 
 fun RecipeExecutor.sampleActivitySetup(
     moduleData: ModuleTemplateData,

@@ -1,4 +1,4 @@
-package com.pluu.wizard.common.viewmodel
+package com.pluu.plugin.wizard.common.viewmodel
 
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.escapeKotlinIdentifier

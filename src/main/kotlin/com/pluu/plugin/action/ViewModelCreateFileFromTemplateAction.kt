@@ -1,11 +1,11 @@
-package com.pluu.wizard.action
+package com.pluu.plugin.action
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
-import com.pluu.wizard.FileTemplateProvider
+import com.pluu.plugin.FileTemplateProviderImpl
 import org.jetbrains.kotlin.idea.KotlinIcons
 
 class ViewModelCreateFileFromTemplateAction : CreateFileFromTemplateAction(
@@ -21,7 +21,7 @@ class ViewModelCreateFileFromTemplateAction : CreateFileFromTemplateAction(
         builder: CreateFileFromTemplateDialog.Builder
     ) {
         builder.setTitle("New ViewModel")
-            .addKind("ViewModel file", KotlinIcons.CLASS, FileTemplateProvider.PLUU_VIEW_MODEL)
+            .addKind("ViewModel file", KotlinIcons.CLASS, FileTemplateProviderImpl.PLUU_VIEW_MODEL)
     }
 
     override fun getActionName(
