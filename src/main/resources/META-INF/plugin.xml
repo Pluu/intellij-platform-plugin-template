@@ -20,4 +20,16 @@
     <extensions defaultExtensionNs="com.android.tools.idea.wizard.template">
         <wizardTemplateProvider implementation="com.pluu.wizard.WizardTemplateProviderImpl" />
     </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <fileTemplateGroup implementation="com.pluu.wizard.FileTemplateProvider" />
+    </extensions>
+
+    <actions>
+        <group id="com.pluu.wizard" popup="true" text="Pluu Template" icon="StudioIcons.Common.ANDROID_HEAD">
+            <action class="com.pluu.wizard.action.ViewModelCreateFileFromTemplateAction"
+                icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
+                id="com.pluu.wizard.action.viewmodel" />
+            <add-to-group anchor="after" group-id="NewGroup" relative-to-action="NewDir" />
+        </group>
+    </actions>
 </idea-plugin>

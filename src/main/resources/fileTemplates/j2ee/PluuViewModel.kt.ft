@@ -1,0 +1,8 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import androidx.lifecycle.ViewModel
+
+#parse("File Header.java")
+class ${NAME}ViewModel : ViewModel() {
+    // TODO: Implement the ViewModel
+}
