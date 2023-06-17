@@ -6,12 +6,13 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.pluu.plugin.FileTemplateProviderImpl
+import icons.StudioIcons
 import org.jetbrains.kotlin.idea.KotlinIcons
 
 class ViewModelCreateFileFromTemplateAction : CreateFileFromTemplateAction(
     "Create ViewModel",
     "create just ViewModel class file",
-    null
+    StudioIcons.Shell.Filetree.ANDROID_FILE
 ), DumbAware {
     override fun startInWriteAction(): Boolean = false
 
