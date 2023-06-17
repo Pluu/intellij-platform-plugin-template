@@ -67,9 +67,9 @@ val sampleActivitySetupTemplate
         }
 
         val isViewModel = booleanParameter {
-            name = "ViewModel 생성 여부"
+            name = "Use ViewModel"
             default = true
-            help = "(기본값 true), ViewModel 생성 여부"
+            help = "(Default true), Use ViewModel"
         }
         val viewModelClass = stringParameter {
             name = "ViewModel Name"
