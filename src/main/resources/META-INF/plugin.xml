@@ -25,10 +25,14 @@
     </extensions>
 
     <actions>
-        <group id="com.pluu.plugin.wizard" popup="true" text="Pluu Template" icon="StudioIcons.Common.ANDROID_HEAD">
+        <group icon="StudioIcons.Common.ANDROID_HEAD" id="com.pluu.plugin.wizard" popup="true"
+            text="Pluu Templates">
             <action class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"
                 icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
-                id="com.pluu.plugin.wizard.action.viewmodel" />
+                id="com.pluu.plugin.action.viewmodel" />
+            <action class="com.pluu.plugin.action.ActivityCreateWizardAction"
+                icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
+                id="com.pluu.plugin.wizard.action.activity" />
             <add-to-group anchor="after" group-id="NewGroup" relative-to-action="NewDir" />
         </group>
     </actions>

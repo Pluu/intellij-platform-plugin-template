@@ -22,13 +22,14 @@ import com.android.tools.idea.wizard.template.impl.defaultPackageNameParameter
 import com.android.tools.idea.wizard.template.layoutToActivity
 import com.android.tools.idea.wizard.template.stringParameter
 import com.android.tools.idea.wizard.template.template
+import com.pluu.plugin.PluuPlugin
 import com.pluu.plugin.wizard.common.ViewBindingType
 import com.pluu.plugin.wizard.common.viewmodel.viewToViewModel
 import java.io.File
 
 val sampleActivitySetupTemplate
     get() = template {
-        name = "[Pluu] Activity with ViewModel"
+        name = PluuPlugin.ACTIVITY_WITH_VIEWMODEL
         minApi = MIN_API
         description = "Creates a Activity with a ViewModel"
 
