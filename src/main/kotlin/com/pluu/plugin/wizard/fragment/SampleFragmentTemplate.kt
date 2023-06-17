@@ -22,13 +22,14 @@ import com.android.tools.idea.wizard.template.impl.defaultPackageNameParameter
 import com.android.tools.idea.wizard.template.layoutToFragment
 import com.android.tools.idea.wizard.template.stringParameter
 import com.android.tools.idea.wizard.template.template
+import com.pluu.plugin.PluuPlugin
 import com.pluu.plugin.wizard.common.ViewBindingType
 import com.pluu.plugin.wizard.common.viewmodel.viewToViewModel
 import java.io.File
 
 val sampleFragmentSetupTemplate
     get() = template {
-        name = "[Pluu] Fragment with ViewModel"
+        name = PluuPlugin.FRAGMENT_WITH_VIEWMODEL
         minApi = MIN_API
         description = "Creates a Fragment with a ViewModel"
 

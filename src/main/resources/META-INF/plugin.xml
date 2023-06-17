@@ -33,6 +33,9 @@
             <action class="com.pluu.plugin.action.ActivityCreateWizardAction"
                 icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
                 id="com.pluu.plugin.wizard.action.activity" />
+            <action class="com.pluu.plugin.action.FragmentCreateWizardAction"
+                icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
+                id="com.pluu.plugin.wizard.action.fragment" />
             <add-to-group anchor="after" group-id="NewGroup" relative-to-action="NewDir" />
         </group>
     </actions>
