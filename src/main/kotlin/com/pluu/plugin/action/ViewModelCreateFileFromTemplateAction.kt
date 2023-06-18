@@ -3,6 +3,7 @@ package com.pluu.plugin.action
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.pluu.plugin.FileTemplateProviderImpl
@@ -25,6 +26,7 @@ class ViewModelCreateFileFromTemplateAction : CreateFileFromTemplateAction(
     ) {
         builder.setTitle("New ViewModel")
             .addKind("ViewModel file", KotlinIcons.CLASS, FileTemplateProviderImpl.PLUU_VIEW_MODEL)
+            .setValidator(ViewModelNameValidator())
     }
 
     override fun getActionName(
@@ -32,5 +34,14 @@ class ViewModelCreateFileFromTemplateAction : CreateFileFromTemplateAction(
         newName: String,
         templateName: String
     ): String = "New ViewModel"
+
+    private class ViewModelNameValidator : InputValidatorEx {
+        override fun canClose(inputString: String) = checkInput(inputString)
+
+        override fun getErrorText(inputString: String) = "Doesn't support the \"ViewModel\" suffix."
+
+        override fun checkInput(inputString: String) =
+            inputString.lowercase().endsWith("viewmodel").not()
+    }
 
 }
