@@ -23,6 +23,7 @@ import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.pluu.plugin.utils.ModuleUtils
 import icons.StudioIcons
 import org.jetbrains.android.facet.AndroidFacet
 import java.io.File
@@ -37,6 +38,10 @@ abstract class UiComponentCreateWizardAction(
     private val dialogTitle: String,
     private val stepTitle: String
 ) : AnAction(text, null, StudioIcons.Shell.Filetree.ANDROID_FILE) {
+
+    override fun update(e: AnActionEvent) {
+        e.presentation.isVisible = ModuleUtils.isAndroidModulePlace(e.dataContext)
+    }
 
     final override fun actionPerformed(e: AnActionEvent) {
         val module = PlatformCoreDataKeys.MODULE.getData(e.dataContext) ?: return

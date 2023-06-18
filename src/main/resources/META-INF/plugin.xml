@@ -33,6 +33,8 @@
                     id="com.pluu.plugin.wizard.action.activity"/>
             <action class="com.pluu.plugin.action.FragmentCreateWizardAction"
                     id="com.pluu.plugin.wizard.action.fragment"/>
+            <action class="com.pluu.plugin.action.FeatureModuleCreateWizardAction"
+                    id="com.pluu.plugin.wizard.action.feature"/>
             <add-to-group anchor="after" group-id="NewGroup" relative-to-action="NewDir"/>
         </group>
     </actions>
