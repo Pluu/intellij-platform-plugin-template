@@ -1,9 +1,27 @@
 package com.pluu.plugin.wizard.activity
 
-import com.android.tools.idea.wizard.template.*
-import com.android.tools.idea.wizard.template.Constraint.*
+import com.android.tools.idea.wizard.template.Category
+import com.android.tools.idea.wizard.template.CheckBoxWidget
+import com.android.tools.idea.wizard.template.Constraint.CLASS
+import com.android.tools.idea.wizard.template.Constraint.LAYOUT
+import com.android.tools.idea.wizard.template.Constraint.NONEMPTY
+import com.android.tools.idea.wizard.template.Constraint.UNIQUE
+import com.android.tools.idea.wizard.template.EnumWidget
+import com.android.tools.idea.wizard.template.FormFactor
+import com.android.tools.idea.wizard.template.ModuleTemplateData
+import com.android.tools.idea.wizard.template.PackageNameWidget
+import com.android.tools.idea.wizard.template.Separator
+import com.android.tools.idea.wizard.template.StringParameter
+import com.android.tools.idea.wizard.template.TextFieldWidget
+import com.android.tools.idea.wizard.template.WizardUiContext
+import com.android.tools.idea.wizard.template.activityToLayout
+import com.android.tools.idea.wizard.template.booleanParameter
+import com.android.tools.idea.wizard.template.enumParameter
 import com.android.tools.idea.wizard.template.impl.activities.common.MIN_API
 import com.android.tools.idea.wizard.template.impl.defaultPackageNameParameter
+import com.android.tools.idea.wizard.template.layoutToActivity
+import com.android.tools.idea.wizard.template.stringParameter
+import com.android.tools.idea.wizard.template.template
 import com.pluu.plugin.PluuPlugin
 import com.pluu.plugin.wizard.common.ViewBindingType
 import com.pluu.plugin.wizard.common.viewmodel.viewToViewModel
@@ -44,7 +62,7 @@ val sampleActivitySetupTemplate
 
         val useBinding = enumParameter<ViewBindingType> {
             name = "Use binding"
-            default = ViewBindingType.None
+            default = ViewBindingType.ViewBinding
             help = "Help"
         }
 
