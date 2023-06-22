@@ -43,7 +43,7 @@ fun RecipeExecutor.sampleActivitySetup(
         moduleData, activityClass, packageName,
         isLauncher = false,
         hasNoActionBar = false,
-        generateActivityTitle = true
+        generateActivityTitle = false
     )
 
     // Create, Activity
