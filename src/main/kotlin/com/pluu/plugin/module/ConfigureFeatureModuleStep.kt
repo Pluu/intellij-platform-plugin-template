@@ -5,14 +5,16 @@ import com.android.tools.idea.npw.template.components.BytecodeLevelComboProvider
 import com.android.tools.idea.npw.toWizardFormFactor
 import com.android.tools.idea.npw.validator.ProjectNameValidator
 import com.android.tools.idea.observable.ui.SelectedItemProperty
+import com.android.tools.idea.observable.ui.SelectedProperty
 import com.android.tools.idea.observable.ui.TextProperty
 import com.android.tools.idea.wizard.template.BytecodeLevel
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.panel
-import com.intellij.util.ui.JBUI.Borders.empty
 import com.pluu.plugin.labelFor
 import org.jetbrains.android.util.AndroidBundle.message
+import javax.swing.JCheckBox
 import javax.swing.JComboBox
 import javax.swing.JTextField
 
@@ -30,6 +32,7 @@ class ConfigureFeatureModuleStep(
 ) {
     private val appName: JTextField = JBTextField(model.applicationName.get())
     private val bytecodeCombo: JComboBox<BytecodeLevel> = BytecodeLevelComboProvider().createComponent()
+    private val conventionPluginCheckbox: JCheckBox = JBCheckBox("Use Gradle convention plugin")
 
     override fun createMainPanel(): DialogPanel = panel {
         row {
@@ -51,11 +54,16 @@ class ConfigureFeatureModuleStep(
             labelFor("Minimum SDK", apiLevelCombo)
             apiLevelCombo(growX)
         }
-    }.withBorder(empty(6))
+
+        row {
+            conventionPluginCheckbox(growX)
+        }
+    }
 
     init {
         bindings.bindTwoWay(TextProperty(appName), model.applicationName)
         bindings.bindTwoWay(SelectedItemProperty(bytecodeCombo), model.bytecodeLevel)
+        bindings.bindTwoWay(SelectedProperty(conventionPluginCheckbox), model.conventionPlugin)
         validatorPanel.registerValidator(model.applicationName, ProjectNameValidator())
     }
 

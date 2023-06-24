@@ -5,6 +5,7 @@ import com.android.tools.idea.npw.model.ExistingProjectModelData
 import com.android.tools.idea.npw.model.ProjectModelData
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.npw.module.ModuleModel
+import com.android.tools.idea.observable.core.BoolValueProperty
 import com.android.tools.idea.observable.core.ObjectProperty
 import com.android.tools.idea.observable.core.ObjectValueProperty
 import com.android.tools.idea.observable.core.OptionalProperty
@@ -41,16 +42,19 @@ class NewFeatureModuleModel(
     moduleParent,
     wizardContext
 ) {
+    val bytecodeLevel: OptionalProperty<BytecodeLevel> = OptionalValueProperty(getInitialBytecodeLevel())
+    val conventionPlugin: BoolValueProperty = BoolValueProperty(true)
+
     override val renderer = object : ModuleTemplateRenderer() {
         override val recipe: Recipe
             get() = { td: TemplateData ->
                 generateFeatureModule(
-                    moduleData = td as ModuleTemplateData
+                    data = td as ModuleTemplateData,
+                    bytecodeLevel = bytecodeLevel.value,
+                    useConventionPlugins = conventionPlugin.get()
                 )
             }
     }
-
-    val bytecodeLevel: OptionalProperty<BytecodeLevel> = OptionalValueProperty(getInitialBytecodeLevel())
 
     init {
         if (applicationName.isEmpty.get()) {
