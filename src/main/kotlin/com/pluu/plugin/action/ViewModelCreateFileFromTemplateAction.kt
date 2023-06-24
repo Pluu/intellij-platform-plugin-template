@@ -3,7 +3,6 @@ package com.pluu.plugin.action
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.psi.PsiDirectory
@@ -18,10 +17,6 @@ class ViewModelCreateFileFromTemplateAction : CreateFileFromTemplateAction(
     "create just ViewModel class file",
     StudioIcons.Shell.Filetree.ANDROID_FILE
 ) {
-    override fun isAvailable(dataContext: DataContext): Boolean {
-        return super.isAvailable(dataContext)
-    }
-
     override fun update(e: AnActionEvent) {
         e.presentation.isVisible = ModuleUtils.isAndroidModulePlace(e.dataContext)
     }
