@@ -23,7 +23,7 @@
     </extensions>
 
     <actions>
-        <group icon="StudioIcons.Common.ANDROID_HEAD" id="com.pluu.plugin.wizard" popup="true"
+        <group icon="assets/konata.png" id="com.pluu.plugin.wizard" popup="true"
                text="Pluu Templates">
             <action class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"
                     id="com.pluu.plugin.action.viewmodel"/>

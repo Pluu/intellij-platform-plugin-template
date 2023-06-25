@@ -14,13 +14,12 @@ import com.pluu.plugin.PluuPlugin
 import com.pluu.plugin.module.ConfigureFeatureModuleStep
 import com.pluu.plugin.module.NewFeatureModuleModel
 import com.pluu.plugin.utils.ModuleUtils
-import icons.StudioIcons
 import org.jetbrains.android.util.AndroidBundle.message
 
 class FeatureModuleCreateWizardAction : AnAction(
     PluuPlugin.PLUU_MODULE,
     null,
-    StudioIcons.Shell.Filetree.ANDROID_MODULE
+    PluuPlugin.PLUU_ICON
 ) {
     override fun update(e: AnActionEvent) {
         e.presentation.isVisible = ModuleUtils.isRootPlace(e.dataContext)
