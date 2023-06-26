@@ -33,7 +33,12 @@ fun RecipeExecutor.generateFeatureModule(
 
     createDefaultDirectories(moduleOut, srcOut)
     addIncludeToSettings(data.name)
-    save(
+
+    val gradleFile: String = if (useConventionPlugins) {
+        buildFeatureGradle(
+            applicationId = data.namespace
+        )
+    } else {
         buildGradle(
             agpVersion,
             isKts = useKts,
@@ -47,7 +52,11 @@ fun RecipeExecutor.generateFeatureModule(
             formFactorNames = projectData.includedFormFactorNames,
             hasTests = data.useGenericLocalTests,
             addLintOptions = addLintOptions
-        ),
+        )
+    }
+
+    save(
+        gradleFile,
         moduleOut.resolve(FN_BUILD_GRADLE)
     )
 
