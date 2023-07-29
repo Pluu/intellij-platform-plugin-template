@@ -51,6 +51,7 @@ class NewFeatureModuleModel(
                 generateFeatureModule(
                     data = td as ModuleTemplateData,
                     bytecodeLevel = bytecodeLevel.value,
+                    useVersionCatalog = true,
                     useConventionPlugins = conventionPlugin.get()
                 )
             }

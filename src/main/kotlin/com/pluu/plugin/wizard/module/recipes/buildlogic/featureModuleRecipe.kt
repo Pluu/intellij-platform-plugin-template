@@ -19,8 +19,9 @@ import com.android.tools.idea.wizard.template.RecipeExecutor
 fun RecipeExecutor.generateFeatureModule(
     data: ModuleTemplateData,
     useKts: Boolean = false,
-    bytecodeLevel: BytecodeLevel,
     addLintOptions: Boolean = false,
+    bytecodeLevel: BytecodeLevel = BytecodeLevel.default,
+    useVersionCatalog: Boolean = false,
     useConventionPlugins: Boolean = false
 ) {
     val (projectData, srcOut, _, manifestOut, instrumentedTestOut, localTestOut, _, moduleOut) = data
@@ -36,7 +37,9 @@ fun RecipeExecutor.generateFeatureModule(
 
     val gradleFile: String = if (useConventionPlugins) {
         buildFeatureGradle(
-            applicationId = data.namespace
+            isKts = useKts,
+            applicationId = data.namespace,
+            useVersionCatalog = useVersionCatalog
         )
     } else {
         buildGradle(
@@ -51,7 +54,8 @@ fun RecipeExecutor.generateFeatureModule(
             useAndroidX = useAndroidX,
             formFactorNames = projectData.includedFormFactorNames,
             hasTests = data.useGenericLocalTests,
-            addLintOptions = addLintOptions
+            addLintOptions = addLintOptions,
+            useVersionCatalog = useVersionCatalog
         )
     }
 

@@ -3,7 +3,9 @@ package com.pluu.plugin.wizard.module.recipes.buildlogic
 import com.android.tools.idea.npw.module.recipes.emptyPluginsBlock
 
 internal fun buildFeatureGradle(
-    applicationId: String
+    isKts: Boolean,
+    applicationId: String,
+    useVersionCatalog: Boolean
 ): String {
     val androidConfigBlock = androidFeatureConfig(
         applicationId = applicationId
@@ -16,7 +18,7 @@ internal fun buildFeatureGradle(
 
     val allBlocks =
         """
-    ${emptyPluginsBlock()}
+    ${emptyPluginsBlock(isKts = isKts, useVersionCatalog = useVersionCatalog)}
     $androidConfigBlock
     $dependenciesBlock
     """
