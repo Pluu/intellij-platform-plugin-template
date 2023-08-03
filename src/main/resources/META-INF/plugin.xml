@@ -25,6 +25,7 @@
     <actions>
         <group icon="/assets/konata.png" id="com.pluu.plugin.wizard" popup="true"
                text="Pluu Templates">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
             <action class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"
                     id="com.pluu.plugin.action.viewmodel"/>
             <action class="com.pluu.plugin.action.ActivityCreateWizardAction"
