@@ -16,25 +16,28 @@
 
     <extensions defaultExtensionNs="com.android">
         <tools.idea.wizard.template.wizardTemplateProvider implementation="com.pluu.plugin.WizardTemplateProviderImpl"/>
-        <moduleDescriptionProvider implementation="com.pluu.plugin.module.FeatureModuleDescriptionProvider" />
+        <moduleDescriptionProvider implementation="com.pluu.plugin.module.FeatureModuleDescriptionProvider"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl"/>
     </extensions>
 
     <actions>
-        <group icon="/assets/konata.png" id="com.pluu.plugin.wizard" popup="true"
-               text="Pluu Templates">
+        <group id="com.pluu.plugin.wizard" popup="true"
+               text="Pluu Templates"
+               icon="/assets/konata.png">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
-            <action class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"
-                    id="com.pluu.plugin.action.viewmodel"/>
-            <action class="com.pluu.plugin.action.ActivityCreateWizardAction"
-                    id="com.pluu.plugin.wizard.action.activity"/>
-            <action class="com.pluu.plugin.action.FragmentCreateWizardAction"
-                    id="com.pluu.plugin.wizard.action.fragment"/>
-            <action class="com.pluu.plugin.action.FeatureModuleCreateWizardAction"
-                    id="com.pluu.plugin.wizard.action.feature"/>
-            <add-to-group anchor="after" group-id="NewGroup" relative-to-action="NewDir"/>
+            <add-to-group group-id="NewGroup" relative-to-action="NewDir" anchor="after"/>
+
+            <action id="com.pluu.plugin.wizard.action.feature"
+                    class="com.pluu.plugin.action.FeatureModuleCreateWizardAction"/>
+            <separator/>
+            <action id="com.pluu.plugin.action.viewmodel"
+                    class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"/>
+            <action id="com.pluu.plugin.wizard.action.activity"
+                    class="com.pluu.plugin.action.ActivityCreateWizardAction"/>
+            <action id="com.pluu.plugin.wizard.action.fragment"
+                    class="com.pluu.plugin.action.FragmentCreateWizardAction"/>
         </group>
     </actions>
 </idea-plugin>
