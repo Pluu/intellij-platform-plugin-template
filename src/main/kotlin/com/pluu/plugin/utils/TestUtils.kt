@@ -1,6 +1,7 @@
 package com.pluu.plugin.utils
 
 import com.intellij.codeInsight.navigation.NavigationUtil
+import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
@@ -10,9 +11,9 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.impl.source.codeStyle.JavaCodeStyleManagerImpl
 import com.intellij.util.IncorrectOperationException
 import com.pluu.plugin.utils.ModuleUtils.getSuggestedUnitTestDirectory
-import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
+import java.util.*
 
 fun generatorTestFile(file: PsiFile) {
     val project = file.project
@@ -23,6 +24,7 @@ fun generatorTestFile(file: PsiFile) {
         is PsiJavaFile -> file.packageName
         else -> throw IllegalStateException(">>>")
     }
+    val className = "${file.virtualFile.nameWithoutExtension}Test"
 
     ApplicationManager.getApplication().runWriteAction {
         val testDirectory = getSuggestedUnitTestDirectory(
@@ -31,19 +33,17 @@ fun generatorTestFile(file: PsiFile) {
             filePackage = packageName
         )
 
-        val psiFileFactory = PsiFileFactory.getInstance(project)
-        val className = "${file.virtualFile.nameWithoutExtension}Test"
-        @Language("kotlin") val testFile = psiFileFactory.createFileFromText(
-            "${className}.kt",
-            KotlinLanguage.INSTANCE,
-            """
-             package $packageName
-             
-             class $className {
-                 // TODO: 여기를 잘 커스텀할 예정
-             }
-             """.trimIndent()
-        )
+        val template = FileTemplateManager.getInstance(project).getJ2eeTemplate("ViewModelTest")
+        val templateProperties = Properties().apply {
+            setProperty("PACKAGE_NAME", packageName)
+            setProperty("NAME", className)
+        }
+        val testFile = PsiFileFactory.getInstance(project)
+            .createFileFromText(
+                "${className}.kt",
+                KotlinLanguage.INSTANCE,
+                template.getText(templateProperties)
+            )
 
         JavaCodeStyleManagerImpl(project).optimizeImports(testFile)
         val createdFile: PsiElement = try {
