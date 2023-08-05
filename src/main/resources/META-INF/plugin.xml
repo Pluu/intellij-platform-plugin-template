@@ -25,7 +25,7 @@
     <actions>
         <group id="com.pluu.plugin.wizard" popup="true"
                text="Pluu Templates"
-               icon="/assets/konata.png">
+               icon="PluuIcons.Konata">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
             <add-to-group group-id="NewGroup" relative-to-action="NewDir" anchor="after"/>
 
@@ -42,7 +42,7 @@
 
         <action id="com.pluu.plugin.wizard.action.testcreator.viewmodel"
                 class="com.pluu.plugin.action.testIntegration.ViewModelTestCreatorAction"
-                icon="/assets/konata.png">
+                icon="PluuIcons.Konata">
             <add-to-group group-id="EditorLangPopupMenu" relative-to-action="Generate" anchor="after"/>
         </action>
     </actions>
