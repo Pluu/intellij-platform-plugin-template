@@ -8,6 +8,10 @@ object PluuPlugin {
     const val FRAGMENT_WITH_VIEWMODEL = "[Pluu] Fragment with ViewModel"
     const val PLUU_MODULE = "[Pluu] Android Library Module"
 
-    val PLUU_ICON : Icon
+    object TestAction {
+        const val CreateViewModel = "Create ViewModelTest"
+    }
+
+    val PLUU_ICON: Icon
         get() = IconLoader.getIcon("assets/androidstudio_icon.svg", PluuPlugin::class.java)
 }
