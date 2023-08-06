@@ -10,6 +10,7 @@ object PluuPlugin {
 
     object TestAction {
         const val CreateViewModel = "Create ViewModelTest"
+        const val CreateActivity = "Create ActivityTest"
     }
 
     val PLUU_ICON: Icon

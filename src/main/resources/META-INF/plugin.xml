@@ -40,10 +40,14 @@
                     class="com.pluu.plugin.action.FragmentCreateWizardAction"/>
         </group>
 
-        <action id="com.pluu.plugin.wizard.action.testcreator.viewmodel"
-                class="com.pluu.plugin.action.testIntegration.ViewModelTestCreatorAction"
-                icon="PluuIcons.Konata">
+        <group>
+            <action id="com.pluu.plugin.wizard.action.testcreator.viewmodel"
+                    class="com.pluu.plugin.action.testIntegration.ViewModelTestCreatorAction"
+                    icon="PluuIcons.Konata" />
+            <action id="com.pluu.plugin.wizard.action.testcreator.activity"
+                    class="com.pluu.plugin.action.testIntegration.ActivityUiTestCreatorAction"
+                    icon="PluuIcons.Konata" />
             <add-to-group group-id="EditorLangPopupMenu" relative-to-action="Generate" anchor="after"/>
-        </action>
+        </group>
     </actions>
 </idea-plugin>

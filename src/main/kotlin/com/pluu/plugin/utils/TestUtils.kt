@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.source.codeStyle.JavaCodeStyleManagerImpl
 import com.intellij.util.IncorrectOperationException
+import com.pluu.plugin.utils.ModuleUtils.getSuggestedAndroidTestDirectory
 import com.pluu.plugin.utils.ModuleUtils.getSuggestedUnitTestDirectory
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
@@ -39,6 +40,40 @@ fun generatorUnitTestFile(
                 "${className}.kt",
                 KotlinLanguage.INSTANCE,
                 template.getText(templateProperties)
+            )
+
+        JavaCodeStyleManagerImpl(project).optimizeImports(testFile)
+        val createdFile: PsiElement = try {
+            testDirectory.add(testFile)
+        } catch (e: IncorrectOperationException) {
+            return@runWriteAction
+        }
+
+        NavigationUtil.openFileWithPsiElement(createdFile, true, true)
+    }
+}
+
+fun generatorAndroidTestFile(
+    srcPackage: String,
+    srcModule: Module,
+    srcClassName: String,
+    writeFileAction: () -> String
+) {
+    val project = srcModule.project
+    val className = "${srcClassName}Test"
+
+    ApplicationManager.getApplication().runWriteAction {
+        val testDirectory = getSuggestedAndroidTestDirectory(
+            srcModule = srcModule
+        ).let { rootDirectory ->
+            VfsUtil.createDirectories(rootDirectory.path + "/" + srcPackage.replace(".", "/"))
+        }?.toPsiDirectory(project) ?: throw IllegalStateException("Failed to create a test folder")
+
+        val testFile = PsiFileFactory.getInstance(project)
+            .createFileFromText(
+                "${className}.kt",
+                KotlinLanguage.INSTANCE,
+                writeFileAction()
             )
 
         JavaCodeStyleManagerImpl(project).optimizeImports(testFile)

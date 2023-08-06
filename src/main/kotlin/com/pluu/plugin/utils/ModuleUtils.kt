@@ -58,4 +58,36 @@ object ModuleUtils {
 
         return VfsUtil.createDirectories(path)
     }
+
+    fun getSuggestedAndroidTestDirectory(
+        srcModule: Module
+    ): VirtualFile {
+        val testModule = AndroidFacet.getInstance(srcModule)?.androidTestModule
+        if (testModule != null) {
+            val testRootUrls = CreateTestUtils.computeTestRoots(testModule).firstOrNull()
+            if (testRootUrls != null) {
+                return testRootUrls
+            }
+        }
+
+        // Generate
+        val project = srcModule.project
+        val rootManager = ModuleRootManager.getInstance(srcModule)
+        return generatedAndroidTestDirectory(
+            directory = rootManager.getSourceRoots(JavaSourceRootType.SOURCE).first().toPsiDirectory(project)!!
+        ) ?: throw IllegalStateException("Failed to create a test folder")
+    }
+
+    private fun generatedAndroidTestDirectory(
+        directory: PsiDirectory
+    ): VirtualFile? {
+        val path = CreateDirectoryOrPackageAction.EP.extensionList.asSequence()
+            .flatMap { contributor ->
+                contributor.getVariants(directory)
+            }.filter { it.rootType?.isForTests == true }.firstOrNull {
+                it.path.endsWith("androidTest/java") || it.path.endsWith("androidTest/kotlin")
+            }?.path ?: return null
+
+        return VfsUtil.createDirectories(path)
+    }
 }
