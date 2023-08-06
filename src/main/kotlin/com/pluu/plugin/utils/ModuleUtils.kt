@@ -6,11 +6,11 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiManager
+import com.intellij.testIntegration.createTest.CreateTestUtils
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
@@ -28,39 +28,34 @@ object ModuleUtils {
     }
 
     fun getSuggestedUnitTestDirectory(
-        project: Project,
-        srcModule: Module,
-        filePackage: String
-    ): PsiDirectory {
-        val psiManager = PsiManager.getInstance(project)
-        val rootManager = ModuleRootManager.getInstance(srcModule)
-        val findTestDirectory = rootManager.getSourceRoots(JavaSourceRootType.TEST_SOURCE)
-            .map { psiManager.findDirectory(it) }
-            .firstOrNull()
-        if (findTestDirectory != null) {
-            return findTestDirectory
+        srcModule: Module
+    ): VirtualFile {
+        val testModule = AndroidFacet.getInstance(srcModule)?.unitTestModule
+        if (testModule != null) {
+            val testRootUrls = CreateTestUtils.computeTestRoots(testModule).firstOrNull()
+            if (testRootUrls != null) {
+                return testRootUrls
+            }
         }
 
         // Generate
-        return generatedTestDirectory(
-            directory = rootManager.getSourceRoots(JavaSourceRootType.SOURCE).first().toPsiDirectory(project)!!,
-            filePackage = filePackage
-        ) ?: throw IllegalStateException(">>>>")
+        val project = srcModule.project
+        val rootManager = ModuleRootManager.getInstance(srcModule)
+        return generatedUnitTestDirectory(
+            directory = rootManager.getSourceRoots(JavaSourceRootType.SOURCE).first().toPsiDirectory(project)!!
+        ) ?: throw IllegalStateException("Failed to create a test folder")
     }
 
-    private fun generatedTestDirectory(
-        directory: PsiDirectory,
-        filePackage: String
-    ): PsiDirectory? {
+    private fun generatedUnitTestDirectory(
+        directory: PsiDirectory
+    ): VirtualFile? {
         val path = CreateDirectoryOrPackageAction.EP.extensionList.asSequence()
             .flatMap { contributor ->
                 contributor.getVariants(directory)
-            }.firstOrNull {
+            }.filter { it.rootType?.isForTests == true }.firstOrNull {
                 it.path.endsWith("test/java") || it.path.endsWith("test/kotlin")
             }?.path ?: return null
 
-        val generatedDirectory =
-            VfsUtil.createDirectories(path + "/" + filePackage.replace(".", "/"))
-        return generatedDirectory.toPsiDirectory(directory.project)
+        return VfsUtil.createDirectories(path)
     }
 }

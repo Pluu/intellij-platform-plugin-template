@@ -3,39 +3,35 @@ package com.pluu.plugin.utils
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.impl.source.codeStyle.JavaCodeStyleManagerImpl
 import com.intellij.util.IncorrectOperationException
 import com.pluu.plugin.utils.ModuleUtils.getSuggestedUnitTestDirectory
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import java.util.*
 
-fun generatorTestFile(file: PsiFile) {
-    val project = file.project
-    val srcModule = ModuleUtilCore.findModuleForFile(file)
-
-    val packageName = when (file) {
-        is KtFile -> file.packageFqName.toString()
-        is PsiJavaFile -> file.packageName
-        else -> throw IllegalStateException(">>>")
-    }
-    val className = "${file.virtualFile.nameWithoutExtension}Test"
+fun generatorUnitTestFile(
+    srcPackage: String,
+    srcModule: Module,
+    srcClassName: String
+) {
+    val project = srcModule.project
+    val className = "${srcClassName}Test"
 
     ApplicationManager.getApplication().runWriteAction {
         val testDirectory = getSuggestedUnitTestDirectory(
-            project = project,
-            srcModule = srcModule ?: throw IllegalArgumentException(""),
-            filePackage = packageName
-        )
+            srcModule = srcModule
+        ).let { rootDirectory ->
+            VfsUtil.createDirectories(rootDirectory.path + "/" + srcPackage.replace(".", "/"))
+        }?.toPsiDirectory(project) ?: throw IllegalStateException("Failed to create a test folder")
 
         val template = FileTemplateManager.getInstance(project).getJ2eeTemplate("ViewModelTest")
         val templateProperties = Properties().apply {
-            setProperty("PACKAGE_NAME", packageName)
+            setProperty("PACKAGE_NAME", srcPackage)
             setProperty("NAME", className)
         }
         val testFile = PsiFileFactory.getInstance(project)
