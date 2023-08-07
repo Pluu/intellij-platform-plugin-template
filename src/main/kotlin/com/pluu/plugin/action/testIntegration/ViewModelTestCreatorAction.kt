@@ -1,53 +1,36 @@
 package com.pluu.plugin.action.testIntegration
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.LangDataKeys
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
+import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import com.pluu.plugin.PluuPlugin
-import com.pluu.plugin.utils.generatorUnitTestFile
-import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
-import org.jetbrains.kotlin.idea.core.util.toPsiFile
+import com.pluu.plugin.utils.ModuleUtils.getSuggestedUnitTestDirectory
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import java.util.*
 
-class ViewModelTestCreatorAction : AnAction(PluuPlugin.TestAction.CreateViewModel) {
+class ViewModelTestCreatorAction : AbstractTestCreatorAction(PluuPlugin.TestAction.CreateViewModel) {
+    override fun isAvailable(fileName: String): Boolean {
+        return fileName.endsWith("ViewModel")
+    }
 
-    override fun actionPerformed(event: AnActionEvent) {
-        val editor = event.getData(CommonDataKeys.EDITOR) ?: return
-        val project = event.project ?: return
-        val module = event.getData(LangDataKeys.MODULE) ?: return
+    override fun getSuggestedDirectory(srcModule: Module): VirtualFile {
+        return getSuggestedUnitTestDirectory(srcModule = srcModule)
+    }
 
-        val psiFile = event.getData(LangDataKeys.VIRTUAL_FILE)?.toPsiFile(project) ?: return
-        val element = getElement(editor, psiFile) ?: return
-
-        ApplicationManager.getApplication().runWriteAction {
-            generatorUnitTestFile(
-                srcPackage = psiFile.getFqNameByDirectory().toString(),
-                srcModule = module,
-                srcClassName = element.text
-            )
+    override fun createFile(project: Project, srcPackage: String, generateClassName: String): PsiFile {
+        val template = FileTemplateManager.getInstance(project).getJ2eeTemplate("ViewModelTest")
+        val templateProperties = Properties().apply {
+            setProperty("PACKAGE_NAME", srcPackage)
+            setProperty("NAME", generateClassName)
         }
-    }
-
-    override fun update(event: AnActionEvent) {
-        val project = event.project ?: return
-        val psiFile = event.getData(LangDataKeys.VIRTUAL_FILE)?.toPsiFile(project) ?: return
-        val editor = event.getData(CommonDataKeys.EDITOR) ?: return
-        val element = getElement(editor, psiFile) ?: return
-        event.presentation.isVisible = element.text.endsWith("ViewModel")
-    }
-
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
-
-    private fun getElement(editor: Editor, file: PsiFile): PsiElement? {
-        val caretModel = editor.caretModel
-        val position = caretModel.offset
-        return file.findElementAt(position)
+        return PsiFileFactory.getInstance(project)
+            .createFileFromText(
+                "${generateClassName}.kt",
+                KotlinLanguage.INSTANCE,
+                template.getText(templateProperties)
+            )
     }
 }
