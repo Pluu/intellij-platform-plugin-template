@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.pluu.plugin.PluuPlugin
-import com.pluu.plugin.utils.ModuleUtils.getSuggestedUnitTestDirectory
+import com.pluu.plugin.utils.ModuleUtils.getSuggestedTestDirectory
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import java.util.*
 
@@ -17,18 +17,18 @@ class ViewModelTestCreatorAction : AbstractTestCreatorAction(PluuPlugin.TestActi
     }
 
     override fun getSuggestedDirectory(srcModule: Module): VirtualFile {
-        return getSuggestedUnitTestDirectory(srcModule = srcModule)
+        return getSuggestedTestDirectory(srcModule = srcModule)
     }
 
-    override fun createFile(project: Project, srcPackage: String, generateClassName: String): PsiFile {
+    override fun createFile(project: Project, srcPackage: String, srcClassName: String): PsiFile {
         val template = FileTemplateManager.getInstance(project).getJ2eeTemplate("ViewModelTest")
         val templateProperties = Properties().apply {
             setProperty("PACKAGE_NAME", srcPackage)
-            setProperty("NAME", generateClassName)
+            setProperty("NAME", srcClassName)
         }
         return PsiFileFactory.getInstance(project)
             .createFileFromText(
-                "${generateClassName}.kt",
+                "${srcClassName}Test.kt",
                 KotlinLanguage.INSTANCE,
                 template.getText(templateProperties)
             )

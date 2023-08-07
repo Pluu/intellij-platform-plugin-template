@@ -1,19 +1,22 @@
 package com.pluu.plugin.utils
 
+import com.android.AndroidProjectTypes
+import com.android.tools.idea.project.AndroidProjectInfo
 import com.intellij.ide.actions.CreateDirectoryOrPackageAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
-import com.intellij.testIntegration.createTest.CreateTestUtils
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
+import org.jetbrains.kotlin.idea.util.sourceRoots
 
 object ModuleUtils {
     fun isRootPlace(dataContext: DataContext): Boolean {
@@ -27,67 +30,85 @@ object ModuleUtils {
         return module != null && AndroidFacet.getInstance(module) != null
     }
 
-    fun getSuggestedUnitTestDirectory(
+    fun getSuggestedTestDirectory(
         srcModule: Module
-    ): VirtualFile {
-        val testModule = AndroidFacet.getInstance(srcModule)?.unitTestModule
-        if (testModule != null) {
-            val testRootUrls = CreateTestUtils.computeTestRoots(testModule).firstOrNull()
-            if (testRootUrls != null) {
-                return testRootUrls
+    ): VirtualFile = getSuggestedTestDirectory(
+        srcModule,
+        testModuleProvider = { module ->
+            module
+        },
+        findTestRoot = { module ->
+            AndroidFacet.getInstance(module)?.unitTestModule?.sourceRoots?.firstOrNull()
+        },
+        createDirectory = { module ->
+            val directory = module.rootManager.getSourceRoots(JavaSourceRootType.SOURCE).first()
+                .toPsiDirectory(module.project)!!
+            createTestDirectory(directory) { path ->
+                path.endsWith("test/java") || path.endsWith("test/kotlin")
             }
         }
-
-        // Generate
-        val project = srcModule.project
-        val rootManager = ModuleRootManager.getInstance(srcModule)
-        return generatedUnitTestDirectory(
-            directory = rootManager.getSourceRoots(JavaSourceRootType.SOURCE).first().toPsiDirectory(project)!!
-        ) ?: throw IllegalStateException("Failed to create a test folder")
-    }
-
-    private fun generatedUnitTestDirectory(
-        directory: PsiDirectory
-    ): VirtualFile? {
-        val path = CreateDirectoryOrPackageAction.EP.extensionList.asSequence()
-            .flatMap { contributor ->
-                contributor.getVariants(directory)
-            }.filter { it.rootType?.isForTests == true }.firstOrNull {
-                it.path.endsWith("test/java") || it.path.endsWith("test/kotlin")
-            }?.path ?: return null
-
-        return VfsUtil.createDirectories(path)
-    }
+    )
 
     fun getSuggestedAndroidTestDirectory(
         srcModule: Module
-    ): VirtualFile {
-        val testModule = AndroidFacet.getInstance(srcModule)?.androidTestModule
-        if (testModule != null) {
-            val testRootUrls = CreateTestUtils.computeTestRoots(testModule).firstOrNull()
-            if (testRootUrls != null) {
-                return testRootUrls
+    ): VirtualFile = getSuggestedTestDirectory(
+        srcModule,
+        testModuleProvider = { module ->
+            module
+//            AndroidFacet.getInstance(module.project.findAppModule()!!)?.androidTestModule!!
+        },
+        findTestRoot = { module ->
+            AndroidFacet.getInstance(module)?.androidTestModule!!.rootManager.getSourceRoots(JavaSourceRootType.TEST_SOURCE).firstOrNull()
+//            module.rootManager.getSourceRoots(JavaSourceRootType.TEST_SOURCE).firstOrNull()
+        },
+        createDirectory = { module ->
+            val directory = module.rootManager.getSourceRoots(JavaSourceRootType.SOURCE).first()
+                .toPsiDirectory(module.project)!!
+//            val directory = module.project.findAppModule()!!
+//                .guessModuleDir()!!
+//                .toPsiDirectory(module.project)!!
+            createTestDirectory(directory) { path ->
+                path.endsWith("androidTest/java") || path.endsWith("androidTest/kotlin")
             }
+        }
+    )
+
+    private fun getSuggestedTestDirectory(
+        srcModule: Module,
+        testModuleProvider: (Module) -> Module,
+        findTestRoot: (Module) -> VirtualFile?,
+        createDirectory: (Module) -> VirtualFile?
+    ): VirtualFile {
+        val testModule = testModuleProvider(srcModule)
+        val testRootUrls = findTestRoot(testModule)
+        if (testRootUrls != null) {
+            return testRootUrls
         }
 
         // Generate
-        val project = srcModule.project
-        val rootManager = ModuleRootManager.getInstance(srcModule)
-        return generatedAndroidTestDirectory(
-            directory = rootManager.getSourceRoots(JavaSourceRootType.SOURCE).first().toPsiDirectory(project)!!
-        ) ?: throw IllegalStateException("Failed to create a test folder")
+        return createDirectory(testModule) ?: throw IllegalStateException("Failed to create a test folder")
     }
 
-    private fun generatedAndroidTestDirectory(
-        directory: PsiDirectory
+    private fun createTestDirectory(
+        directory: PsiDirectory,
+        matchers: (String) -> Boolean
     ): VirtualFile? {
         val path = CreateDirectoryOrPackageAction.EP.extensionList.asSequence()
             .flatMap { contributor ->
                 contributor.getVariants(directory)
-            }.filter { it.rootType?.isForTests == true }.firstOrNull {
-                it.path.endsWith("androidTest/java") || it.path.endsWith("androidTest/kotlin")
-            }?.path ?: return null
+            }
+            .filter {
+                it.rootType?.isForTests == true
+            }
+            .firstOrNull { matchers(it.path) }
+            ?.path ?: return null
 
         return VfsUtil.createDirectories(path)
+    }
+
+    private fun Project.findAppModule(): Module? {
+        return AndroidProjectInfo.getInstance(this)
+            .getAllModulesOfProjectType(AndroidProjectTypes.PROJECT_TYPE_APP)
+            .firstOrNull()
     }
 }

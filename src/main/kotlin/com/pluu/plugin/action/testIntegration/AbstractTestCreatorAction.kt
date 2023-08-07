@@ -31,7 +31,6 @@ abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionNa
         val element = getElement(editor, psiFile) ?: return
 
         val srcClassName = element.text
-        val generateClassName = "${srcClassName}Test"
         val srcPackage = psiFile.getFqNameByDirectory().toString()
 
         ApplicationManager.getApplication().runWriteAction {
@@ -42,7 +41,7 @@ abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionNa
             }?.toPsiDirectory(project) ?: throw IllegalStateException("Failed to create a test folder")
 
             val testFile = createFile(
-                project, srcPackage, generateClassName
+                project, srcPackage, srcClassName
             )
             JavaCodeStyleManagerImpl(project).optimizeImports(testFile)
             val createdFile: PsiElement = try {
@@ -77,5 +76,5 @@ abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionNa
 
     protected abstract fun getSuggestedDirectory(srcModule: Module): VirtualFile
 
-    protected abstract fun createFile(project: Project, srcPackage: String, generateClassName: String): PsiFile
+    protected abstract fun createFile(project: Project, srcPackage: String, srcClassName: String): PsiFile
 }

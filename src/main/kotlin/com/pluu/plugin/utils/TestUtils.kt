@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.source.codeStyle.JavaCodeStyleManagerImpl
 import com.intellij.util.IncorrectOperationException
 import com.pluu.plugin.utils.ModuleUtils.getSuggestedAndroidTestDirectory
-import com.pluu.plugin.utils.ModuleUtils.getSuggestedUnitTestDirectory
+import com.pluu.plugin.utils.ModuleUtils.getSuggestedTestDirectory
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import java.util.*
@@ -24,7 +24,7 @@ fun generatorUnitTestFile(
     val className = "${srcClassName}Test"
 
     ApplicationManager.getApplication().runWriteAction {
-        val testDirectory = getSuggestedUnitTestDirectory(
+        val testDirectory = getSuggestedTestDirectory(
             srcModule = srcModule
         ).let { rootDirectory ->
             VfsUtil.createDirectories(rootDirectory.path + "/" + srcPackage.replace(".", "/"))

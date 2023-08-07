@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ${NAME}Test {
     @get:Rule
-    var activityScenarioRule: ActivityScenarioRule<MainActivity> =
+    var activityScenarioRule: ActivityScenarioRule<${NAME}> =
         ActivityScenarioRule($NAME::class.java)
 
     @Test

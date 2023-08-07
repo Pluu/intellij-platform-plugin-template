@@ -21,15 +21,15 @@ class ActivityUiTestCreatorAction : AbstractTestCreatorAction(PluuPlugin.TestAct
         return getSuggestedAndroidTestDirectory(srcModule)
     }
 
-    override fun createFile(project: Project, srcPackage: String, generateClassName: String): PsiFile {
+    override fun createFile(project: Project, srcPackage: String, srcClassName: String): PsiFile {
         val template = FileTemplateManager.getInstance(project).getJ2eeTemplate("ActivityTest")
         val templateProperties = Properties().apply {
             setProperty("PACKAGE_NAME", srcPackage)
-            setProperty("NAME", generateClassName)
+            setProperty("NAME", srcClassName)
         }
         return PsiFileFactory.getInstance(project)
             .createFileFromText(
-                "${generateClassName}.kt",
+                "${srcClassName}Test.kt",
                 KotlinLanguage.INSTANCE,
                 template.getText(templateProperties)
             )

@@ -1,5 +1,5 @@
 package $PACKAGE_NAME
 
-class $NAME {
+class ${NAME}Test {
     // TODO: 여기를 잘 커스텀할 예정
 }
