@@ -1,0 +1,5 @@
+fun foo(attrs: AttributeSet?, defStyle: Int) {
+    context.obtainStyledAttributes(attrs, R.styleable.MyView, defStyle, 0).use {
+
+    }
+}

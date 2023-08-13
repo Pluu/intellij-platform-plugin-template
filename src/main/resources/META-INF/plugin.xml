@@ -20,6 +20,10 @@
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl"/>
+
+        <codeInsight.template.postfixTemplateProvider
+            language="kotlin"
+            implementationClass="com.pluu.plugin.codeInsight.postfix.PluuPostfixTemplateProvider" />
     </extensions>
 
     <actions>
