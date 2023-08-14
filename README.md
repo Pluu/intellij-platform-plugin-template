@@ -66,6 +66,14 @@ All you have to do is click the <kbd>Use this template</kbd> button (you must be
 After using the template to create your blank project, the [Template Cleanup][file:template_cleanup.yml] workflow will be triggered to override or remove any template-specific configurations, such as the plugin name, current changelog, etc.
 Once this is complete, the project is ready to be cloned to your local environment and opened with [IntelliJ IDEA][jb:download-ij].
 
+The most convenient way for getting your new project from GitHub is the <kbd>Get from VCS</kbd> action available on the Welcome Screen, where you can filter your GitHub  repository by its name.
+
+![Get from Version Control][file:get-from-version-control]
+
+The next step, after opening your project in IntelliJ IDEA, is to set the proper <kbd>SDK</kbd> to Java in version `17` within the [Project Structure settings][docs:project-strucure-settings].
+
+![Project Structure — SDK][file:project-structure-sdk.png]
+
 For the last step, you have to manually review the configuration variables described in the [`gradle.properties`][file:gradle.properties] file and *optionally* move sources from the *com.github.username.repository* package to the one that works best for you.
 Then you can get to work implementing your ideas.
 
@@ -102,7 +110,7 @@ The project-specific configuration file [`gradle.properties`][file:gradle.proper
 | Property name         | Description                                                                                               |
 |-----------------------|-----------------------------------------------------------------------------------------------------------|
 | `pluginGroup`         | Package name - after *using* the template, this will be set to `com.github.username.repo`.                |
-| `pluginName`          | Plugin name displayed in the JetBrains Marketplace and the Plugins Repository.                            |
+| `pluginName`          | Plugin name displayed in JetBrains Marketplace.                                                           |
 | `pluginRepositoryUrl` | Repository URL used for generating URLs by the [Gradle Changelog Plugin][gh:gradle-changelog-plugin]      |
 | `pluginVersion`       | The current version of the plugin in [SemVer][semver] format.                                             |
 | `pluginSinceBuild`    | The `since-build` attribute of the `<idea-version>` tag.                                                  |
@@ -114,7 +122,7 @@ The project-specific configuration file [`gradle.properties`][file:gradle.proper
 
 The properties listed define the plugin itself or configure the [gradle-intellij-plugin][gh:gradle-intellij-plugin] – check its documentation for more details.
 
-In addition, extra behaviours are configured through the [`gradle.properties`][file:gradle.properties] file, such as:
+In addition, extra behaviors are configured through the [`gradle.properties`][file:gradle.properties] file, such as:
 
 | Property name                                    | Value   | Description                                                                                    |
 |--------------------------------------------------|---------|------------------------------------------------------------------------------------------------|
@@ -122,7 +130,6 @@ In addition, extra behaviours are configured through the [`gradle.properties`][f
 | `org.gradle.configuration-cache`                 | `true`  | Enable [Gradle Configuration Cache][gradle:configuration-cache]                                |
 | `org.gradle.caching`                             | `true`  | Enable [Gradle Build Cache][gradle:build-cache]                                                |
 | `systemProp.org.gradle.unsafe.kotlin.assignment` | `true`  | Enable [Gradle Kotlin DSL Lazy Property Assignment][gradle:kotlin-dsl-assignment]              |
-| `kotlin.incremental.useClasspathSnapshot`        | `false` | Temporary workaround for [Kotlin Compiler OutOfMemoryError][docs:intellij-platform-kotlin-oom] |
 
 ### Environment variables
 
@@ -218,14 +225,13 @@ Therefore, the template contains only the following files:
 
 ```
 .
-├── MyBundle.kt                             Bundle class providing access to the resources messages
 ├── listeners
 │   └── MyApplicationActivationListener.kt  Application activation listener — detects when IDE frame is activated
 ├── services
 │   └── MyProjectService.kt                 Project level service
 ├── toolWindow
 │   └── MyToolWindowFactory.kt              Tool window factory — creates tool window content
-└
+└── MyBundle.kt                             Bundle class providing access to the resources messages
 ```
 
 These files are located in `src/main/kotlin`.
@@ -260,7 +266,7 @@ In `src/test/kotlin`, you'll find a basic `MyPluginTest` test that utilizes `Bas
 ### Code coverage
 
 The [Kover][gh:kover] – a Gradle plugin for Kotlin code coverage agents: IntelliJ and JaCoCo – is integrated into the project to provide the code coverage feature.
-Code coverage makes it possible to measure and track the degree of testing of the plugin sources.
+Code coverage makes it possible to measure and track the degree of plugin sources testing.
 The code coverage gets executed when running the `check` Gradle task.
 The final test report is sent to [CodeCov][codecov] for better results visualization.
 
@@ -536,9 +542,9 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 - [IntelliJ Platform SDK Plugin SDK][docs]
 - [Gradle IntelliJ Plugin Documentation][gh:gradle-intellij-plugin-docs]
 - [IntelliJ Platform Explorer][jb:ipe]
-- [Marketplace Quality Guidelines][jb:quality-guidelines]
+- [JetBrains Marketplace Quality Guidelines][jb:quality-guidelines]
 - [IntelliJ Platform UI Guidelines][jb:ui-guidelines]
-- [Marketplace Paid Plugins][jb:paid-plugins]
+- [JetBrains Marketplace Paid Plugins][jb:paid-plugins]
 - [Kotlin UI DSL][docs:kotlin-ui-dsl]
 - [IntelliJ SDK Code Samples][gh:code-samples]
 - [JetBrains Platform Slack][jb:slack]
@@ -558,22 +564,25 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 [docs:release-channel]: https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate#specifying-a-release-channel
 [docs:using-gradle]: https://plugins.jetbrains.com/docs/intellij/developing-plugins.html?from=IJPluginTemplate
 [docs:plugin-signing]: https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate
+[docs:project-strucure-settings]: https://www.jetbrains.com/help/idea/project-settings-and-structure.html
 [docs:testing-plugins]: https://plugins.jetbrains.com/docs/intellij/testing-plugins.html?from=IJPluginTemplate
 
-[file:use-this-template.png]: .github/readme/use-this-template.png
-[file:draft-release.png]: .github/readme/draft-release.png
+[file:draft-release.png]: ./.github/readme/draft-release.png
+[file:get-from-version-control]: ./.github/readme/get-from-version-control.png
 [file:gradle.properties]: ./gradle.properties
-[file:libs.versions.toml]: ./gradle/libs.versions.toml
-[file:run-logs.png]: .github/readme/run-logs.png
-[file:plugin.xml]: ./src/main/resources/META-INF/plugin.xml
-[file:run-debug-configurations.png]: .github/readme/run-debug-configurations.png
-[file:settings-secrets.png]: .github/readme/settings-secrets.png
-[file:template_cleanup.yml]: ./.github/workflows/template-cleanup.yml
 [file:intellij-platform-plugin-template-dark]: ./.github/readme/intellij-platform-plugin-template-dark.svg#gh-dark-mode-only
 [file:intellij-platform-plugin-template-light]: ./.github/readme/intellij-platform-plugin-template-light.svg#gh-light-mode-only
-[file:ui-testing.png]: ./.github/readme/ui-testing.png
+[file:libs.versions.toml]: ./gradle/libs.versions.toml
+[file:project-structure-sdk.png]: ./.github/readme/project-structure-sdk.png
+[file:plugin.xml]: ./src/main/resources/META-INF/plugin.xml
+[file:qodana.png]: ./.github/readme/qodana.png
 [file:qodana.yml]: ./qodana.yml
-[file:qodana.png]: .github/readme/qodana.png
+[file:run-debug-configurations.png]: ./.github/readme/run-debug-configurations.png
+[file:run-logs.png]: ./.github/readme/run-logs.png
+[file:settings-secrets.png]: ./.github/readme/settings-secrets.png
+[file:template_cleanup.yml]: ./.github/workflows/template-cleanup.yml
+[file:ui-testing.png]: ./.github/readme/ui-testing.png
+[file:use-this-template.png]: ./.github/readme/use-this-template.png
 
 [gh:actions]: https://help.github.com/en/actions
 [gh:build]: https://github.com/JetBrains/intellij-platform-plugin-template/actions?query=workflow%3ABuild

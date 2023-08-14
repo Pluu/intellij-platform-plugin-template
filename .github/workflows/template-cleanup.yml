@@ -1,6 +1,5 @@
-# GitHub Actions Workflow responsible for cleaning up the IntelliJ Platform Plugin Template repository from
-# the template-specific files and configurations. This workflow is supposed to be triggered automatically
-# when a new template-based repository has been created.
+# GitHub Actions Workflow responsible for cleaning up the IntelliJ Platform Plugin Template repository from the template-specific files and configurations.
+# This workflow is supposed to be triggered automatically when a new template-based repository has been created.
 
 name: Template Cleanup
 on:
@@ -48,7 +47,7 @@ jobs:
           # Move content
           mkdir -p src/main/kotlin/${GROUP//.//}
           mkdir -p src/test/kotlin/${GROUP//.//}
-          cp -R .github/template-cleanup/* .
+          cp -R .github/template-cleanup/. .
           cp -R src/main/kotlin/org/jetbrains/plugins/template/* src/main/kotlin/${GROUP//.//}/
           cp -R src/test/kotlin/org/jetbrains/plugins/template/* src/test/kotlin/${GROUP//.//}/
 
