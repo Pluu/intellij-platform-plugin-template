@@ -1,6 +1,7 @@
 package com.pluu.plugin.utils
 
 import com.android.AndroidProjectTypes
+import com.android.tools.idea.gradle.util.GradleUtil
 import com.android.tools.idea.project.AndroidProjectInfo
 import com.intellij.ide.actions.CreateDirectoryOrPackageAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -13,10 +14,13 @@ import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
+import com.pluu.plugin.PluuPlugin
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
+import org.jetbrains.kotlin.idea.core.util.toVirtualFile
 import org.jetbrains.kotlin.idea.util.sourceRoots
+import java.io.File
 
 object ModuleUtils {
     fun isRootPlace(dataContext: DataContext): Boolean {
@@ -58,7 +62,8 @@ object ModuleUtils {
 //            AndroidFacet.getInstance(module.project.findAppModule()!!)?.androidTestModule!!
         },
         findTestRoot = { module ->
-            AndroidFacet.getInstance(module)?.androidTestModule!!.rootManager.getSourceRoots(JavaSourceRootType.TEST_SOURCE).firstOrNull()
+            AndroidFacet.getInstance(module)?.androidTestModule!!
+                .rootManager.getSourceRoots(JavaSourceRootType.TEST_SOURCE).firstOrNull()
 //            module.rootManager.getSourceRoots(JavaSourceRootType.TEST_SOURCE).firstOrNull()
         },
         createDirectory = { module ->
@@ -110,5 +115,13 @@ object ModuleUtils {
         return AndroidProjectInfo.getInstance(this)
             .getAllModulesOfProjectType(AndroidProjectTypes.PROJECT_TYPE_APP)
             .firstOrNull()
+    }
+
+    fun useConventionPlugin(moduleRootDir: File): Boolean {
+        val rootVirtualFile = moduleRootDir.toVirtualFile() ?: return false
+        val buildFile = GradleUtil.findGradleBuildFile(rootVirtualFile) ?: return false
+        if (!buildFile.exists()) return false
+        val buildFileText = VfsUtil.loadText(buildFile)
+        return buildFileText.contains(PluuPlugin.Convension.LIBRARY)
     }
 }
