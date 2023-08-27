@@ -8,6 +8,7 @@ import com.android.tools.idea.wizard.template.impl.activities.common.addLifecycl
 import com.android.tools.idea.wizard.template.impl.activities.common.addMaterialDependency
 import com.android.tools.idea.wizard.template.impl.activities.common.generateManifest
 import com.android.tools.idea.wizard.template.impl.activities.common.generateSimpleLayout
+import com.pluu.plugin.utils.ModuleUtils
 import com.pluu.plugin.wizard.activity.src.basicActivityKt
 import com.pluu.plugin.wizard.common.ViewBindingType
 import com.pluu.plugin.wizard.common.generateDataBindingSimpleXml
@@ -27,9 +28,12 @@ fun RecipeExecutor.sampleActivitySetup(
     val useAndroidX = moduleData.projectTemplateData.androidXSupport
     val ktOrJavaExt = projectData.language.extension
     val generateKotlin = projectData.language == Language.Kotlin
+    val useConventionPlugin = ModuleUtils.useConventionPlugin(moduleData.rootDir)
 
     // Add, Dependencies
-    addAllKotlinDependencies(moduleData)
+    if (!useConventionPlugin) {
+        addAllKotlinDependencies(moduleData)
+    }
     addMaterialDependency(useAndroidX)
     addDependency("com.android.support:appcompat-v7:$appCompatVersion.+")
     addDependency("com.android.support.constraint:constraint-layout:+")
@@ -88,7 +92,7 @@ fun RecipeExecutor.sampleActivitySetup(
         setBuildFeature("dataBinding", true)
     }
 
-    if (generateKotlin) {
+    if (!useConventionPlugin && generateKotlin) {
         requireJavaVersion("1.8", true)
     }
 }

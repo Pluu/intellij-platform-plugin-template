@@ -7,6 +7,7 @@ import com.android.tools.idea.wizard.template.impl.activities.common.addAllKotli
 import com.android.tools.idea.wizard.template.impl.activities.common.addLifecycleDependencies
 import com.android.tools.idea.wizard.template.impl.activities.common.addMaterialDependency
 import com.android.tools.idea.wizard.template.impl.fragments.blankFragment.res.layout.fragmentBlankXml
+import com.pluu.plugin.utils.ModuleUtils
 import com.pluu.plugin.wizard.common.ViewBindingType
 import com.pluu.plugin.wizard.common.generateDataBindingSimpleXml
 import com.pluu.plugin.wizard.common.viewmodel.viewModelKt
@@ -27,9 +28,12 @@ fun RecipeExecutor.sampleFragmentSetup(
     val useAndroidX = moduleData.projectTemplateData.androidXSupport
     val ktOrJavaExt = projectData.language.extension
     val generateKotlin = projectData.language == Language.Kotlin
+    val useConventionPlugin = ModuleUtils.useConventionPlugin(moduleData.rootDir)
 
     // Add, Dependencies
-    addAllKotlinDependencies(moduleData)
+    if (!useConventionPlugin) {
+        addAllKotlinDependencies(moduleData)
+    }
     addDependency("com.android.support:appcompat-v7:$appCompatVersion.+")
     addDependency("com.android.support.constraint:constraint-layout:+")
     if (isUsedViewModel) {
@@ -78,7 +82,7 @@ fun RecipeExecutor.sampleFragmentSetup(
         setBuildFeature("dataBinding", true)
     }
 
-    if (generateKotlin) {
+    if (!useConventionPlugin && generateKotlin) {
         requireJavaVersion("1.8", true)
     }
 }
