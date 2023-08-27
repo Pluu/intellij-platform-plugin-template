@@ -9,8 +9,8 @@ import com.android.tools.idea.wizard.model.SkippableWizardStep
 import com.android.tools.idea.wizard.template.Category
 import com.android.tools.idea.wizard.template.FormFactor
 import com.intellij.openapi.project.Project
+import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.PluuPlugin
-import org.jetbrains.android.util.AndroidBundle.message
 import javax.swing.Icon
 
 class FeatureModuleDescriptionProvider : ModuleDescriptionProvider {
@@ -20,8 +20,8 @@ class FeatureModuleDescriptionProvider : ModuleDescriptionProvider {
 
     private class FeatureModuleTemplateGalleryEntry : ModuleGalleryEntry {
         override val icon: Icon = PluuPlugin.PLUU_ICON
-        override val name: String = PluuPlugin.PLUU_MODULE
-        override val description: String = message("com.pluu.plugin.module.feature.description")
+        override val name: String = PluuBundle.message("pluu.module.new.feature.title")
+        override val description: String = PluuBundle.message("pluu.module.new.feature.description")
         override fun toString(): String = name
 
         override fun createStep(

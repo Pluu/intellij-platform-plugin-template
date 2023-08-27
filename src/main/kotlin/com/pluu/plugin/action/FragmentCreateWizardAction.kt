@@ -1,13 +1,13 @@
 package com.pluu.plugin.action
 
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext.FRAGMENT_GALLERY
-import com.pluu.plugin.PluuPlugin
+import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.action.component.UiComponentCreateWizardAction
 
 class FragmentCreateWizardAction : UiComponentCreateWizardAction(
     text = "Create Fragment",
     wizardUiContext = FRAGMENT_GALLERY,
-    templateName = PluuPlugin.FRAGMENT_WITH_VIEWMODEL,
+    templateName = PluuBundle.message("pluu.fragment.and.viewmodel.new.feature.title"),
     dialogTitle = "android.wizard.new.fragment.title",
     stepTitle = "android.wizard.config.fragment.title"
 )

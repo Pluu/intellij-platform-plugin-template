@@ -6,12 +6,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.pluu.plugin.PluuPlugin
+import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.utils.ModuleUtils.getSuggestedAndroidTestDirectory
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import java.util.*
 
-class ActivityUiTestCreatorAction : AbstractTestCreatorAction(PluuPlugin.TestAction.CreateActivity) {
+class ActivityUiTestCreatorAction : AbstractTestCreatorAction(
+    PluuBundle.message("pluu.activity.test.action.name")
+) {
 
     override fun isAvailable(fileName: String): Boolean {
         return fileName.endsWith("Activity")

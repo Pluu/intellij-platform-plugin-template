@@ -10,6 +10,7 @@ import com.android.tools.idea.wizard.ui.StudioWizardDialogBuilder
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.util.ui.JBUI
+import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.PluuPlugin
 import com.pluu.plugin.module.ConfigureFeatureModuleStep
 import com.pluu.plugin.module.NewFeatureModuleModel
@@ -17,8 +18,8 @@ import com.pluu.plugin.utils.ModuleUtils
 import org.jetbrains.android.util.AndroidBundle.message
 
 class FeatureModuleCreateWizardAction : AnAction(
-    PluuPlugin.PLUU_MODULE,
-    null,
+    PluuBundle.message("pluu.module.new.feature.title"),
+    PluuBundle.message("pluu.module.new.feature.description"),
     PluuPlugin.PLUU_ICON
 ) {
     override fun update(e: AnActionEvent) {
@@ -42,7 +43,7 @@ class FeatureModuleCreateWizardAction : AnAction(
                     model,
                     SdkVersionInfo.LOWEST_ACTIVE_API,
                     basePackage,
-                    PluuPlugin.PLUU_MODULE
+                    PluuBundle.message("pluu.module.new.feature.title")
                 )
             )
             .build()
