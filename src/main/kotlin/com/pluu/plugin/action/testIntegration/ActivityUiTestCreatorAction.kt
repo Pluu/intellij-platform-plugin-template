@@ -24,7 +24,7 @@ class ActivityUiTestCreatorAction : AbstractTestCreatorAction(
     }
 
     override fun createFile(project: Project, srcPackage: String, srcClassName: String): PsiFile {
-        val template = FileTemplateManager.getInstance(project).getJ2eeTemplate("ActivityTest")
+        val template = FileTemplateManager.getInstance(project).getInternalTemplate("ActivityTest")
         val templateProperties = Properties().apply {
             setProperty("PACKAGE_NAME", srcPackage)
             setProperty("NAME", srcClassName)

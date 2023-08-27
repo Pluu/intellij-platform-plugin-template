@@ -20,6 +20,7 @@
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl"/>
+        <internalFileTemplate name="ActivityTest" />
 
         <codeInsight.template.postfixTemplateProvider
             language="kotlin"
