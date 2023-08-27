@@ -15,6 +15,7 @@ import com.android.tools.idea.wizard.template.BytecodeLevel
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
+import com.pluu.plugin.PluuPlugin
 
 fun RecipeExecutor.generateFeatureModule(
     data: ModuleTemplateData,
@@ -67,10 +68,10 @@ fun RecipeExecutor.generateFeatureModule(
     if (isLibraryProject) {
         if (useConventionPlugins) {
             // build-logic
-            applyPlugin("pluu.android.library", null)
-            applyPlugin("pluu.android.hilt", null)
+            applyPlugin(PluuPlugin.Convension.LIBRARY, null)
+            applyPlugin(PluuPlugin.Convension.HILT, null)
         } else {
-            applyPlugin("com.android.library", null)
+            applyPlugin(PluuPlugin.Android.LIBRARY, null)
         }
     }
     if (!useConventionPlugins) {
