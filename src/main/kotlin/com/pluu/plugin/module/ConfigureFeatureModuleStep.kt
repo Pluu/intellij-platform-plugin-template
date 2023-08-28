@@ -11,9 +11,11 @@ import com.android.tools.idea.wizard.template.BytecodeLevel
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.panel
-import com.pluu.plugin.labelFor
-import org.jetbrains.android.util.AndroidBundle.message
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.util.ui.JBUI.Borders.empty
+import com.pluu.plugin.utils.contextLabel
+import org.jetbrains.android.util.AndroidBundle
 import javax.swing.JCheckBox
 import javax.swing.JComboBox
 import javax.swing.JTextField
@@ -35,30 +37,26 @@ class ConfigureFeatureModuleStep(
     private val conventionPluginCheckbox: JCheckBox = JBCheckBox("Use Gradle convention plugin")
 
     override fun createMainPanel(): DialogPanel = panel {
-        row {
-            labelFor("Module name", moduleName, message("android.wizard.module.help.name"))
-            moduleName(pushX)
+        row(contextLabel("Module name", AndroidBundle.message("android.wizard.module.help.name"))) {
+            cell(moduleName).align(AlignX.FILL)
+        }
+
+        row("Package name") {
+            cell(packageName).align(AlignX.FILL)
+        }
+
+        row("Language") {
+            cell(languageCombo).align(AlignX.FILL)
+        }
+
+        row("Minimum SDK") {
+            cell(apiLevelCombo).align(AlignX.FILL)
         }
 
         row {
-            labelFor("Package name", packageName)
-            packageName(pushX)
+            cell(conventionPluginCheckbox).align(AlignX.FILL)
         }
-
-        row {
-            labelFor("Language", languageCombo)
-            languageCombo(growX)
-        }
-
-        row {
-            labelFor("Minimum SDK", apiLevelCombo)
-            apiLevelCombo(growX)
-        }
-
-        row {
-            conventionPluginCheckbox(growX)
-        }
-    }
+    }.withBorder(empty(6))
 
     init {
         bindings.bindTwoWay(TextProperty(appName), model.applicationName)
