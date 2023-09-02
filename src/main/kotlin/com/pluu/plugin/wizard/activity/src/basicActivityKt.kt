@@ -10,6 +10,10 @@ import com.pluu.plugin.wizard.common.ViewBindingType
 import com.pluu.plugin.wizard.common.importDataBinding
 import com.pluu.plugin.wizard.common.viewmodel.importActivityViewModel
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/base/+/mirror-goog-studio-main:wizard/template-impl/src/com/android/tools/idea/wizard/template/impl/activities/basicActivity/src/basicActivityKt.kt
+///////////////////////////////////////////////////////////////////////////
+
 fun basicActivityKt(
     isNewProject: Boolean,
     applicationPackage: String?,

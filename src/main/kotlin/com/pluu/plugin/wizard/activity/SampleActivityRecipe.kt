@@ -14,6 +14,12 @@ import com.pluu.plugin.wizard.common.ViewBindingType
 import com.pluu.plugin.wizard.common.generateDataBindingSimpleXml
 import com.pluu.plugin.wizard.common.viewmodel.viewModelKt
 
+///////////////////////////////////////////////////////////////////////////
+// Origin
+// - https://cs.android.com/android-studio/platform/tools/base/+/mirror-goog-studio-main:wizard/template-impl/src/com/android/tools/idea/wizard/template/impl/activities/emptyActivity/emptyActivityRecipe.kt
+// - https://cs.android.com/android-studio/platform/tools/base/+/mirror-goog-studio-main:wizard/template-impl/src/com/android/tools/idea/wizard/template/impl/activities/common/commonRecipes.kt
+///////////////////////////////////////////////////////////////////////////
+
 fun RecipeExecutor.sampleActivitySetup(
     moduleData: ModuleTemplateData,
     packageName: String,

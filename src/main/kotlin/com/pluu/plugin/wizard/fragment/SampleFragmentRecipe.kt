@@ -13,6 +13,10 @@ import com.pluu.plugin.wizard.common.generateDataBindingSimpleXml
 import com.pluu.plugin.wizard.common.viewmodel.viewModelKt
 import com.pluu.plugin.wizard.fragment.src.basicFragmentKt
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/base/+/mirror-goog-studio-main:wizard/template-impl/src/com/android/tools/idea/wizard/template/impl/fragments/viewModelFragment/viewModelFragmentRecipe.kt
+///////////////////////////////////////////////////////////////////////////
+
 fun RecipeExecutor.sampleFragmentSetup(
     moduleData: ModuleTemplateData,
     packageName: String,
