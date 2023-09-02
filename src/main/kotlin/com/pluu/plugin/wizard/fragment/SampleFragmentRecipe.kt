@@ -28,7 +28,6 @@ fun RecipeExecutor.sampleFragmentSetup(
     viewBindingType: ViewBindingType,
 ) {
     val (projectData, srcOut, resOut) = moduleData
-    val appCompatVersion = moduleData.apis.appCompatVersion
     val useAndroidX = moduleData.projectTemplateData.androidXSupport
     val ktOrJavaExt = projectData.language.extension
     val generateKotlin = projectData.language == Language.Kotlin
@@ -38,7 +37,6 @@ fun RecipeExecutor.sampleFragmentSetup(
     if (!useConventionPlugin) {
         addAllKotlinDependencies(moduleData)
     }
-    addDependency("com.android.support:appcompat-v7:$appCompatVersion.+")
     addDependency("com.android.support.constraint:constraint-layout:+")
     if (isUsedViewModel) {
         addDependency("androidx.fragment:fragment-ktx:+")
