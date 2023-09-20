@@ -17,6 +17,11 @@ import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
 import com.pluu.plugin.PluuPlugin
 
+///////////////////////////////////////////////////////////////////////////
+// Origin
+// - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android-npw/src/com/android/tools/idea/npw/module/recipes/commonModuleRecipe.kt
+///////////////////////////////////////////////////////////////////////////
+
 fun RecipeExecutor.generateFeatureModule(
     data: ModuleTemplateData,
     useKts: Boolean = false,
