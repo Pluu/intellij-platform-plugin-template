@@ -16,7 +16,7 @@
 
     <extensions defaultExtensionNs="com.android">
         <tools.idea.wizard.template.wizardTemplateProvider implementation="com.pluu.plugin.WizardTemplateProviderImpl"/>
-        <moduleDescriptionProvider implementation="com.pluu.plugin.module.FeatureModuleDescriptionProvider"/>
+        <moduleDescriptionProvider implementation="com.pluu.plugin.module.feature.FeatureModuleDescriptionProvider"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl"/>

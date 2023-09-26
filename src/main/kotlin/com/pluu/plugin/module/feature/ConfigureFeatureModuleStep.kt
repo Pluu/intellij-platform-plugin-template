@@ -1,4 +1,4 @@
-package com.pluu.plugin.module
+package com.pluu.plugin.module.feature
 
 import com.android.tools.idea.npw.module.ConfigureModuleStep
 import com.android.tools.idea.npw.template.components.BytecodeLevelComboProvider

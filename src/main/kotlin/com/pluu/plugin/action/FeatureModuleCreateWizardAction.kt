@@ -11,8 +11,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.PluuBundle
-import com.pluu.plugin.module.ConfigureFeatureModuleStep
-import com.pluu.plugin.module.NewFeatureModuleModel
+import com.pluu.plugin.module.feature.ConfigureFeatureModuleStep
+import com.pluu.plugin.module.feature.NewFeatureModuleModel
 import com.pluu.plugin.utils.ModuleUtils
 import icons.PluuIcons
 import org.jetbrains.android.util.AndroidBundle.message

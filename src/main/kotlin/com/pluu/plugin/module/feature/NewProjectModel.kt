@@ -1,4 +1,4 @@
-package com.pluu.plugin.module
+package com.pluu.plugin.module.feature
 
 import com.intellij.ide.util.PropertiesComponent
 

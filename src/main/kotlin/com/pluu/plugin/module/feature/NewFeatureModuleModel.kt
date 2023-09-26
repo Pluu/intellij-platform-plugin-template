@@ -1,4 +1,4 @@
-package com.pluu.plugin.module
+package com.pluu.plugin.module.feature
 
 import com.android.tools.idea.gradle.npw.project.GradleAndroidModuleTemplate.createSampleTemplate
 import com.android.tools.idea.npw.model.ExistingProjectModelData

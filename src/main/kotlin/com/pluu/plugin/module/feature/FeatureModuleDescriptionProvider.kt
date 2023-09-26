@@ -1,4 +1,4 @@
-package com.pluu.plugin.module
+package com.pluu.plugin.module.feature
 
 import com.android.sdklib.SdkVersionInfo.LOWEST_ACTIVE_API
 import com.android.tools.idea.npw.model.NewProjectModel.Companion.getSuggestedProjectPackage
