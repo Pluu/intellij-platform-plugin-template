@@ -1,4 +1,4 @@
-package com.pluu.plugin.wizard.module.recipes.buildlogic
+package com.pluu.plugin.wizard.module.recipes.feature
 
 import com.android.tools.idea.npw.module.recipes.emptyPluginsBlock
 

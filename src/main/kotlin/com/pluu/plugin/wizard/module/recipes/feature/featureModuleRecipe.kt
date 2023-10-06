@@ -1,4 +1,4 @@
-package com.pluu.plugin.wizard.module.recipes.buildlogic
+package com.pluu.plugin.wizard.module.recipes.feature
 
 import com.android.SdkConstants.FN_ANDROID_MANIFEST_XML
 import com.android.SdkConstants.FN_BUILD_GRADLE
