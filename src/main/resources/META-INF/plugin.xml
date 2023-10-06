@@ -17,6 +17,7 @@
     <extensions defaultExtensionNs="com.android">
         <tools.idea.wizard.template.wizardTemplateProvider implementation="com.pluu.plugin.WizardTemplateProviderImpl"/>
         <moduleDescriptionProvider implementation="com.pluu.plugin.module.feature.FeatureModuleDescriptionProvider"/>
+        <moduleDescriptionProvider implementation="com.pluu.plugin.module.sample.FeatureSampleModuleDescriptionProvider"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl"/>
@@ -36,6 +37,8 @@
 
             <action id="com.pluu.plugin.wizard.action.feature"
                     class="com.pluu.plugin.action.FeatureModuleCreateWizardAction"/>
+            <action id="com.pluu.plugin.wizard.action.feature.sample"
+                    class="com.pluu.plugin.action.FeatureSampleModuleCreateWizardAction"/>
             <separator/>
             <action id="com.pluu.plugin.action.viewmodel"
                     class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"/>
