@@ -5,7 +5,10 @@
     <vendor>Pluu</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <!-- We define the dependencies we will use. -->
     <depends>org.jetbrains.android</depends>
+    <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.androidstudio</depends>
 
     <description>
