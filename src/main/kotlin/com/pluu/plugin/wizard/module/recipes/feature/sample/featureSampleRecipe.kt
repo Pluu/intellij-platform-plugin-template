@@ -15,6 +15,7 @@ import com.android.tools.idea.wizard.template.Category
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
+import com.android.tools.idea.wizard.template.impl.activities.common.addMaterialDependency
 import com.pluu.plugin.PluuPlugin
 
 fun RecipeExecutor.generateFeatureSampleModule(
@@ -26,6 +27,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
     useConventionPlugins: Boolean = false
 ) {
     val (projectData, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
+    val appCompatVersion = moduleData.apis.appCompatVersion
     val (useAndroidX, agpVersion) = projectData
     val language = projectData.language
     val isLibraryProject = moduleData.isLibrary
@@ -78,13 +80,16 @@ fun RecipeExecutor.generateFeatureSampleModule(
         addKotlinIfNeeded(projectData, targetApi = apis.targetApi.api, noKtx = true)
         requireJavaVersion(bytecodeLevel.versionString, language == Language.Kotlin)
     }
+    addMaterialDependency(useAndroidX)
+    addDependency("com.android.support:appcompat-v7:$appCompatVersion.+")
+    addDependency("com.android.support.constraint:constraint-layout:+")
 
+    // Add, Manifest
     val manifestXml = generateManifest(
         hasApplicationBlock = !isLibraryProject,
         theme = "@style/${moduleData.themesData.main.name}",
         addBackupRules = false
     )
-
     save(manifestXml, manifestOut.resolve(SdkConstants.FN_ANDROID_MANIFEST_XML))
     save(gitignore(), moduleOut.resolve(".gitignore"))
     proguardRecipe(moduleOut, isLibraryProject)
