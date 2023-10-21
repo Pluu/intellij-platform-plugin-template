@@ -1,5 +1,7 @@
 package com.pluu.plugin.module.feature
 
+import com.android.sdklib.SdkVersionInfo
+import com.android.tools.idea.npw.model.NewProjectModel.Companion.getSuggestedProjectPackage
 import com.android.tools.idea.npw.module.ConfigureModuleStep
 import com.android.tools.idea.npw.template.components.BytecodeLevelComboProvider
 import com.android.tools.idea.npw.toWizardFormFactor
@@ -14,6 +16,7 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI.Borders.empty
+import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.utils.contextLabel
 import org.jetbrains.android.util.AndroidBundle
 import javax.swing.JCheckBox
@@ -22,13 +25,12 @@ import javax.swing.JTextField
 
 class ConfigureFeatureModuleStep(
     model: NewFeatureModuleModel,
-    minSdkLevel: Int,
-    basePackage: String?,
-    title: String
+    basePackage: String? = getSuggestedProjectPackage(),
+    title: String = PluuBundle.message("pluu.module.new.feature.title")
 ) : ConfigureModuleStep<NewFeatureModuleModel>(
     model = model,
     formFactor = model.formFactor.get().toWizardFormFactor(),
-    minSdkLevel = minSdkLevel,
+    minSdkLevel = SdkVersionInfo.LOWEST_ACTIVE_API,
     basePackage = basePackage,
     title = title
 ) {

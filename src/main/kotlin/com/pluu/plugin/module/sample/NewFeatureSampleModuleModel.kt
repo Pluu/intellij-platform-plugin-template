@@ -1,7 +1,6 @@
 package com.pluu.plugin.module.sample
 
-import com.android.tools.idea.npw.model.ExistingProjectModelData
-import com.android.tools.idea.npw.model.ProjectSyncInvoker
+import com.android.tools.idea.npw.model.ProjectModelData
 import com.android.tools.idea.npw.module.ModuleModel
 import com.android.tools.idea.observable.core.BoolValueProperty
 import com.android.tools.idea.observable.core.OptionalProperty
@@ -12,21 +11,19 @@ import com.android.tools.idea.wizard.template.Recipe
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext.NEW_MODULE
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
 import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.module.feature.PROPERTIES_BYTECODE_LEVEL_KEY
 import com.pluu.plugin.module.feature.properties
 import com.pluu.plugin.wizard.module.recipes.feature.sample.generateFeatureSampleModule
 
 class NewFeatureSampleModuleModel(
-    project: Project,
+    projectModelData: ProjectModelData,
     moduleParent: String,
-    projectSyncInvoker: ProjectSyncInvoker
 ) : ModuleModel(
     name = "",
     commandName = PluuBundle.message("pluu.module.new.feature.sample.title"),
     isLibrary = false,
-    projectModelData = ExistingProjectModelData(project, projectSyncInvoker),
+    projectModelData = projectModelData,
     moduleParent = moduleParent + "sample",
     wizardContext = NEW_MODULE
 ) {

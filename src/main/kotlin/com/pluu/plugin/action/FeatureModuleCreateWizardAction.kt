@@ -1,7 +1,5 @@
 package com.pluu.plugin.action
 
-import com.android.sdklib.SdkVersionInfo
-import com.android.tools.idea.npw.model.NewProjectModel.Companion.getSuggestedProjectPackage
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.wizard.model.ModelWizard
 import com.android.tools.idea.wizard.ui.StudioWizardDialogBuilder
@@ -26,22 +24,14 @@ class FeatureModuleCreateWizardAction : AnAction(
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val basePackage = getSuggestedProjectPackage()
         val model = NewFeatureModuleModel.fromExistingProject(
             project = project,
-            moduleParent = ":",
             projectSyncInvoker = ProjectSyncInvoker.DefaultProjectSyncInvoker(),
+            moduleParent = ":",
             isLibrary = true
         )
         val modelWizard = ModelWizard.Builder()
-            .addStep(
-                ConfigureFeatureModuleStep(
-                    model,
-                    SdkVersionInfo.LOWEST_ACTIVE_API,
-                    basePackage,
-                    PluuBundle.message("pluu.module.new.feature.title")
-                )
-            )
+            .addStep(ConfigureFeatureModuleStep(model))
             .build()
 
         StudioWizardDialogBuilder(modelWizard, message("android.wizard.module.new.module.title"))

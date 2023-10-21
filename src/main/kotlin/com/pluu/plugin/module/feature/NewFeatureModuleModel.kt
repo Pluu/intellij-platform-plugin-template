@@ -25,12 +25,12 @@ import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplateRenderer
 
 class NewFeatureModuleModel(
     projectModelData: ProjectModelData,
-    template: NamedModuleTemplate,
     moduleParent: String,
+    template: NamedModuleTemplate,
     commandName: String = "New Module",
     isLibrary: Boolean = false
 ) : ModuleModel(
-    name = "feature",
+    name = "",
     commandName = commandName,
     isLibrary = isLibrary,
     projectModelData = projectModelData,
@@ -83,13 +83,13 @@ class NewFeatureModuleModel(
     companion object {
         fun fromExistingProject(
             project: Project,
-            moduleParent: String,
             projectSyncInvoker: ProjectSyncInvoker,
+            moduleParent: String,
             isLibrary: Boolean = false
         ): NewFeatureModuleModel = NewFeatureModuleModel(
             projectModelData = ExistingProjectModelData(project, projectSyncInvoker),
-            template = createSampleTemplate(),
             moduleParent = moduleParent,
+            template = createSampleTemplate(),
             isLibrary = isLibrary
         )
     }

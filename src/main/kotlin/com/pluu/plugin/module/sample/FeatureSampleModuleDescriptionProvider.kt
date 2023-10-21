@@ -1,6 +1,6 @@
 package com.pluu.plugin.module.sample
 
-import com.android.sdklib.SdkVersionInfo
+import com.android.tools.idea.npw.model.ExistingProjectModelData
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.npw.module.ModuleDescriptionProvider
 import com.android.tools.idea.npw.module.ModuleGalleryEntry
@@ -27,14 +27,11 @@ class FeatureSampleModuleDescriptionProvider : ModuleDescriptionProvider {
             moduleParent: String,
             projectSyncInvoker: ProjectSyncInvoker
         ): SkippableWizardStep<*> {
-            val basePackage = "com.pluu.sample"
             return ConfigureFeatureSampleModuleStep(
                 NewFeatureSampleModuleModel(
-                    project = project,
-                    moduleParent = ":",
-                    projectSyncInvoker = projectSyncInvoker
-                ),
-                SdkVersionInfo.LOWEST_ACTIVE_API, basePackage, name
+                    projectModelData = ExistingProjectModelData(project, projectSyncInvoker),
+                    moduleParent = ":"
+                )
             )
         }
     }

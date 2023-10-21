@@ -1,7 +1,5 @@
 package com.pluu.plugin.module.feature
 
-import com.android.sdklib.SdkVersionInfo.LOWEST_ACTIVE_API
-import com.android.tools.idea.npw.model.NewProjectModel.Companion.getSuggestedProjectPackage
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.npw.module.ModuleDescriptionProvider
 import com.android.tools.idea.npw.module.ModuleGalleryEntry
@@ -27,14 +25,13 @@ class FeatureModuleDescriptionProvider : ModuleDescriptionProvider {
             moduleParent: String,
             projectSyncInvoker: ProjectSyncInvoker
         ): SkippableWizardStep<*> {
-            val basePackage = getSuggestedProjectPackage()
             val model = NewFeatureModuleModel.fromExistingProject(
                 project = project,
-                moduleParent = moduleParent,
                 projectSyncInvoker = projectSyncInvoker,
+                moduleParent = moduleParent,
                 isLibrary = true
             )
-            return ConfigureFeatureModuleStep(model, LOWEST_ACTIVE_API, basePackage, name)
+            return ConfigureFeatureModuleStep(model)
         }
     }
 }
