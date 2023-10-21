@@ -28,7 +28,7 @@ class FeatureModuleDescriptionProvider : ModuleDescriptionProvider {
             val model = NewFeatureModuleModel.fromExistingProject(
                 project = project,
                 projectSyncInvoker = projectSyncInvoker,
-                moduleParent = moduleParent,
+                moduleParent = ":feature",
                 isLibrary = true
             )
             return ConfigureFeatureModuleStep(model)

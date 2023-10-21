@@ -30,7 +30,7 @@ class FeatureSampleModuleDescriptionProvider : ModuleDescriptionProvider {
             val model = NewFeatureModuleModel.fromExistingProject(
                 project = project,
                 projectSyncInvoker = projectSyncInvoker,
-                moduleParent = ":",
+                moduleParent = ":sample",
                 isLibrary = false,
                 isNeedBaseModule = true
             )

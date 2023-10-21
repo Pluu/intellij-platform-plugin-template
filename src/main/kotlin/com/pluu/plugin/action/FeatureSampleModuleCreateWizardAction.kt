@@ -28,9 +28,9 @@ class FeatureSampleModuleCreateWizardAction : AnAction(
         val model = NewFeatureModuleModel.fromExistingProject(
             project = project,
             projectSyncInvoker = ProjectSyncInvoker.DefaultProjectSyncInvoker(),
-            moduleParent = ":",
+            moduleParent = ":sample",
             isLibrary = false,
-            isNeedBaseModule = true
+            isNeedBaseModule = true,
         )
         val modelWizard = ModelWizard.Builder()
             .addStep(ConfigureFeatureSampleModuleStep(model))

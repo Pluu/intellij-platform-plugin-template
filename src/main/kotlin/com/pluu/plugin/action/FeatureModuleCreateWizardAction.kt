@@ -27,7 +27,7 @@ class FeatureModuleCreateWizardAction : AnAction(
         val model = NewFeatureModuleModel.fromExistingProject(
             project = project,
             projectSyncInvoker = ProjectSyncInvoker.DefaultProjectSyncInvoker(),
-            moduleParent = ":",
+            moduleParent = ":feature",
             isLibrary = true
         )
         val modelWizard = ModelWizard.Builder()

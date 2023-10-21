@@ -21,6 +21,7 @@ import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplatesUsage.T
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.pluu.plugin.wizard.module.recipes.feature.generateFeatureModule
+import com.pluu.plugin.wizard.module.recipes.feature.sample.generateFeatureSampleModule
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplateRenderer as RenderLoggingEvent
 
 class NewFeatureModuleModel(
@@ -29,14 +30,14 @@ class NewFeatureModuleModel(
     moduleParent: String,
     commandName: String = "New Module",
     isLibrary: Boolean = false,
-    isNeedBaseModule: Boolean = false
+    isFeatureSample: Boolean = false,
 ) : ModuleModel(
     name = name,
     commandName = commandName,
     isLibrary = isLibrary,
     projectModelData = projectModelData,
     _template = createDefaultModuleTemplate(projectModelData.project, name),
-    moduleParent = moduleParent + "feature",
+    moduleParent = moduleParent,
     wizardContext = NEW_MODULE
 ) {
     override val formFactor: ObjectProperty<FormFactor> =
@@ -51,17 +52,26 @@ class NewFeatureModuleModel(
     override val renderer = object : ModuleTemplateRenderer() {
         override val recipe: Recipe
             get() = { td: TemplateData ->
-                generateFeatureModule(
-                    data = td as ModuleTemplateData,
-                    bytecodeLevel = bytecodeLevel.value,
-                    useVersionCatalog = true,
-                    useConventionPlugins = conventionPlugin.get()
-                )
+                if (isFeatureSample) {
+                    generateFeatureSampleModule(
+                        moduleData = td as ModuleTemplateData,
+                        appTitle = applicationName.get(),
+                        useVersionCatalog = true,
+                        useConventionPlugins = conventionPlugin.get()
+                    )
+                } else {
+                    generateFeatureModule(
+                        data = td as ModuleTemplateData,
+                        bytecodeLevel = bytecodeLevel.value,
+                        useVersionCatalog = true,
+                        useConventionPlugins = conventionPlugin.get()
+                    )
+                }
             }
 
         override fun init() {
             super.init()
-            if (isNeedBaseModule) {
+            if (isFeatureSample) {
                 moduleTemplateDataBuilder.setBaseFeature(baseModule.value)
             }
         }
@@ -101,7 +111,7 @@ class NewFeatureModuleModel(
             projectModelData = ExistingProjectModelData(project, projectSyncInvoker),
             moduleParent = moduleParent,
             isLibrary = isLibrary,
-            isNeedBaseModule = isNeedBaseModule
+            isFeatureSample = isNeedBaseModule,
         )
     }
 }

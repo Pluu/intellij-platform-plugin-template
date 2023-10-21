@@ -15,6 +15,7 @@ import com.android.tools.idea.wizard.template.Category
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
+import com.pluu.plugin.PluuPlugin
 
 fun RecipeExecutor.generateFeatureSampleModule(
     moduleData: ModuleTemplateData,
@@ -41,6 +42,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
     val gradleFile: String = if (useConventionPlugins) {
         buildFeatureSampleGradle(
             isKts = useGradleKts,
+            isLibraryProject = isLibraryProject,
             applicationId = namespace,
             useVersionCatalog = useVersionCatalog,
             baseFeature = baseFeature
@@ -66,12 +68,11 @@ fun RecipeExecutor.generateFeatureSampleModule(
     )
 
     if (useConventionPlugins) {
-        // TODO: Custom convention plugin
-        applyPlugin("com.android.application", agpVersion)
-        addKotlinIfNeeded(projectData, targetApi = apis.targetApi.api, noKtx = true)
+        // build-logic
+        applyPlugin(PluuPlugin.Convension.APPLICATION, null)
+        applyPlugin(PluuPlugin.Convension.HILT, null)
     } else {
-        applyPlugin("com.android.application", agpVersion)
-        addKotlinIfNeeded(projectData, targetApi = apis.targetApi.api, noKtx = true)
+        applyPlugin(PluuPlugin.Android.APPLICATION, null)
     }
     if (!useConventionPlugins) {
         addKotlinIfNeeded(projectData, targetApi = apis.targetApi.api, noKtx = true)

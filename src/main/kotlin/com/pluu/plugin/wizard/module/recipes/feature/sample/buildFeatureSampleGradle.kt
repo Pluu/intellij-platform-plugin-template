@@ -5,39 +5,31 @@ import com.android.tools.idea.npw.module.recipes.emptyPluginsBlock
 import com.android.tools.idea.wizard.template.BaseFeature
 import com.android.tools.idea.wizard.template.CppStandardType
 import com.android.tools.idea.wizard.template.GradlePluginVersion
+import com.pluu.plugin.wizard.module.recipes.feature.androidFeatureConfig
 
 internal fun buildFeatureSampleGradle(
     isKts: Boolean,
+    isLibraryProject: Boolean,
     applicationId: String,
     useVersionCatalog: Boolean,
     baseFeature: BaseFeature
 ): String {
     val androidConfigBlock = androidFeatureConfig(
+        isLibraryProject = isLibraryProject,
         applicationId = applicationId
     )
 
-    val dependenciesBlock =
-        """
+    val dependenciesBlock = """
       dependencies {
         implementation project("${baseFeature.name}")
       }
     """
 
     return """
-${emptyPluginsBlock(isKts = isKts, useVersionCatalog = useVersionCatalog)}
-$androidConfigBlock
-$dependenciesBlock
+    ${emptyPluginsBlock(isKts = isKts, useVersionCatalog = useVersionCatalog)}
+    $androidConfigBlock
+    $dependenciesBlock
 """
-}
-
-internal fun androidFeatureConfig(
-    applicationId: String
-): String {
-    return """
-    android {
-    namespace '$applicationId'
-    }
-    """
 }
 
 internal fun buildFeatureSampleDefaultGradle(

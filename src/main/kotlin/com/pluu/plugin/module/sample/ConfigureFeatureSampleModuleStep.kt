@@ -83,7 +83,7 @@ class ConfigureFeatureSampleModuleStep(
         listeners.listen(model.baseModule) { value ->
             model.moduleName.set(
                 buildList {
-                    add("sample")
+                    add(model.moduleParent)
                     addAll(value.get().name.split(".").drop(1))
                 }.joinToString(":")
             )

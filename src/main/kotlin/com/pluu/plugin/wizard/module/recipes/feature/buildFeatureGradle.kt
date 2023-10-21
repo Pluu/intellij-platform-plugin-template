@@ -4,34 +4,23 @@ import com.android.tools.idea.npw.module.recipes.emptyPluginsBlock
 
 internal fun buildFeatureGradle(
     isKts: Boolean,
+    isLibraryProject: Boolean,
     applicationId: String,
     useVersionCatalog: Boolean
 ): String {
     val androidConfigBlock = androidFeatureConfig(
+        isLibraryProject = isLibraryProject,
         applicationId = applicationId
     )
 
     val dependenciesBlock = """
-  dependencies {  
-  }
-  """
+      dependencies {  
+      }
+    """
 
-    val allBlocks =
-        """
+    return """
     ${emptyPluginsBlock(isKts = isKts, useVersionCatalog = useVersionCatalog)}
     $androidConfigBlock
     $dependenciesBlock
-    """
-
-    return allBlocks
-}
-
-internal fun androidFeatureConfig(
-    applicationId: String
-): String {
-    return """
-    android {
-    namespace '$applicationId'
-    }
-    """
+"""
 }

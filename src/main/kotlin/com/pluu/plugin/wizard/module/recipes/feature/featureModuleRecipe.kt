@@ -44,6 +44,7 @@ fun RecipeExecutor.generateFeatureModule(
     val gradleFile: String = if (useConventionPlugins) {
         buildFeatureGradle(
             isKts = useKts,
+            isLibraryProject = isLibraryProject,
             applicationId = data.namespace,
             useVersionCatalog = useVersionCatalog
         )
