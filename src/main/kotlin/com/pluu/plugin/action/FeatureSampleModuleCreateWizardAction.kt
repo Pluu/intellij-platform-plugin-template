@@ -1,6 +1,5 @@
 package com.pluu.plugin.action
 
-import com.android.tools.idea.npw.model.ExistingProjectModelData
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.wizard.model.ModelWizard
 import com.android.tools.idea.wizard.ui.StudioWizardDialogBuilder
@@ -9,8 +8,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.PluuBundle
+import com.pluu.plugin.module.feature.NewFeatureModuleModel
 import com.pluu.plugin.module.sample.ConfigureFeatureSampleModuleStep
-import com.pluu.plugin.module.sample.NewFeatureSampleModuleModel
 import com.pluu.plugin.utils.ModuleUtils
 import icons.PluuIcons
 import org.jetbrains.android.util.AndroidBundle.message
@@ -26,9 +25,12 @@ class FeatureSampleModuleCreateWizardAction : AnAction(
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val model = NewFeatureSampleModuleModel(
-            projectModelData = ExistingProjectModelData(project, ProjectSyncInvoker.DefaultProjectSyncInvoker()),
-            moduleParent = ":"
+        val model = NewFeatureModuleModel.fromExistingProject(
+            project = project,
+            projectSyncInvoker = ProjectSyncInvoker.DefaultProjectSyncInvoker(),
+            moduleParent = ":",
+            isLibrary = false,
+            isNeedBaseModule = true
         )
         val modelWizard = ModelWizard.Builder()
             .addStep(ConfigureFeatureSampleModuleStep(model))

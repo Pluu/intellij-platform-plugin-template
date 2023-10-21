@@ -1,6 +1,6 @@
 package com.pluu.plugin.module.feature
 
-import com.android.tools.idea.gradle.npw.project.GradleAndroidModuleTemplate.createSampleTemplate
+import com.android.tools.idea.gradle.npw.project.GradleAndroidModuleTemplate.createDefaultModuleTemplate
 import com.android.tools.idea.npw.model.ExistingProjectModelData
 import com.android.tools.idea.npw.model.ProjectModelData
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
@@ -10,7 +10,6 @@ import com.android.tools.idea.observable.core.ObjectProperty
 import com.android.tools.idea.observable.core.ObjectValueProperty
 import com.android.tools.idea.observable.core.OptionalProperty
 import com.android.tools.idea.observable.core.OptionalValueProperty
-import com.android.tools.idea.projectsystem.NamedModuleTemplate
 import com.android.tools.idea.wizard.template.BytecodeLevel
 import com.android.tools.idea.wizard.template.Category
 import com.android.tools.idea.wizard.template.FormFactor
@@ -19,23 +18,25 @@ import com.android.tools.idea.wizard.template.Recipe
 import com.android.tools.idea.wizard.template.TemplateData
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext.NEW_MODULE
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.pluu.plugin.wizard.module.recipes.feature.generateFeatureModule
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplateRenderer as RenderLoggingEvent
 
 class NewFeatureModuleModel(
+    name: String,
     projectModelData: ProjectModelData,
     moduleParent: String,
-    template: NamedModuleTemplate,
     commandName: String = "New Module",
-    isLibrary: Boolean = false
+    isLibrary: Boolean = false,
+    isNeedBaseModule: Boolean = false
 ) : ModuleModel(
-    name = "",
+    name = name,
     commandName = commandName,
     isLibrary = isLibrary,
     projectModelData = projectModelData,
-    _template = template,
-    moduleParent = moduleParent,
+    _template = createDefaultModuleTemplate(projectModelData.project, name),
+    moduleParent = moduleParent + "feature",
     wizardContext = NEW_MODULE
 ) {
     override val formFactor: ObjectProperty<FormFactor> =
@@ -44,8 +45,8 @@ class NewFeatureModuleModel(
     override val category: ObjectProperty<Category> =
         ObjectValueProperty(Category.Activity)
 
-    val bytecodeLevel: OptionalProperty<BytecodeLevel> = OptionalValueProperty(getInitialBytecodeLevel())
-    val conventionPlugin: BoolValueProperty = BoolValueProperty(true)
+    override val loggingEvent: AndroidStudioEvent.TemplateRenderer
+        get() = RenderLoggingEvent.ANDROID_MODULE
 
     override val renderer = object : ModuleTemplateRenderer() {
         override val recipe: Recipe
@@ -57,7 +58,18 @@ class NewFeatureModuleModel(
                     useConventionPlugins = conventionPlugin.get()
                 )
             }
+
+        override fun init() {
+            super.init()
+            if (isNeedBaseModule) {
+                moduleTemplateDataBuilder.setBaseFeature(baseModule.value)
+            }
+        }
     }
+
+    val baseModule = OptionalValueProperty<Module>()
+    val bytecodeLevel: OptionalProperty<BytecodeLevel> = OptionalValueProperty(getInitialBytecodeLevel())
+    val conventionPlugin: BoolValueProperty = BoolValueProperty(true)
 
     init {
         if (applicationName.isEmpty.get()) {
@@ -68,9 +80,6 @@ class NewFeatureModuleModel(
             applicationName.set(msg)
         }
     }
-
-    override val loggingEvent: AndroidStudioEvent.TemplateRenderer
-        get() = RenderLoggingEvent.ANDROID_MODULE
 
     private fun getInitialBytecodeLevel(): BytecodeLevel {
         if (isLibrary) {
@@ -85,12 +94,14 @@ class NewFeatureModuleModel(
             project: Project,
             projectSyncInvoker: ProjectSyncInvoker,
             moduleParent: String,
-            isLibrary: Boolean = false
+            isLibrary: Boolean = false,
+            isNeedBaseModule: Boolean = false
         ): NewFeatureModuleModel = NewFeatureModuleModel(
+            name = "",
             projectModelData = ExistingProjectModelData(project, projectSyncInvoker),
             moduleParent = moduleParent,
-            template = createSampleTemplate(),
-            isLibrary = isLibrary
+            isLibrary = isLibrary,
+            isNeedBaseModule = isNeedBaseModule
         )
     }
 }

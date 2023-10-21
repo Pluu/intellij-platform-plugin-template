@@ -22,6 +22,7 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI.Borders.empty
 import com.pluu.plugin.PluuBundle
+import com.pluu.plugin.module.feature.NewFeatureModuleModel
 import com.pluu.plugin.utils.contextLabel
 import org.jetbrains.android.util.AndroidBundle
 import javax.swing.JCheckBox
@@ -29,17 +30,17 @@ import javax.swing.JComboBox
 import javax.swing.JTextField
 
 class ConfigureFeatureSampleModuleStep(
-    model: NewFeatureSampleModuleModel,
+    model: NewFeatureModuleModel,
     basePackage: String? = getSuggestedProjectPackage(),
     title: String = PluuBundle.message("pluu.module.new.feature.sample.title")
-) : ConfigureModuleStep<NewFeatureSampleModuleModel>(
+) : ConfigureModuleStep<NewFeatureModuleModel>(
     model = model,
     formFactor = model.formFactor.get().toWizardFormFactor(),
     minSdkLevel = SdkVersionInfo.LOWEST_ACTIVE_API,
     basePackage = basePackage,
     title = title
 ) {
-    private val baseApplication: JComboBox<Module> = ModuleComboProvider().createComponent()
+    private val baseModule: JComboBox<Module> = ModuleComboProvider().createComponent()
 
     private val appName: JTextField = JBTextField(model.applicationName.get())
     private val bytecodeCombo: JComboBox<BytecodeLevel> = BytecodeLevelComboProvider().createComponent()
@@ -47,7 +48,7 @@ class ConfigureFeatureSampleModuleStep(
 
     override fun createMainPanel(): DialogPanel = panel {
         row("Base Module") {
-            cell(baseApplication).align(AlignX.FILL)
+            cell(baseModule).align(AlignX.FILL)
         }
 
         row(contextLabel("Module name", AndroidBundle.message("android.wizard.module.help.name"))) {
@@ -74,12 +75,12 @@ class ConfigureFeatureSampleModuleStep(
     init {
         AndroidProjectInfo.getInstance(model.project)
             .getAllModulesOfProjectType(AndroidProjectTypes.PROJECT_TYPE_LIBRARY)
-            .forEach { module -> baseApplication.addItem(module) }
-        val baseApplication: OptionalProperty<Module> = model.baseApplication
-        bindings.bind(baseApplication, SelectedItemProperty(this.baseApplication))
-        validatorPanel.registerValidator(baseApplication, ModuleSelectedValidator())
+            .forEach { module -> baseModule.addItem(module) }
+        val baseModule: OptionalProperty<Module> = model.baseModule
+        bindings.bind(baseModule, SelectedItemProperty(this.baseModule))
+        validatorPanel.registerValidator(baseModule, ModuleSelectedValidator())
 
-        listeners.listen(model.baseApplication) { value ->
+        listeners.listen(model.baseModule) { value ->
             model.moduleName.set(
                 buildList {
                     add("sample")

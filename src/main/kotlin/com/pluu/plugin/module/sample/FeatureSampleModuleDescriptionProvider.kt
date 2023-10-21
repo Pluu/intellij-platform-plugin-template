@@ -1,12 +1,12 @@
 package com.pluu.plugin.module.sample
 
-import com.android.tools.idea.npw.model.ExistingProjectModelData
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.npw.module.ModuleDescriptionProvider
 import com.android.tools.idea.npw.module.ModuleGalleryEntry
 import com.android.tools.idea.wizard.model.SkippableWizardStep
 import com.intellij.openapi.project.Project
 import com.pluu.plugin.PluuBundle
+import com.pluu.plugin.module.feature.NewFeatureModuleModel
 import icons.PluuIcons
 import javax.swing.Icon
 
@@ -27,12 +27,14 @@ class FeatureSampleModuleDescriptionProvider : ModuleDescriptionProvider {
             moduleParent: String,
             projectSyncInvoker: ProjectSyncInvoker
         ): SkippableWizardStep<*> {
-            return ConfigureFeatureSampleModuleStep(
-                NewFeatureSampleModuleModel(
-                    projectModelData = ExistingProjectModelData(project, projectSyncInvoker),
-                    moduleParent = ":"
-                )
+            val model = NewFeatureModuleModel.fromExistingProject(
+                project = project,
+                projectSyncInvoker = projectSyncInvoker,
+                moduleParent = ":",
+                isLibrary = false,
+                isNeedBaseModule = true
             )
+            return ConfigureFeatureSampleModuleStep(model)
         }
     }
 }
