@@ -18,7 +18,6 @@ import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.Recipe
 import com.android.tools.idea.wizard.template.TemplateData
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent
-import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext.NEW_MODULE
 import com.intellij.openapi.project.Project
 import com.pluu.plugin.wizard.module.recipes.feature.generateFeatureModule
@@ -28,20 +27,23 @@ class NewFeatureModuleModel(
     projectModelData: ProjectModelData,
     template: NamedModuleTemplate,
     moduleParent: String,
-    override val formFactor: ObjectProperty<FormFactor>,
-    override val category: ObjectProperty<Category>,
     commandName: String = "New Module",
-    override val isLibrary: Boolean = false,
-    wizardContext: WizardUiContext
+    isLibrary: Boolean = false
 ) : ModuleModel(
-    "feature",
-    commandName,
-    isLibrary,
-    projectModelData,
-    template,
-    moduleParent,
-    wizardContext
+    name = "feature",
+    commandName = commandName,
+    isLibrary = isLibrary,
+    projectModelData = projectModelData,
+    _template = template,
+    moduleParent = moduleParent,
+    wizardContext = NEW_MODULE
 ) {
+    override val formFactor: ObjectProperty<FormFactor> =
+        ObjectValueProperty(FormFactor.Mobile)
+
+    override val category: ObjectProperty<Category> =
+        ObjectValueProperty(Category.Activity)
+
     val bytecodeLevel: OptionalProperty<BytecodeLevel> = OptionalValueProperty(getInitialBytecodeLevel())
     val conventionPlugin: BoolValueProperty = BoolValueProperty(true)
 
@@ -83,17 +85,12 @@ class NewFeatureModuleModel(
             project: Project,
             moduleParent: String,
             projectSyncInvoker: ProjectSyncInvoker,
-            formFactor: FormFactor,
-            category: Category,
             isLibrary: Boolean = false
         ): NewFeatureModuleModel = NewFeatureModuleModel(
             projectModelData = ExistingProjectModelData(project, projectSyncInvoker),
             template = createSampleTemplate(),
             moduleParent = moduleParent,
-            formFactor = ObjectValueProperty(formFactor),
-            category = ObjectValueProperty(category),
-            isLibrary = isLibrary,
-            wizardContext = NEW_MODULE
+            isLibrary = isLibrary
         )
     }
 }

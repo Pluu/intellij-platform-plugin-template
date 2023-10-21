@@ -6,8 +6,6 @@ import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.npw.module.ModuleDescriptionProvider
 import com.android.tools.idea.npw.module.ModuleGalleryEntry
 import com.android.tools.idea.wizard.model.SkippableWizardStep
-import com.android.tools.idea.wizard.template.Category
-import com.android.tools.idea.wizard.template.FormFactor
 import com.intellij.openapi.project.Project
 import com.pluu.plugin.PluuBundle
 import icons.PluuIcons
@@ -34,8 +32,6 @@ class FeatureModuleDescriptionProvider : ModuleDescriptionProvider {
                 project = project,
                 moduleParent = moduleParent,
                 projectSyncInvoker = projectSyncInvoker,
-                formFactor = FormFactor.Mobile,
-                category = Category.Activity,
                 isLibrary = true
             )
             return ConfigureFeatureModuleStep(model, LOWEST_ACTIVE_API, basePackage, name)

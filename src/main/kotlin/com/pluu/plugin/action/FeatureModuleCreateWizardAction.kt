@@ -4,8 +4,6 @@ import com.android.sdklib.SdkVersionInfo
 import com.android.tools.idea.npw.model.NewProjectModel.Companion.getSuggestedProjectPackage
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.wizard.model.ModelWizard
-import com.android.tools.idea.wizard.template.Category
-import com.android.tools.idea.wizard.template.FormFactor
 import com.android.tools.idea.wizard.ui.StudioWizardDialogBuilder
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -33,8 +31,6 @@ class FeatureModuleCreateWizardAction : AnAction(
             project = project,
             moduleParent = ":",
             projectSyncInvoker = ProjectSyncInvoker.DefaultProjectSyncInvoker(),
-            formFactor = FormFactor.Mobile,
-            category = Category.Activity,
             isLibrary = true
         )
         val modelWizard = ModelWizard.Builder()
