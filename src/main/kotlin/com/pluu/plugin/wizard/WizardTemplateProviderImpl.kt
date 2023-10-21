@@ -1,4 +1,4 @@
-package com.pluu.plugin
+package com.pluu.plugin.wizard
 
 import com.android.tools.idea.wizard.template.Template
 import com.android.tools.idea.wizard.template.WizardTemplateProvider
