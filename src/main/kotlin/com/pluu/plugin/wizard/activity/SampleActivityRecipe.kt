@@ -59,7 +59,6 @@ fun RecipeExecutor.sampleActivitySetup(
     // Create, Activity
     val simpleActivityPath = srcOut.resolve("$activityClass.$ktOrJavaExt")
     val simpleActivity = basicActivityKt(
-        isNewProject = moduleData.isNewModule,
         applicationPackage = projectData.applicationPackage,
         packageName = packageName,
         useAndroidX = useAndroidX,

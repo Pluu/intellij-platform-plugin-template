@@ -15,7 +15,6 @@ import com.pluu.plugin.wizard.common.viewmodel.importActivityViewModel
 ///////////////////////////////////////////////////////////////////////////
 
 fun basicActivityKt(
-    isNewProject: Boolean,
     applicationPackage: String?,
     packageName: String,
     useAndroidX: Boolean,

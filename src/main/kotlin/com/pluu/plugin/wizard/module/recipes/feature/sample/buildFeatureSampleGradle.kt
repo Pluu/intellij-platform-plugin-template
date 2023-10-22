@@ -1,10 +1,10 @@
 package com.pluu.plugin.wizard.module.recipes.feature.sample
 
+import com.android.ide.common.repository.AgpVersion
 import com.android.tools.idea.npw.module.recipes.androidConfig
 import com.android.tools.idea.npw.module.recipes.emptyPluginsBlock
 import com.android.tools.idea.wizard.template.BaseFeature
 import com.android.tools.idea.wizard.template.CppStandardType
-import com.android.tools.idea.wizard.template.GradlePluginVersion
 import com.pluu.plugin.wizard.module.recipes.feature.androidFeatureConfig
 
 internal fun buildFeatureSampleGradle(
@@ -33,7 +33,7 @@ internal fun buildFeatureSampleGradle(
 }
 
 internal fun buildFeatureSampleDefaultGradle(
-    agpVersion: GradlePluginVersion,
+    agpVersion: AgpVersion,
     isKts: Boolean,
     /** The application ID; also used for the namespace. */
     applicationId: String,
@@ -47,7 +47,7 @@ internal fun buildFeatureSampleDefaultGradle(
     useVersionCatalog: Boolean
 ): String {
     val androidConfigBlock = androidConfig(
-        gradlePluginVersion = agpVersion,
+        agpVersion = agpVersion,
         buildApiString = buildApiString,
         minApi = minApi,
         targetApi = targetApi,

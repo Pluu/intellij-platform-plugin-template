@@ -4,7 +4,7 @@ import com.intellij.codeInsight.template.postfix.templates.PostfixTemplate
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvider
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
-import org.gradle.internal.impldep.org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.TestOnly
 
 class PluuPostfixTemplateProvider : PostfixTemplateProvider {
 
@@ -26,7 +26,7 @@ class PluuPostfixTemplateProvider : PostfixTemplateProvider {
         /**
          * In tests only one expression should be suggested, so in case there are many of them, save relevant items
          */
-        @get:TestOnly
+        @TestOnly
         @Volatile
         var previouslySuggestedExpressions = emptyList<String>()
     }
