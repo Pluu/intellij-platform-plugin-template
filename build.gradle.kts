@@ -41,8 +41,8 @@ kotlin {
 
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2023.1.1")
-    type.set("IC")
+    version = properties("platformVersion")
+    type = properties("platformType")
     plugins.set(listOf("android"))
 }
 
