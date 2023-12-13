@@ -10,7 +10,7 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import org.jetbrains.android.facet.AndroidFacet
 
-internal const val RES_MANAGER_PREF_KEY = "ResourceManagerPrefKey"
+internal const val DESIGN_MANAGER_PREF_KEY = "DesignManagerPrefKey"
 
 internal const val MODULE_NAME_KEY = "ModuleName"
 
@@ -31,7 +31,7 @@ internal fun findCompatibleFacetFromOpenedFiles(project: Project): AndroidFacet?
  *
  */
 internal fun findLastSelectedFacet(project: Project): AndroidFacet? =
-    getFacetForModuleName(PropertiesComponent.getInstance(project).getValue("$RES_MANAGER_PREF_KEY.$MODULE_NAME_KEY"), project)
+    getFacetForModuleName(PropertiesComponent.getInstance(project).getValue("$DESIGN_MANAGER_PREF_KEY.$MODULE_NAME_KEY"), project)
 
 /**
  * Returns [AndroidFacet]s corresponding only to the main module.

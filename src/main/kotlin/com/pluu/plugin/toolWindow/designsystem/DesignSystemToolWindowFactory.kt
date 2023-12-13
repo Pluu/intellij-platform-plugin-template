@@ -1,5 +1,6 @@
 package com.pluu.plugin.toolWindow.designsystem
 
+import com.android.tools.idea.project.getLastSyncTimestamp
 import com.android.tools.idea.projectsystem.PROJECT_SYSTEM_SYNC_TOPIC
 import com.android.tools.idea.projectsystem.ProjectSystemSyncManager
 import com.android.tools.idea.startup.ClearResourceCacheAfterFirstBuild
@@ -29,7 +30,7 @@ import javax.swing.BoxLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-const val RESOURCE_EXPLORER_TOOL_WINDOW_ID = "Resources Explorer"
+const val DESIGN_SYSTEM_EXPLORER_TOOL_WINDOW_ID = "Design System Explorer"
 
 class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware {
 
@@ -68,9 +69,7 @@ private fun connectListeners(
         FileEditorManagerListener.FILE_EDITOR_MANAGER,
         MyFileEditorListener(project, toolWindow, designSystemExplorer)
     )
-    connection.subscribe(PROJECT_SYSTEM_SYNC_TOPIC, ProjectSystemSyncManager.SyncResultListener {
-
-    })
+    connection.subscribe(PROJECT_SYSTEM_SYNC_TOPIC, SyncResultListener(project, designSystemExplorer, toolWindow))
 }
 
 private fun createContent(toolWindow: ToolWindow, project: Project) {
@@ -81,14 +80,20 @@ private fun createContent(toolWindow: ToolWindow, project: Project) {
         return
     }
 
-    toolWindow.displayWaitingForGoodSync()
+    if (project.getLastSyncTimestamp() < 0L) {
+        toolWindow.displayWaitingForBuild()
+    } else {
+        toolWindow.displayWaitingForGoodSync()
+    }
 
     // No existing successful sync, since there's a fair chance of having rendering issues, wait for next successful sync.
     project.runWhenSmartAndSyncedOnEdt(callback = { result ->
         if (result.isSuccessful) {
             displayInToolWindow(facet, toolWindow)
         } else {
-            project.listenUntilNextSync(listener = { createContent(toolWindow, project) })
+            project.listenUntilNextSync(listener = {
+                createContent(toolWindow, project)
+            })
         }
     })
 }
@@ -122,6 +127,8 @@ private fun ToolWindow.displayWaitingView(message: String, showWarning: Boolean)
     val content = contentManager.factory.createContent(waitingForSyncPanel, null, false)
     contentManager.addContent(content)
 }
+
+private fun ToolWindow.displayWaitingForBuild() = displayWaitingView("Waiting for build to finish...", false)
 
 private fun ToolWindow.displayWaitingForGoodSync() = displayWaitingView("Waiting for successful sync...", true)
 
@@ -177,7 +184,7 @@ private class MyFileEditorListener(
 private class MyToolWindowManagerListener(private val project: Project) : ToolWindowManagerListener {
 
     override fun stateChanged(toolWindowManager: ToolWindowManager) {
-        val window: ToolWindow = toolWindowManager.getToolWindow(RESOURCE_EXPLORER_TOOL_WINDOW_ID) ?: return
+        val window: ToolWindow = toolWindowManager.getToolWindow(DESIGN_SYSTEM_EXPLORER_TOOL_WINDOW_ID) ?: return
         val contentManager = window.contentManager
         val designSystemExplorerIsPresent = contentManager.contents.any { it.component is DesignSystemExplorer }
         if (!window.isVisible) {
@@ -185,6 +192,19 @@ private class MyToolWindowManagerListener(private val project: Project) : ToolWi
             // ResourceManagerTracking.logPanelCloses()
         } else if (!designSystemExplorerIsPresent) {
             createContent(window, project)
+        }
+    }
+}
+
+private class SyncResultListener(
+    private val project: Project,
+    private val designSystemExplorer: DesignSystemExplorer,
+    private val toolWindow: ToolWindow
+) : ProjectSystemSyncManager.SyncResultListener {
+    override fun syncEnded(result: ProjectSystemSyncManager.SyncResult) {
+        // After sync, if the facet is not found anymore, recreate the view.
+        if (!compatibleFacetExists(designSystemExplorer.facet)) {
+            createContent(toolWindow, project)
         }
     }
 }
