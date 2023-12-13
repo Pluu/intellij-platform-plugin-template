@@ -12,6 +12,9 @@ object PluuIcons {
     val Konata: Icon = load("/icons/konata.png")
 
     @JvmField
+    val Konata_32: Icon = load("/icons/konata_32.png")
+
+    @JvmField
     val Studio: Icon = load("icons/androidstudio_icon.svg")
 }
 
