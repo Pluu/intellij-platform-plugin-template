@@ -1,6 +1,10 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+import com.android.ide.common.resources.ResourceResolver
 import com.android.tools.idea.ui.resourcemanager.model.ResourceSection
+import com.android.tools.idea.ui.resourcemanager.rendering.AssetPreviewManager
+import com.android.tools.idea.ui.resourcemanager.rendering.AssetPreviewManagerImpl
+import com.android.tools.idea.ui.resourcemanager.rendering.ImageCache
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -17,6 +21,8 @@ import kotlin.properties.Delegates
 class DesignSystemExplorerListViewModelImpl(
     override val facet: AndroidFacet,
     private val contextFile: VirtualFile?,
+    private val resourceResolver: ResourceResolver,
+    private val listViewImageCache: ImageCache,
     override val filterOptions: FilterOptions,
     designSystemType: DesignSystemType
 ) : DesignSystemExplorerListViewModel {
@@ -39,6 +45,8 @@ class DesignSystemExplorerListViewModelImpl(
             updatePattern(filterOptions.searchString)
         }
     }
+
+    override val assetPreviewManager: AssetPreviewManager = AssetPreviewManagerImpl(facet, listViewImageCache, resourceResolver, contextFile)
 
     override fun getCurrentModuleResourceLists() = resourceExplorerSupplyAsync {
         getResourceSections(facet)

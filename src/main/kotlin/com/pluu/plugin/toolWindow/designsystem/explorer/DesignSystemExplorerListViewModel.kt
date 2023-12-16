@@ -1,6 +1,7 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.tools.idea.ui.resourcemanager.model.ResourceSection
+import com.android.tools.idea.ui.resourcemanager.rendering.AssetPreviewManager
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
@@ -36,6 +37,10 @@ interface DesignSystemExplorerListViewModel {
      * The current [DesignSystemType] of resources being fetched.
      */
     var currentDesignSystemType: DesignSystemType
+
+    val selectedTabName: String get() = ""
+
+    val assetPreviewManager: AssetPreviewManager
 
     val facet: AndroidFacet
 

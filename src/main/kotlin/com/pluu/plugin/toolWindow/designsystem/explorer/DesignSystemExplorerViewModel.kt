@@ -5,12 +5,14 @@ import com.android.ide.common.resources.ResourceResolver
 import com.android.ide.common.resources.configuration.FolderConfiguration
 import com.android.tools.configurations.Configuration
 import com.android.tools.idea.configurations.ConfigurationManager
+import com.android.tools.idea.ui.resourcemanager.rendering.ImageCache
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.EdtExecutorService
+import com.intellij.util.ui.update.MergingUpdateQueue
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
@@ -41,6 +43,11 @@ class DesignSystemExplorerViewModel(
             refreshListModel()
         },
         { updateListModelSpeedSearch(it) }
+    )
+
+    private val listViewImageCache = ImageCache.createImageCache(
+        parentDisposable = this,
+        mergingUpdateQueue = MergingUpdateQueue("queue", 1000, true, MergingUpdateQueue.ANY_COMPONENT, this, null, false)
     )
 
     /**
@@ -91,6 +98,8 @@ class DesignSystemExplorerViewModel(
                     DesignSystemExplorerListViewModelImpl(
                         facet,
                         contextFileForConfiguration,
+                        resourceResolver,
+                        listViewImageCache,
                         filterOptions,
                         supportedTypes[supportTypeIndex]
                     ).also {
