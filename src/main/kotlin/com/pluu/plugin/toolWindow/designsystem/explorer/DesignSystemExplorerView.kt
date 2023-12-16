@@ -7,7 +7,6 @@ import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import java.util.concurrent.CompletableFuture
-import java.util.function.BiConsumer
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.JTabbedPane
@@ -65,7 +64,7 @@ class DesignSystemExplorerView(
         listView?.let { Disposer.dispose(it) }
         listView = null
         listViewJob?.cancel(true)
-        listViewJob = viewModel.createResourceListViewModel().whenCompleteAsync(BiConsumer { listViewModel, _ ->
+        listViewJob = viewModel.createResourceListViewModel().whenCompleteAsync({ listViewModel, _ ->
             // TODO: Add a loading screen if this process takes too long.
             listView = createResourcesListView(listViewModel).also {
                 if (!Disposer.isDisposed(this)) {
@@ -76,7 +75,7 @@ class DesignSystemExplorerView(
                     Disposer.dispose(it)
                 }
             }
-           // selectIfNeeded()
+            // selectIfNeeded()
         }, EdtExecutorService.getInstance())
     }
 

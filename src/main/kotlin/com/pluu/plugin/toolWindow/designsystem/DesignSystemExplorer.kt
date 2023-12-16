@@ -38,13 +38,13 @@ class DesignSystemExplorer private constructor(
     }
 
     private fun updateFacet(facet: AndroidFacet) {
-//        resourceExplorerViewModel.facet = facet
+        designSystemExplorerViewModel.facet = facet
 //        resourceImportDragTarget.facet = facet
-//        toolbarViewModel.facet = facet
+        toolbarViewModel.facet = facet
     }
 
     private fun updateResourceType(resourceType: DesignSystemType) {
-//        toolbarViewModel.resourceType = resourceType
+        toolbarViewModel.resourceType = resourceType
     }
 
     override fun dispose() {

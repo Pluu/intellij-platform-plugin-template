@@ -37,13 +37,7 @@ class DesignSystemExplorerViewModel(
     private var listModelResourceType: DesignSystemType? = null
     //endregion
 
-    val filterOptions = FilterOptions.create(
-        {
-            updateFilterParamsInModelState()
-            refreshListModel()
-        },
-        { updateListModelSpeedSearch(it) }
-    )
+    val filterOptions = FilterOptions.create { updateListModelSpeedSearch(it) }
 
     private val listViewImageCache = ImageCache.createImageCache(
         parentDisposable = this,
