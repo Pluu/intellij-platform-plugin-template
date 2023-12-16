@@ -30,7 +30,6 @@ fun getModuleResources(forFacet: AndroidFacet, type: DesignSystemType): Resource
         moduleRepository.getResourcesAndApplyFilters(
             namespace,
             ResourceType.COLOR,
-            true,
             emptyList<TypeFilter>(),
             forFacet
         )
@@ -42,24 +41,13 @@ fun getModuleResources(forFacet: AndroidFacet, type: DesignSystemType): Resource
 private fun ResourceRepository.getResourcesAndApplyFilters(
     namespace: ResourceNamespace,
     type: ResourceType,
-    isLocalRepo: Boolean,
     typeFilters: List<TypeFilter>,
     facet: AndroidFacet
 ): Collection<ResourceItem> {
-    return if (isLocalRepo) {
-        if (typeFilters.isEmpty()) {
-            getResources(namespace, type).values()
-        } else {
-            getResources(namespace, type) { resourceItem -> resourceItem.isValidForFilters(typeFilters, facet) }
-        }
+    return if (typeFilters.isEmpty()) {
+        getResources(namespace, type).values()
     } else {
-        // Only public resources for external resources.
-        val publicResources = getPublicResources(namespace, type)
-        if (typeFilters.isEmpty()) {
-            publicResources
-        } else {
-            publicResources.filter { resourceItem -> resourceItem.isValidForFilters(typeFilters, facet) }
-        }
+        getResources(namespace, type) { resourceItem -> resourceItem.isValidForFilters(typeFilters, facet) }
     }
 }
 
