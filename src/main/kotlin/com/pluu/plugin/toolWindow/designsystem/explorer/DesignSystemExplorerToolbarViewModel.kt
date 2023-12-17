@@ -11,6 +11,8 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.findCompatibleFacets
+import com.pluu.plugin.toolWindow.designsystem.getFacetForModuleName
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import org.jetbrains.android.facet.AndroidFacet
 import kotlin.properties.Delegates
@@ -47,6 +49,12 @@ class DesignSystemExplorerToolbarViewModel(
             }
         }
 
+    /**
+     * Name of the module currently selected
+     */
+    val currentModuleName
+        get() = facet.module.name
+
     var searchString: String by Delegates.observable("") { _, old, new ->
         if (new != old) {
             filterOptions.searchString = new
@@ -73,6 +81,19 @@ class DesignSystemExplorerToolbarViewModel(
     private fun getDataInBackground(dataId: String): Any? = when (dataId) {
         CommonDataKeys.PSI_ELEMENT.name -> getPsiDirForDesignSystemType()
         else -> null
+    }
+
+    /**
+     * Return the [AnAction]s to switch to another module.
+     * This method only returns Android modules.
+     */
+    fun getAvailableModules(): List<String> = findCompatibleFacets(facet.module.project).map { it.module.name }.sorted()
+
+    /**
+     * Calls [facetUpdaterCallback] when a new module is selected in the ComboBox.
+     */
+    fun onModuleSelected(moduleName: String?) {
+        getFacetForModuleName(moduleName, facet.module.project)?.run(facetUpdaterCallback)
     }
 
     /**

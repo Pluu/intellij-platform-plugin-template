@@ -153,7 +153,7 @@ class SectionList(private val model: SectionListModel) : JBScrollPane() {
                 allInnerLists += section.list
                 section.list.addListSelectionListener(selectionListener)
                 section.list.addFocusListener(focusListener)
-//                add(section.header)
+                add(section.header)
                 add(section.list)
                 add(Box.createVerticalStrut(listsGap))
             }

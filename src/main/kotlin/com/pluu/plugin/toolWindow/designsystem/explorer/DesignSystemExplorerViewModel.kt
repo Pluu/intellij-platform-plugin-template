@@ -37,11 +37,27 @@ class DesignSystemExplorerViewModel(
     private var listModelResourceType: DesignSystemType? = null
     //endregion
 
-    val filterOptions = FilterOptions.create { updateListModelSpeedSearch(it) }
+    val filterOptions = FilterOptions.create(
+        {
+            updateFilterParamsInModelState()
+            refreshListModel()
+        },
+        {
+            updateListModelSpeedSearch(it)
+        }
+    )
 
     private val listViewImageCache = ImageCache.createImageCache(
         parentDisposable = this,
-        mergingUpdateQueue = MergingUpdateQueue("queue", 1000, true, MergingUpdateQueue.ANY_COMPONENT, this, null, false)
+        mergingUpdateQueue = MergingUpdateQueue(
+            "queue",
+            1000,
+            true,
+            MergingUpdateQueue.ANY_COMPONENT,
+            this,
+            null,
+            false
+        )
     )
 
     /**
@@ -142,8 +158,7 @@ class DesignSystemExplorerViewModel(
         val listModel = listViewModel
         if (listModel == null) {
             listModelResourceType = designSystemType
-        }
-        else {
+        } else {
             listModel.currentDesignSystemType = designSystemType
         }
     }
