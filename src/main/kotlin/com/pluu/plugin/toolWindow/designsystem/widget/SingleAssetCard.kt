@@ -4,7 +4,6 @@ import com.android.tools.adtui.common.AdtUiUtils
 import com.android.tools.adtui.common.border
 import com.android.tools.adtui.common.secondaryPanelBackground
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
-import com.android.tools.idea.ui.resourcemanager.widget.Separator
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.components.JBLabel
@@ -17,7 +16,6 @@ import icons.StudioIcons
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
-import java.awt.FlowLayout
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.RenderingHints
@@ -39,44 +37,58 @@ import kotlin.properties.Delegates
  */
 private const val THUMBNAIL_HEIGHT_WIDTH_RATIO = 23 / 26f
 
-private val LARGE_MAIN_CELL_BORDER_SELECTED get() = BorderFactory.createCompoundBorder(
-    JBUI.Borders.empty(10),
-    RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(4), JBUI.scale(2))
-)
+private val LARGE_MAIN_CELL_BORDER_SELECTED
+    get() = BorderFactory.createCompoundBorder(
+        JBUI.Borders.empty(10),
+        RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(4), JBUI.scale(2))
+    )
 
 
-private val LARGE_MAIN_CELL_BORDER_UNFOCUSED get() = BorderFactory.createCompoundBorder(
-    JBUI.Borders.empty(10),
-    RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(4), JBUI.scale(2))
-)
+private val LARGE_MAIN_CELL_BORDER_UNFOCUSED
+    get() = BorderFactory.createCompoundBorder(
+        JBUI.Borders.empty(10),
+        RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(4), JBUI.scale(2))
+    )
 
 private var PREVIEW_BORDER_COLOR: Color = border
 
-private val LARGE_MAIN_CELL_BORDER get() = BorderFactory.createCompoundBorder(
-    JBUI.Borders.empty(11),
-    RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(4), JBUI.scale(1))
-)
+private val LARGE_MAIN_CELL_BORDER
+    get() = BorderFactory.createCompoundBorder(
+        JBUI.Borders.empty(11),
+        RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(4), JBUI.scale(1))
+    )
 
 private val ROW_CELL_BORDER get() = JBUI.Borders.empty(4)
 
-private val ROW_CELL_BORDER_SELECTED get() = BorderFactory.createCompoundBorder(
-    JBUI.Borders.empty(2),
-    RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(4), JBUI.scale(2))
-)
+private val ROW_CELL_BORDER_SELECTED
+    get() = BorderFactory.createCompoundBorder(
+        JBUI.Borders.empty(2),
+        RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(4), JBUI.scale(2))
+    )
 
-private val ROW_CELL_BORDER_UNFOCUSED get() = BorderFactory.createCompoundBorder(
-    JBUI.Borders.empty(2),
-    RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(4), JBUI.scale(2))
-)
+private val ROW_CELL_BORDER_UNFOCUSED
+    get() = BorderFactory.createCompoundBorder(
+        JBUI.Borders.empty(2),
+        RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(4), JBUI.scale(2))
+    )
 
-private val BOTTOM_PANEL_BORDER get()  = JBUI.Borders.empty(5, 8, 10, 10)
+private val BOTTOM_PANEL_BORDER get() = JBUI.Borders.empty(5, 8, 10, 10)
 
-private val PRIMARY_FONT get() = StartupUiUtil.labelFont.deriveFont(mapOf(TextAttribute.WEIGHT to TextAttribute.WEIGHT_DEMIBOLD,
-    TextAttribute.SIZE to JBUI.scaleFontSize(14f)))
+private val PRIMARY_FONT
+    get() = StartupUiUtil.labelFont.deriveFont(
+        mapOf(
+            TextAttribute.WEIGHT to TextAttribute.WEIGHT_DEMIBOLD,
+            TextAttribute.SIZE to JBUI.scaleFontSize(14f)
+        )
+    )
 
 private val SECONDARY_FONT_SIZE get() = JBUI.scaleFontSize(12f).toFloat()
 
-private val SECONDARY_FONT_COLOR get() = JBColor(NamedColorUtil.getInactiveTextColor().darker(), NamedColorUtil.getInactiveTextColor())
+private val SECONDARY_FONT_COLOR
+    get() = JBColor(
+        NamedColorUtil.getInactiveTextColor().darker(),
+        NamedColorUtil.getInactiveTextColor()
+    )
 
 private const val DEFAULT_WIDTH = 120
 
@@ -96,7 +108,9 @@ abstract class AssetView : JPanel(BorderLayout()) {
     /**
      * If true, draw a chessboard as in background of [thumbnail]
      */
-    var withChessboard: Boolean by Delegates.observable(false) { _, _, withChessboard -> contentWrapper.showChessboard = withChessboard }
+    var withChessboard: Boolean by Delegates.observable(false) { _, _, withChessboard ->
+        contentWrapper.showChessboard = withChessboard
+    }
 
     /**
      * Set the [JComponent] acting as the thumbnail of the object represented (e.g an image or a color)
@@ -226,8 +240,6 @@ class SingleAssetCard : AssetView() {
         border = getBorder(selected, focused)
     }
 
-    override fun computeThumbnailSize(width: Int) = Dimension(width, (width * THUMBNAIL_HEIGHT_WIDTH_RATIO).toInt())
-
     private val bottomPanel = JPanel(BorderLayout(0, JBUI.scale(2))).apply {
         background = secondaryPanelBackground
         isOpaque = true
@@ -254,6 +266,8 @@ class SingleAssetCard : AssetView() {
         }
         viewWidth = DEFAULT_WIDTH
     }
+
+    override fun computeThumbnailSize(width: Int) = Dimension(width, (width * THUMBNAIL_HEIGHT_WIDTH_RATIO).toInt())
 
     override fun getBorder(selected: Boolean, focused: Boolean): Border = when {
         selected && focused -> LARGE_MAIN_CELL_BORDER_SELECTED
@@ -306,40 +320,30 @@ class RowAssetView : AssetView() {
         border = CENTER_PANEL_BORDER_UNSELECTED
     }
 
-    private val metadataPanel = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)).apply {
-        isOpaque = false
-        add(secondLineLabel)
-        add(Separator(4, 8))
-        add(thirdLineLabel)
-    }
+    private val metadataPanel = JPanel(BorderLayout(0, JBUI.scale(2)).apply {
+        background = secondaryPanelBackground
+        isOpaque = true
+        border = BOTTOM_PANEL_BORDER
+    })
 
     init {
-        contentWrapper.border = DEFAULT_CUSTOM_LINE
         viewWidth = DEFAULT_WIDTH
         background = UIUtil.getListBackground()
-        with(centerPanel) {
-            add(JPanel(BorderLayout()).apply {
-                add(titleLabel)
-                add(newLabel, BorderLayout.EAST)
-                isOpaque = false
-                border = JBUI.Borders.empty(8, 0, 0, 4)
-            }, BorderLayout.NORTH)
 
-            add(JPanel(BorderLayout()).apply {
-                add(metadataPanel)
-                add(issueIcon, BorderLayout.EAST)
-                border = JBUI.Borders.empty(0, 0, 4, 4)
-                isOpaque = false
-            }, BorderLayout.SOUTH)
-
-            issueIcon.preferredSize = Dimension(newLabel.preferredSize.width, issueIcon.preferredSize.height)
+        with(metadataPanel) {
+            add(titleLabel, BorderLayout.NORTH)
+            add(Box.createVerticalBox().apply {
+                add(secondLineLabel)
+                add(thirdLineLabel)
+            })
         }
 
-        add(contentWrapper, BorderLayout.WEST)
-        add(centerPanel)
+        add(contentWrapper)
+        add(metadataPanel, BorderLayout.SOUTH)
+        viewWidth = DEFAULT_WIDTH
     }
 
-    override fun computeThumbnailSize(width: Int) = Dimension(width, width)
+    override fun computeThumbnailSize(width: Int) = Dimension(width, width * 2)
 
     override fun setNonIconLayout() {
         contentWrapper.isVisible = false
