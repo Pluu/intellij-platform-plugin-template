@@ -32,9 +32,6 @@ class DesignSystemExplorerToolbarViewModel(
     /** Called when a new facet is selected. */
     var facetUpdaterCallback: (AndroidFacet) -> Unit = {}
 
-    /** Callback for when a new resource is created from a toolbar action. */
-    var resourceUpdaterCallback: ((String, DesignSystemType) -> Unit)? = null
-
     /** Callback for when a request to refresh resources previews is made. */
     var refreshResourcesPreviewsCallback: () -> Unit = {}
 
@@ -51,12 +48,6 @@ class DesignSystemExplorerToolbarViewModel(
                 updateUICallback()
             }
         }
-
-    /**
-     * Name of the module currently selected
-     */
-    val currentModuleName
-        get() = facet.module.name
 
     var searchString: String by Delegates.observable("") { _, old, new ->
         if (new != old) {

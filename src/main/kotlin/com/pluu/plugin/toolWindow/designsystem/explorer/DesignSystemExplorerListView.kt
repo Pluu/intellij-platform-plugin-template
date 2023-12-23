@@ -211,7 +211,7 @@ class DesignSystemExplorerListView(
     private fun populateSearchLinkLabels() {
         if (moduleSearchView == null) return
         searchFuture?.let { future ->
-            if (!future.isDone()) {
+            if (!future.isDone) {
                 // Only one 'future' for getOtherModulesResourceLists may run at a time.
                 future.cancel(true)
             }
@@ -305,7 +305,7 @@ class DesignSystemExplorerListView(
 
     private fun displayLoading() {
         showLoadingFuture = null
-        if (populateResourcesFuture?.isDone ?: true) {
+        if (populateResourcesFuture?.isDone != false) {
             return
         }
         sectionListModel.clear()

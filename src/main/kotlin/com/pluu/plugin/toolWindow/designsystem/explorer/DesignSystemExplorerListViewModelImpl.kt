@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.tools.idea.ui.resourcemanager.model.TypeFilter
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -76,9 +75,7 @@ class DesignSystemExplorerListViewModelImpl(
             // Don't include modules that are already being displayed.
             !displayedModuleNames.contains(facet.module.name)
         }.flatMap { facet ->
-            getResourceSections(
-                facet
-            )
+            getResourceSections(facet)
         }
     }
 
@@ -86,10 +83,7 @@ class DesignSystemExplorerListViewModelImpl(
         facetUpdaterCallback?.invoke(newFacet)
     }
 
-    private fun getResourceSections(
-        forFacet: AndroidFacet,
-        typeFilters: List<TypeFilter> = emptyList()
-    ): List<DesignSection> {
+    private fun getResourceSections(forFacet: AndroidFacet): List<DesignSection> {
         val resourceType = currentDesignSystemType
         val resources = mutableListOf<DesignSection>()
         resources.add(

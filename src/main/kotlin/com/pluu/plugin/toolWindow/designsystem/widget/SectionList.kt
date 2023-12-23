@@ -1,12 +1,12 @@
 package com.pluu.plugin.toolWindow.designsystem.widget
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ScrollingUtil
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import org.jetbrains.kotlin.idea.util.application.invokeLater
 import java.awt.Color
 import java.awt.Container
 import java.awt.Dimension
@@ -147,7 +147,7 @@ class SectionList(private val model: SectionListModel) : JBScrollPane() {
         allInnerLists: MutableList<JList<*>>,
         selectionListener: ListSelectionListener
     ): JComponent {
-        return JPanel(multiLisLayoutManager).apply{
+        return JPanel(multiLisLayoutManager).apply {
             background = this@SectionList.background
             for (section in model.sections) {
                 allInnerLists += section.list
@@ -202,8 +202,7 @@ class SectionList(private val model: SectionListModel) : JBScrollPane() {
             if (listToIndex != null) {
                 val (list, index) = listToIndex
                 allInnerLists.getOrNull(list)?.selectedIndex = index
-            }
-            else {
+            } else {
                 allInnerLists.forEach { it.selectedIndex = -1 }
             }
         }
@@ -229,7 +228,7 @@ class SectionList(private val model: SectionListModel) : JBScrollPane() {
                 preferredSize = Dimension(scrollPrefSize.width, contentHeight)
                 maximumSize = Dimension(Int.MAX_VALUE, contentHeight)
                 // Trigger a layout in the parent for the new dimensions.
-                invokeLater { parent?.revalidate() }
+                ApplicationManager.getApplication().invokeLater { parent?.revalidate() }
                 return
             }
         }
@@ -258,17 +257,23 @@ class SectionListModel : ListModel<Section<*>> {
 
     fun addSection(section: Section<*>) {
         sections += section
-        dataListeners.forEach { it.contentsChanged(ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, sections.size)) }
+        dataListeners.forEach {
+            it.contentsChanged(ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, sections.size))
+        }
     }
 
     fun addSections(newSections: List<Section<*>>) {
         sections += newSections
-        dataListeners.forEach { it.contentsChanged(ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, sections.size)) }
+        dataListeners.forEach {
+            it.contentsChanged(ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, sections.size))
+        }
     }
 
     fun clear() {
         sections.clear()
-        dataListeners.forEach { it.contentsChanged(ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, sections.size)) }
+        dataListeners.forEach {
+            it.contentsChanged(ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, sections.size))
+        }
     }
 }
 
