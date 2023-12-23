@@ -6,7 +6,7 @@ import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import org.jetbrains.android.facet.AndroidFacet
 
-object MyViewFindModel {
+object DesignSystemManager {
     @WorkerThread
     fun findDesignKit(forFacet: AndroidFacet, type: DesignSystemType): List<DesignSystemItem> {
         val project = forFacet.module.project.getBaseDirectories()

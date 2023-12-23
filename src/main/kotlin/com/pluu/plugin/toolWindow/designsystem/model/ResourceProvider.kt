@@ -2,7 +2,7 @@ package com.pluu.plugin.toolWindow.designsystem.model
 
 import com.android.annotations.concurrency.Slow
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
-import com.pluu.plugin.toolWindow.designsystem.provider.MyViewFindModel
+import com.pluu.plugin.toolWindow.designsystem.provider.DesignSystemManager
 import org.jetbrains.android.facet.AndroidFacet
 
 /**
@@ -13,5 +13,5 @@ fun getModuleResources(
     forFacet: AndroidFacet,
     type: DesignSystemType
 ): List<DesignSystemItem> {
-    return MyViewFindModel.findDesignKit(forFacet, type)
+    return DesignSystemManager.findDesignKit(forFacet, type)
 }
