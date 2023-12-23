@@ -7,18 +7,14 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.CollectionListModel
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.speedSearch.NameFilteringListModel
 import com.intellij.util.ModalityUiUtil
 import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
-import com.pluu.plugin.toolWindow.designsystem.findCompatibleFacets
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.widget.Section
@@ -161,17 +157,14 @@ class DesignSystemExplorerListView(
                 UpdateUiReason.DESIGN_SYSTEM_TYPE_CHANGED -> {
                     setContentPanel()
                     populateResourcesLists()
-                    populateSearchLinkLabels()
                 }
 
                 UpdateUiReason.DESIGN_SYSTEM_CHANGED -> {
                     populateResourcesLists(keepScrollPosition = true)
-                    populateSearchLinkLabels()
                 }
             }
         }
         populateResourcesLists()
-        populateSearchLinkLabels()
         viewModel.speedSearch.addChangeListener {
             sectionList.getLists().filterIsInstance<AssetListView>()
                 .forEach { assetListView -> assetListView.refilter() }
@@ -180,7 +173,6 @@ class DesignSystemExplorerListView(
             }
             centerPanel.validate()
             centerPanel.repaint()
-            populateSearchLinkLabels()
         }
 
         setContentPanel()
@@ -200,68 +192,6 @@ class DesignSystemExplorerListView(
         add(contentPanel)
         revalidate()
         repaint()
-    }
-
-    private fun populateSearchLinkLabels() {
-        if (moduleSearchView == null) return
-        searchFuture?.let { future ->
-            if (!future.isDone) {
-                // Only one 'future' for getOtherModulesResourceLists may run at a time.
-                future.cancel(true)
-            }
-        }
-
-        moduleSearchView.clear()
-        contentSeparator.isVisible = false
-
-        val filter = viewModel.speedSearch.filter
-        if (filter.isNotBlank()) {
-            searchFuture = viewModel.getOtherModulesResourceLists()
-                .whenCompleteAsync({ resourceLists, _ ->
-                    displaySearchLinkLabels(resourceLists, filter)
-                }, EdtExecutorService.getInstance())
-        }
-        centerPanel.revalidate()
-    }
-
-
-    /**
-     * Applies the filter in the SpeedSearch to the given resource sections, then, creates and displays LinkLabels to the modules with
-     * resources matching the filter.
-     *
-     * @param filter Received filter string, since the filter in SpeedSearch might change at runtime while this is running.
-     */
-    private fun displaySearchLinkLabels(resourceSections: List<DesignSection>, filter: String) {
-        if (moduleSearchView == null) return // TODO: Log?
-        val search = viewModel.speedSearch
-        search.setEnabled(true)
-        resourceSections.forEach { section ->
-            val filteringModel = NameFilteringListModel(
-                CollectionListModel(section.assetSets), { it.name }, search::shouldBeShowing,
-                { StringUtil.notNullize(filter) })
-            filteringModel.refilter()
-            val resourcesCount = filteringModel.size
-            if (resourcesCount > 0) {
-                // TODO: Get the facet when the module is being set in ResourceExplorerViewModel by passing the module name instead of the actual facet.
-                // I.e: This class should not be fetching module objects.
-                findCompatibleFacets(viewModel.facet.module.project).firstOrNull()?.let { facetToChange ->
-                    // Create [LinkLabel]s that when clicking them, changes the working module to the module in the given [AndroidFacet].
-                    moduleSearchView.addLabel(
-                        "$resourcesCount ${
-                            StringUtil.pluralize(
-                                "resource",
-                                resourcesCount
-                            )
-                        } found in '${facetToChange.module.name}'"
-                    ) {
-                        viewModel.facetUpdated(facetToChange)
-                    }
-                }
-            }
-        }
-        contentSeparator.isVisible = moduleSearchView.isVisible
-        centerPanel.validate()
-        centerPanel.repaint()
     }
 
     /**
