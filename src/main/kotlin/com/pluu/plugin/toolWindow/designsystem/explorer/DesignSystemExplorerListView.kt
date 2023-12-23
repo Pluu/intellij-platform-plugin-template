@@ -30,7 +30,6 @@ import java.awt.Container
 import java.awt.Dimension
 import java.awt.Point
 import java.awt.font.TextAttribute
-import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -323,7 +322,7 @@ class DesignSystemExplorerListView(
     }
 
     private fun createLoadingSection() = AssetSection<DesignAssetSet>(
-        viewModel.facet.module.name, null,
+        viewModel.selectedTabName, null,
         AssetListView(emptyList(), null).apply {
             setPaintBusy(true)
             setEmptyText("Loading...")
@@ -332,9 +331,9 @@ class DesignSystemExplorerListView(
     )
 
     private fun createEmptySection() = AssetSection<DesignAssetSet>(
-        viewModel.facet.module.name, null,
+        viewModel.selectedTabName, null,
         AssetListView(emptyList(), null).apply {
-            setEmptyText("No ${viewModel.selectedTabName.lowercase(Locale.US)} available")
+            setEmptyText("No ${viewModel.selectedTabName} available")
             background = this@DesignSystemExplorerListView.background
         }
     )
@@ -471,7 +470,7 @@ class DesignSystemExplorerListView(
 
         private fun buildName(size: Int?): String {
             val itemNumber = size?.let { " ($it)" } ?: ""
-            return "${this@AssetSection.name}$itemNumber"
+            return "Result$itemNumber"
         }
     }
 
