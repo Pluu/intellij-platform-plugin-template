@@ -4,11 +4,13 @@ import com.android.tools.idea.ui.resourcemanager.model.TypeFilter
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
+import com.intellij.util.concurrency.EdtExecutorService
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.findCompatibleFacets
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.model.getModuleResources
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
@@ -48,6 +50,21 @@ class DesignSystemExplorerListViewModelImpl(
 
     override val assetPreviewManager: DesignAssetPreviewManager =
         DesignAssetPreviewManagerImpl(facet, listViewImageCache, contextFile)
+
+    override fun clearCacheForCurrentResources() {
+        getCurrentModuleResourceLists().whenCompleteAsync({ lists, throwable ->
+            if (throwable == null) {
+                lists.flatMap {
+                    it.assetSets.map { it.asset }
+                }.forEach(::clearImageCache)
+                updateUiCallback?.invoke(UpdateUiReason.IMAGE_CACHE_CHANGED)
+            }
+        }, EdtExecutorService.getInstance())
+    }
+
+    override fun clearImageCache(asset: DesignSystemItem) {
+        listViewImageCache.clear(asset)
+    }
 
     override fun getCurrentModuleResourceLists() = resourceExplorerSupplyAsync {
         getResourceSections(facet)

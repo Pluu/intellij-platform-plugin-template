@@ -35,6 +35,9 @@ class DesignSystemExplorerToolbarViewModel(
     /** Callback for when a new resource is created from a toolbar action. */
     var resourceUpdaterCallback: ((String, DesignSystemType) -> Unit)? = null
 
+    /** Callback for when a request to refresh resources previews is made. */
+    var refreshResourcesPreviewsCallback: () -> Unit = {}
+
     var resourceType: DesignSystemType by Delegates.observable(initialDesignSystemType) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             updateUICallback()

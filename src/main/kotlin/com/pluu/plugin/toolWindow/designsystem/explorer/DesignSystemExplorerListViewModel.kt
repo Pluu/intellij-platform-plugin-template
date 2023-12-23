@@ -4,6 +4,7 @@ import com.android.tools.idea.ui.resourcemanager.model.ResourceSection
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import org.jetbrains.android.facet.AndroidFacet
@@ -48,6 +49,20 @@ interface DesignSystemExplorerListViewModel {
     val speedSearch: SpeedSearch
 
     val filterOptions: FilterOptions
+
+    /**
+     * Clears the cached image for all resources being currently displayed for the [currentDesignSystemType].
+     *
+     * This considers the fields in [FilterOptions], except for [FilterOptions.searchString].
+     */
+    fun clearCacheForCurrentResources()
+
+    /**
+     * Clears the cached image for the given [DesignSystemItem].
+     *
+     * Clearing the cached image will indirectly result in a new image being rendered and cached.
+     */
+    fun clearImageCache(asset: DesignSystemItem)
 
     /**
      * Returns a list of [ResourceSection] with one section per namespace, the first section being the

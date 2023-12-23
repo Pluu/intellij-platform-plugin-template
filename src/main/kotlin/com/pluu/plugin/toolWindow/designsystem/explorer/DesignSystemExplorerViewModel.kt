@@ -83,6 +83,10 @@ class DesignSystemExplorerViewModel(
             }
         }
 
+    fun refreshPreviews() {
+        listViewModel?.clearCacheForCurrentResources()
+    }
+
     fun createResourceListViewModel(): CompletableFuture<DesignSystemExplorerListViewModel> {
         (listViewModel as? Disposable)?.let { Disposer.dispose(it) }
         listViewModel = null

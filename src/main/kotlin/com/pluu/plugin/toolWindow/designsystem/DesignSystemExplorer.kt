@@ -25,6 +25,7 @@ class DesignSystemExplorer private constructor(
     init {
         toolbarViewModel.facetUpdaterCallback = { newValue -> this.facet = newValue }
 //        toolbarViewModel.resourceUpdaterCallback = { name, type -> selectAsset(name, type) }
+        toolbarViewModel.refreshResourcesPreviewsCallback = { designSystemExplorerViewModel.refreshPreviews() }
         designSystemExplorerViewModel.facetUpdaterCallback = { newValue -> this.facet = newValue }
         designSystemExplorerViewModel.designSystemTypeUpdaterCallback = this::updateResourceType
 
@@ -46,12 +47,9 @@ class DesignSystemExplorer private constructor(
         toolbarViewModel.resourceType = resourceType
     }
 
-    override fun dispose() {
-        //  TODO("Not yet implemented")
-    }
+    override fun dispose() {}
 
     override fun getData(dataId: String): Any? {
-        // TODO("Not yet implemented")
         return null
     }
 
@@ -67,7 +65,7 @@ class DesignSystemExplorer private constructor(
                 designSystemExplorerViewModel.supportedTypes[designSystemExplorerViewModel.supportTypeIndex],
                 designSystemExplorerViewModel.filterOptions
             )
-            val toolbar = DesignSystemExplorerToolbar.create(toolbarViewModel, moduleComboEnabled = true)
+            val toolbar = DesignSystemExplorerToolbar.create(toolbarViewModel)
             val designSystemExplorerView = DesignSystemExplorerView(designSystemExplorerViewModel)
             return DesignSystemExplorer(
                 facet,

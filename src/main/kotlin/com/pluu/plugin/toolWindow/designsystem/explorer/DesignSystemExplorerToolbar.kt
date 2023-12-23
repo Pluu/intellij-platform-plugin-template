@@ -1,24 +1,22 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataProvider
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.CollectionComboBoxModel
-import com.intellij.ui.ColoredListCellRenderer
+import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.actionSystem.impl.PresentationFactory
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
-import com.intellij.ui.PopupMenuListenerAdapter
 import com.intellij.ui.SearchTextField
 import com.intellij.util.ui.JBUI
-import java.awt.event.ItemEvent
 import javax.swing.GroupLayout
-import javax.swing.JList
+import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
-import javax.swing.event.PopupMenuEvent
 
 private const val SEARCH_FIELD_LABEL = "Search resources by name"
-private const val ADD_BUTTON_LABEL = "Add resources to the module"
-private const val FILTERS_BUTTON_LABEL = "Filter displayed resources"
 private const val MODULE_PREFIX = "Module: "
 
 private val MIN_FIELD_SIZE = JBUI.scale(40)
@@ -30,20 +28,20 @@ private val ACTION_BTN_SIZE get() = JBUI.scale(32)
 
 class DesignSystemExplorerToolbar(
     private val toolbarViewModel: DesignSystemExplorerToolbarViewModel,
-    private val moduleSelectionCombo: ComboBox<String>
 ) : JPanel(), DataProvider by toolbarViewModel {
 
     private val searchAction = createSearchField()
+    private val refreshAction = action(RefreshAction(toolbarViewModel))
 
     init {
         layout = GroupLayout(this)
         val groupLayout = layout as GroupLayout
         val sequentialGroup = groupLayout.createSequentialGroup()
-            .addComponent(moduleSelectionCombo, MIN_FIELD_SIZE, PREF_FIELD_SIZE, MAX_FIELD_SIZE)
+            .addFixedSizeComponent(refreshAction, true)
             .addComponent(searchAction, MIN_FIELD_SIZE, PREF_FIELD_SIZE, Int.MAX_VALUE)
 
         val verticalGroup = groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(moduleSelectionCombo)
+            .addComponent(refreshAction)
             .addComponent(searchAction)
 
         groupLayout.setHorizontalGroup(sequentialGroup)
@@ -59,7 +57,7 @@ class DesignSystemExplorerToolbar(
     }
 
     private fun update() {
-        moduleSelectionCombo.selectedItem = toolbarViewModel.currentModuleName
+        refreshAction.update()
     }
 
     private fun createSearchField() = SearchTextField(true).apply {
@@ -79,51 +77,45 @@ class DesignSystemExplorerToolbar(
          * Returns a [DesignSystemExplorerToolbar].
          */
         @JvmStatic
-        fun create(
-            toolbarViewModel: DesignSystemExplorerToolbarViewModel,
-            moduleComboEnabled: Boolean
-        ): DesignSystemExplorerToolbar {
-            val moduleSelectionCombo = createModuleSelectionComboBox(toolbarViewModel, moduleComboEnabled)
-            return DesignSystemExplorerToolbar(toolbarViewModel, moduleSelectionCombo)
+        fun create(toolbarViewModel: DesignSystemExplorerToolbarViewModel): DesignSystemExplorerToolbar {
+            return DesignSystemExplorerToolbar(toolbarViewModel)
         }
     }
 }
 
 /**
- * Creates a combo box for the [DesignSystemExplorerToolbar], should contain available modules in the project. Selecting a module should
- * change the working facet in the [DesignSystemExplorerToolbarViewModel].
- *
- * @param moduleComboEnabled Sets the isEnabled UI property. I.e: Whether it's allowed for the user to select a different module.
+ * Action to refresh the previews of a particular type of resources.
  */
-private fun createModuleSelectionComboBox(
-    toolbarViewModel: DesignSystemExplorerToolbarViewModel,
-    moduleComboEnabled: Boolean
-) =
-    ComboBox<String>().apply {
-        model = CollectionComboBoxModel(toolbarViewModel.getAvailableModules().toMutableList())
-        isEnabled = moduleComboEnabled
-        renderer = object : ColoredListCellRenderer<String>() {
-            override fun customizeCellRenderer(
-                list: JList<out String>,
-                value: String,
-                index: Int,
-                selected: Boolean,
-                hasFocus: Boolean
-            ) {
-                append(MODULE_PREFIX + value)
-            }
-        }
-
-        addItemListener { event ->
-            if (event.stateChange == ItemEvent.SELECTED) {
-                val moduleName = event.itemSelectable.selectedObjects.first() as String
-                toolbarViewModel.onModuleSelected(moduleName)
-            }
-        }
-
-        addPopupMenuListener(object : PopupMenuListenerAdapter() {
-            override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
-                (model as CollectionComboBoxModel).replaceAll(toolbarViewModel.getAvailableModules())
-            }
-        })
+private class RefreshAction(
+    val viewModel: DesignSystemExplorerToolbarViewModel
+) : AnAction(
+    "Refresh Previews",
+    "Refresh previews for ${viewModel.resourceType.displayName}s",
+    AllIcons.Actions.Refresh
+) {
+    override fun actionPerformed(e: AnActionEvent) {
+        viewModel.refreshResourcesPreviewsCallback()
     }
+
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+
+    override fun update(e: AnActionEvent) {
+        super.update(e)
+        e.presentation.text = templatePresentation.text
+        e.presentation.description = templatePresentation.description
+        e.presentation.isEnabled = true
+    }
+}
+
+private fun action(
+    addAction: AnAction
+) = ActionButton(addAction, PresentationFactory().getPresentation(addAction), "", BUTTON_SIZE)
+
+private fun GroupLayout.SequentialGroup.addFixedSizeComponent(
+    jComponent: JComponent,
+    baseline: Boolean = false
+): GroupLayout.SequentialGroup {
+    val width = jComponent.preferredSize.width
+    this.addComponent(baseline, jComponent, width, width, width)
+    return this
+}
