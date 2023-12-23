@@ -243,7 +243,7 @@ class DesignSystemExplorerListView(
         search.setEnabled(true)
         resourceSections.forEach { section ->
             val filteringModel = NameFilteringListModel(
-                CollectionListModel(section.items), { it.name }, search::shouldBeShowing,
+                CollectionListModel(section.assetSets), { it.name }, search::shouldBeShowing,
                 { StringUtil.notNullize(filter) })
             filteringModel.refilter()
             val resourcesCount = filteringModel.size
@@ -315,7 +315,7 @@ class DesignSystemExplorerListView(
     private fun displayResources(resourceLists: List<DesignSection>) {
         sectionListModel.clear()
         val sections = resourceLists
-            .filterNot { it.items.isEmpty() }
+            .filterNot { it.assetSets.isEmpty() }
             .map(this::createSection)
             .toList()
         if (sections.isNotEmpty()) {
@@ -431,7 +431,7 @@ class DesignSystemExplorerListView(
     }
 
     private fun createSection(section: DesignSection): AssetSection<DesignAssetSet> {
-        val assetList = AssetListView(section.items, viewModel.speedSearch).apply {
+        val assetList = AssetListView(section.assetSets, viewModel.speedSearch).apply {
             cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager)
 //            dragHandler.registerSource(this)
 //            addMouseListener(popupHandler)

@@ -50,9 +50,7 @@ class DesignSystemExplorerListViewModelImpl(
         DesignAssetPreviewManagerImpl(facet, listViewImageCache, contextFile)
 
     override fun getCurrentModuleResourceLists() = resourceExplorerSupplyAsync {
-        getResourceSections(
-            facet
-        )
+        getResourceSections(facet)
     }
 
     override fun getOtherModulesResourceLists() = resourceExplorerSupplyAsync supplier@{
