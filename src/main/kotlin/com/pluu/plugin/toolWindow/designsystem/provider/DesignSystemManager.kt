@@ -15,12 +15,14 @@ object DesignSystemManager {
             ?.findChild(type.name.lowercase())
             ?.takeIf { it.isDirectory }
             ?: return emptyList()
-        return project.children.map {
-            DesignSystemItem(
-                type = type,
-                name = it.nameWithoutExtension,
-                file = it
-            )
-        }
+        return project.children.asSequence()
+            .map {
+                DesignSystemItem(
+                    type = type,
+                    name = it.nameWithoutExtension,
+                    file = it
+                )
+            }.sortedBy { it.name }
+            .toList()
     }
 }
