@@ -1,10 +1,11 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.tools.idea.ui.resourcemanager.model.ResourceSection
-import com.android.tools.idea.ui.resourcemanager.rendering.AssetPreviewManager
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
+import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import org.jetbrains.android.facet.AndroidFacet
 import java.util.concurrent.CompletableFuture
 
@@ -40,7 +41,7 @@ interface DesignSystemExplorerListViewModel {
 
     val selectedTabName: String get() = ""
 
-    val assetPreviewManager: AssetPreviewManager
+    val assetPreviewManager: DesignAssetPreviewManager
 
     val facet: AndroidFacet
 
@@ -52,12 +53,12 @@ interface DesignSystemExplorerListViewModel {
      * Returns a list of [ResourceSection] with one section per namespace, the first section being the
      * one containing the resource of the current module.
      */
-    fun getCurrentModuleResourceLists(): CompletableFuture<List<ResourceSection>>
+    fun getCurrentModuleResourceLists(): CompletableFuture<List<DesignSection>>
 
     /**
      * Similar to [getCurrentModuleResourceLists], but fetches resources for all other modules excluding the ones being displayed.
      */
-    fun getOtherModulesResourceLists(): CompletableFuture<List<ResourceSection>>
+    fun getOtherModulesResourceLists(): CompletableFuture<List<DesignSection>>
 
     /**
      * Triggers an [AndroidFacet] change through [facetUpdaterCallback].

@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.FilteringListModel
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.ui.JBUI
+import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.widget.AssetView
 import com.pluu.plugin.toolWindow.designsystem.widget.RowAssetView
 import com.pluu.plugin.toolWindow.designsystem.widget.SingleAssetCard
@@ -22,9 +23,9 @@ private const val DEFAULT_GRID_MODE = false
  * between grid and list mode.
  */
 class AssetListView(
-    assets: List<ResourceAssetSet>,
+    assets: List<DesignAssetSet>,
     speedSearch: SpeedSearch? = null
-) : JBList<ResourceAssetSet>() {
+) : JBList<DesignAssetSet>() {
 
     var isGridMode: Boolean by Delegates.observable(DEFAULT_GRID_MODE) { _, _, isGridMode ->
         if (isGridMode) {
@@ -52,7 +53,7 @@ class AssetListView(
         }
     }
 
-    private val filteringListModel: FilteringListModel<ResourceAssetSet>?
+    private val filteringListModel: FilteringListModel<DesignAssetSet>?
 
     init {
         isOpaque = false

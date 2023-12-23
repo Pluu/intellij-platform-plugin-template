@@ -1,10 +1,7 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.ide.common.resources.ResourceResolver
-import com.android.tools.idea.ui.resourcemanager.model.ResourceSection
 import com.android.tools.idea.ui.resourcemanager.model.TypeFilter
-import com.android.tools.idea.ui.resourcemanager.rendering.AssetPreviewManager
-import com.android.tools.idea.ui.resourcemanager.rendering.AssetPreviewManagerImpl
 import com.android.tools.idea.ui.resourcemanager.rendering.ImageCache
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
@@ -12,9 +9,12 @@ import com.intellij.util.concurrency.AppExecutorUtil
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.findCompatibleFacets
+import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
-import com.pluu.plugin.toolWindow.designsystem.model.getDependentModuleResources
 import com.pluu.plugin.toolWindow.designsystem.model.getModuleResources
+import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
+import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManagerImpl
 import org.jetbrains.android.facet.AndroidFacet
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.supplyAsync
@@ -48,13 +48,12 @@ class DesignSystemExplorerListViewModelImpl(
         }
     }
 
-    override val assetPreviewManager: AssetPreviewManager =
-        AssetPreviewManagerImpl(facet, listViewImageCache, resourceResolver, contextFile)
+    override val assetPreviewManager: DesignAssetPreviewManager =
+        DesignAssetPreviewManagerImpl(facet, listViewImageCache, resourceResolver, contextFile)
 
     override fun getCurrentModuleResourceLists() = resourceExplorerSupplyAsync {
         getResourceSections(
-            facet,
-            showModuleDependencies = filterOptions.isShowModuleDependencies
+            facet
         )
     }
 
@@ -65,8 +64,7 @@ class DesignSystemExplorerListViewModelImpl(
             !displayedModuleNames.contains(facet.module.name)
         }.flatMap { facet ->
             getResourceSections(
-                facet,
-                showModuleDependencies = false
+                facet
             )
         }
     }
@@ -77,15 +75,18 @@ class DesignSystemExplorerListViewModelImpl(
 
     private fun getResourceSections(
         forFacet: AndroidFacet,
-        showModuleDependencies: Boolean = true,
         typeFilters: List<TypeFilter> = emptyList()
-    ): List<ResourceSection> {
+    ): List<DesignSection> {
         val resourceType = currentDesignSystemType
-        val resources = mutableListOf<ResourceSection>()
-        resources.add(getModuleResources(forFacet, resourceType))
-        if (showModuleDependencies) {
-            resources.addAll(getDependentModuleResources(forFacet, resourceType, typeFilters))
-        }
+        val resources = mutableListOf<DesignSection>()
+        resources.add(
+            DesignSection(
+                resourceType,
+                getModuleResources(forFacet, resourceType).map {
+                    DesignAssetSet(it.name, it)
+                }
+            )
+        )
         return resources
     }
 }

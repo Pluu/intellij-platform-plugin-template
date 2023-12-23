@@ -39,14 +39,13 @@ private const val THUMBNAIL_HEIGHT_WIDTH_RATIO = 23 / 26f
 
 private val LARGE_MAIN_CELL_BORDER_SELECTED
     get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(10),
+        JBUI.Borders.empty(3),
         RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(4), JBUI.scale(2))
     )
 
-
 private val LARGE_MAIN_CELL_BORDER_UNFOCUSED
     get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(10),
+        JBUI.Borders.empty(3),
         RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(4), JBUI.scale(2))
     )
 
@@ -54,25 +53,11 @@ private var PREVIEW_BORDER_COLOR: Color = border
 
 private val LARGE_MAIN_CELL_BORDER
     get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(11),
+        JBUI.Borders.empty(4),
         RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(4), JBUI.scale(1))
     )
 
-private val ROW_CELL_BORDER get() = JBUI.Borders.empty(4)
-
-private val ROW_CELL_BORDER_SELECTED
-    get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(2),
-        RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(4), JBUI.scale(2))
-    )
-
-private val ROW_CELL_BORDER_UNFOCUSED
-    get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(2),
-        RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(4), JBUI.scale(2))
-    )
-
-private val BOTTOM_PANEL_BORDER get() = JBUI.Borders.empty(5, 8, 10, 10)
+private val BOTTOM_PANEL_BORDER get() = JBUI.Borders.empty(5, 8, 5, 5)
 
 private val PRIMARY_FONT
     get() = StartupUiUtil.labelFont.deriveFont(
@@ -254,16 +239,17 @@ class SingleAssetCard : AssetView() {
     init {
         isOpaque = false
         border = LARGE_MAIN_CELL_BORDER
-        add(contentWrapper)
-        add(bottomPanel, BorderLayout.SOUTH)
+
         with(bottomPanel) {
             add(titleLabel, BorderLayout.NORTH)
             add(Box.createVerticalBox().apply {
                 add(secondLineLabel)
                 add(thirdLineLabel)
             })
-            add(issueIcon, BorderLayout.EAST)
         }
+
+        add(contentWrapper)
+        add(bottomPanel, BorderLayout.SOUTH)
         viewWidth = DEFAULT_WIDTH
     }
 
@@ -291,46 +277,25 @@ class SingleAssetCard : AssetView() {
  */
 class RowAssetView : AssetView() {
 
-    private val CENTER_PANEL_BORDER_SELECTED = JBUI.Borders.empty(0, 10, 1, 1)
-    private val DEFAULT_CUSTOM_LINE = JBUI.Borders.customLine(JBColor.border(), 1)
-
     override var selected by Delegates.observable(false) { _, _, selected ->
         border = getBorder(selected, focused)
-        centerPanel.border = if (selected) CENTER_PANEL_BORDER_SELECTED else CENTER_PANEL_BORDER_UNSELECTED
     }
 
     override var focused: Boolean by Delegates.observable(false) { _, _, focused ->
         border = getBorder(selected, focused)
-        centerPanel.border = if (selected) CENTER_PANEL_BORDER_SELECTED else CENTER_PANEL_BORDER_UNSELECTED
     }
 
-    override fun getBorder(selected: Boolean, focused: Boolean): Border = when {
-        selected && focused -> ROW_CELL_BORDER_SELECTED
-        selected && !focused -> ROW_CELL_BORDER_UNFOCUSED
-        else -> ROW_CELL_BORDER
-    }
-
-    private val CENTER_PANEL_BORDER_UNSELECTED = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(0, 10, 0, 1),
-        JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0)
-    )
-
-    private val centerPanel = JPanel(BorderLayout()).apply {
-        isOpaque = false
-        border = CENTER_PANEL_BORDER_UNSELECTED
-    }
-
-    private val metadataPanel = JPanel(BorderLayout(0, JBUI.scale(2)).apply {
+    private val bottomPanel = JPanel(BorderLayout(0, JBUI.scale(2)).apply {
         background = secondaryPanelBackground
         isOpaque = true
         border = BOTTOM_PANEL_BORDER
     })
 
     init {
-        viewWidth = DEFAULT_WIDTH
-        background = UIUtil.getListBackground()
+        isOpaque = false
+        border = LARGE_MAIN_CELL_BORDER
 
-        with(metadataPanel) {
+        with(bottomPanel) {
             add(titleLabel, BorderLayout.NORTH)
             add(Box.createVerticalBox().apply {
                 add(secondLineLabel)
@@ -339,11 +304,17 @@ class RowAssetView : AssetView() {
         }
 
         add(contentWrapper)
-        add(metadataPanel, BorderLayout.SOUTH)
+        add(bottomPanel, BorderLayout.SOUTH)
         viewWidth = DEFAULT_WIDTH
     }
 
-    override fun computeThumbnailSize(width: Int) = Dimension(width, width * 2)
+    override fun computeThumbnailSize(width: Int) = Dimension(width, (width * 3).toInt())
+
+    override fun getBorder(selected: Boolean, focused: Boolean): Border = when {
+        selected && focused -> LARGE_MAIN_CELL_BORDER_SELECTED
+        selected && !focused -> LARGE_MAIN_CELL_BORDER_UNFOCUSED
+        else -> LARGE_MAIN_CELL_BORDER
+    }
 
     override fun setNonIconLayout() {
         contentWrapper.isVisible = false

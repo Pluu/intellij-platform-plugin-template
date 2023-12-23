@@ -5,29 +5,22 @@ import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
 import com.intellij.openapi.util.Condition
 import com.intellij.ui.CollectionListModel
 import com.intellij.ui.speedSearch.FilteringListModel
+import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 
 /**
  * [FilteringListModel] for [ResourceAssetSet] matching name and [ResourceType.STRING] values.
  */
 class ResourceAssetSetFilteringListModel(
-    collectionListModel: CollectionListModel<ResourceAssetSet>,
+    collectionListModel: CollectionListModel<DesignAssetSet>,
     private val filter: Condition<String>
-) : FilteringListModel<ResourceAssetSet>(collectionListModel) {
+) : FilteringListModel<DesignAssetSet>(collectionListModel) {
     init {
         setFilter(::isMatch)
     }
 
-    private fun isMatch(assetSet: ResourceAssetSet): Boolean {
+    private fun isMatch(assetSet: DesignAssetSet): Boolean {
         if (filter.value(assetSet.name)) {
             return true
-        }
-        for (asset in assetSet.assets) {
-            if (asset.type == ResourceType.STRING) {
-                val value = asset.resourceItem.resourceValue?.value
-                if (value?.let { filter.value(it) } == true) {
-                    return true
-                }
-            }
         }
         return false
     }

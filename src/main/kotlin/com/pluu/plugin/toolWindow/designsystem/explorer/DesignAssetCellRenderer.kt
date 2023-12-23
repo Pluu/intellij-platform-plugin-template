@@ -1,10 +1,11 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
-import com.android.tools.idea.ui.resourcemanager.rendering.AssetData
 import com.android.tools.idea.ui.resourcemanager.rendering.AssetIconProvider
-import com.android.tools.idea.ui.resourcemanager.rendering.AssetPreviewManager
-import com.android.tools.idea.ui.resourcemanager.rendering.DefaultIconProvider
+import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
+import com.pluu.plugin.toolWindow.designsystem.rendering.DefaultIconProvider
+import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetIconProvider
+import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import java.awt.Component
 import javax.swing.JLabel
 import javax.swing.JList
@@ -15,23 +16,23 @@ import javax.swing.ListCellRenderer
  * returned by the [assetPreviewManager].
  */
 class DesignAssetCellRenderer(
-    private val assetPreviewManager: AssetPreviewManager
-) : ListCellRenderer<ResourceAssetSet> {
+    private val assetPreviewManager: DesignAssetPreviewManager
+) : ListCellRenderer<DesignAssetSet> {
 
     val label = JLabel().apply { horizontalAlignment = JLabel.CENTER }
 
     override fun getListCellRendererComponent(
-        list: JList<out ResourceAssetSet>,
-        value: ResourceAssetSet,
+        list: JList<out DesignAssetSet>,
+        value: DesignAssetSet,
         index: Int,
         isSelected: Boolean,
         cellHasFocus: Boolean
     ): Component {
         val assetView = (list as AssetListView).assetView
         val thumbnailSize = assetView.thumbnailSize
-        val assetToRender = value.getHighestDensityAsset()
+        val assetToRender = value.asset
 
-        val iconProvider: AssetIconProvider = assetPreviewManager.getPreviewProvider(assetToRender.type)
+        val iconProvider: DesignAssetIconProvider = assetPreviewManager.getPreviewProvider(assetToRender.type)
         label.icon = iconProvider.getIcon(assetToRender,
             thumbnailSize.width,
             thumbnailSize.height,
@@ -43,20 +44,14 @@ class DesignAssetCellRenderer(
         assetView.withChessboard = iconProvider.supportsTransparency
         assetView.selected = isSelected
         assetView.focused = cellHasFocus
-        with(assetPreviewManager.getAssetSetData(value)) {
-            assetView.title = title
-            assetView.subtitle = subtitle
-            assetView.metadata = metadata
-        }
+
+        assetView.title = assetToRender.name
+        assetView.subtitle = assetToRender.type.name
+//        assetView.metadata = metadata
 //        if (RESOURCE_DEBUG) {
 //            assetView.issueLevel = IssueLevel.ERROR
 //            assetView.isNew = true
 //        }
         return assetView
     }
-}
-
-private fun AssetPreviewManager.getAssetSetData(assetSet: ResourceAssetSet): AssetData {
-    val asset = assetSet.getHighestDensityAsset()
-    return getDataProvider(asset.type).getAssetSetData(assetSet)
 }

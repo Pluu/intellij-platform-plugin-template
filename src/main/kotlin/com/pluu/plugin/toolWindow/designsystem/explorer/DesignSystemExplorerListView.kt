@@ -2,8 +2,6 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.tools.idea.ui.resourcemanager.actions.ExpandAction
 import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
-import com.android.tools.idea.ui.resourcemanager.model.ResourceSection
-import com.android.tools.idea.ui.resourcemanager.model.designAssets
 import com.android.tools.idea.ui.resourcemanager.widget.LinkLabelSearchView
 import com.intellij.concurrency.JobScheduler
 import com.intellij.ide.util.PropertiesComponent
@@ -26,6 +24,8 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.findCompatibleFacets
+import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.widget.Section
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionList
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionListModel
@@ -99,10 +99,10 @@ class DesignSystemExplorerListView(
 
     private var updatePending = false
 
-    private var populateResourcesFuture: CompletableFuture<List<ResourceSection>>? = null
+    private var populateResourcesFuture: CompletableFuture<List<DesignSection>>? = null
 
     /** Reference to the last [CompletableFuture] used to search for filtered resources in other modules */
-    private var searchFuture: CompletableFuture<List<ResourceSection>>? = null
+    private var searchFuture: CompletableFuture<List<DesignSection>>? = null
     private var showLoadingFuture: ScheduledFuture<*>? = null
 
     private var fileToSelect: VirtualFile? = null
@@ -237,22 +237,20 @@ class DesignSystemExplorerListView(
      *
      * @param filter Received filter string, since the filter in SpeedSearch might change at runtime while this is running.
      */
-    private fun displaySearchLinkLabels(resourceSections: List<ResourceSection>, filter: String) {
+    private fun displaySearchLinkLabels(resourceSections: List<DesignSection>, filter: String) {
         if (moduleSearchView == null) return // TODO: Log?
         val search = viewModel.speedSearch
         search.setEnabled(true)
         resourceSections.forEach { section ->
             val filteringModel = NameFilteringListModel(
-                CollectionListModel(section.assetSets), { it.name }, search::shouldBeShowing,
+                CollectionListModel(section.items), { it.name }, search::shouldBeShowing,
                 { StringUtil.notNullize(filter) })
             filteringModel.refilter()
             val resourcesCount = filteringModel.size
             if (resourcesCount > 0) {
                 // TODO: Get the facet when the module is being set in ResourceExplorerViewModel by passing the module name instead of the actual facet.
                 // I.e: This class should not be fetching module objects.
-                findCompatibleFacets(viewModel.facet.module.project).firstOrNull {
-                    it.module.name == section.libraryName
-                }?.let { facetToChange ->
+                findCompatibleFacets(viewModel.facet.module.project).firstOrNull()?.let { facetToChange ->
                     // Create [LinkLabel]s that when clicking them, changes the working module to the module in the given [AndroidFacet].
                     moduleSearchView.addLabel(
                         "$resourcesCount ${
@@ -314,10 +312,10 @@ class DesignSystemExplorerListView(
         sectionListModel.addSection(createLoadingSection())
     }
 
-    private fun displayResources(resourceLists: List<ResourceSection>) {
+    private fun displayResources(resourceLists: List<DesignSection>) {
         sectionListModel.clear()
         val sections = resourceLists
-            .filterNot { it.assetSets.isEmpty() }
+            .filterNot { it.items.isEmpty() }
             .map(this::createSection)
             .toList()
         if (sections.isNotEmpty()) {
@@ -329,7 +327,7 @@ class DesignSystemExplorerListView(
         sectionList.repaint()
     }
 
-    private fun createLoadingSection() = AssetSection<ResourceAssetSet>(
+    private fun createLoadingSection() = AssetSection<DesignAssetSet>(
         viewModel.facet.module.name, null,
         AssetListView(emptyList(), null).apply {
             setPaintBusy(true)
@@ -338,7 +336,7 @@ class DesignSystemExplorerListView(
         }
     )
 
-    private fun createEmptySection() = AssetSection<ResourceAssetSet>(
+    private fun createEmptySection() = AssetSection<DesignAssetSet>(
         viewModel.facet.module.name, null,
         AssetListView(emptyList(), null).apply {
             setEmptyText("No ${viewModel.selectedTabName.lowercase(Locale.US)} available")
@@ -391,7 +389,7 @@ class DesignSystemExplorerListView(
             fileToSelect = virtualFile
         } else {
             doSelectAsset { assetSet ->
-                assetSet.designAssets.any { it.file == virtualFile }.also { if (it) fileToSelect = null }
+                (assetSet.asset.virtualFile == virtualFile).also { if (it) fileToSelect = null }
             }
         }
     }
@@ -417,7 +415,7 @@ class DesignSystemExplorerListView(
         }
     }
 
-    private fun doSelectAsset(isDesiredAssetSet: (ResourceAssetSet) -> Boolean) {
+    private fun doSelectAsset(isDesiredAssetSet: (DesignAssetSet) -> Boolean) {
         sectionList.getLists()
             .filterIsInstance<AssetListView>()
             .forEachIndexed { listIndex, list ->
@@ -432,8 +430,8 @@ class DesignSystemExplorerListView(
             }
     }
 
-    private fun createSection(section: ResourceSection): AssetSection<ResourceAssetSet> {
-        val assetList = AssetListView(section.assetSets, viewModel.speedSearch).apply {
+    private fun createSection(section: DesignSection): AssetSection<DesignAssetSet> {
+        val assetList = AssetListView(section.items, viewModel.speedSearch).apply {
             cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager)
 //            dragHandler.registerSource(this)
 //            addMouseListener(popupHandler)
@@ -450,7 +448,7 @@ class DesignSystemExplorerListView(
             thumbnailWidth = this@DesignSystemExplorerListView.previewSize
             isGridMode = false
         }
-        return AssetSection(section.libraryName, assetList.getFilteredSize(), assetList)
+        return AssetSection(section.type.name, assetList.getFilteredSize(), assetList)
     }
 
     private class AssetSection<T>(
