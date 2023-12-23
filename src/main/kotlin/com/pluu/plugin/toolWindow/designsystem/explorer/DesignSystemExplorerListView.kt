@@ -1,16 +1,11 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.tools.idea.ui.resourcemanager.actions.ExpandAction
 import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
 import com.android.tools.idea.ui.resourcemanager.widget.LinkLabelSearchView
 import com.intellij.concurrency.JobScheduler
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionToolbar
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataProvider
-import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -58,7 +53,7 @@ private val SECTION_HEADER_SECONDARY_COLOR get() = JBColor.border()
 
 private val SECTION_HEADER_BORDER
     get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(4, 4, 8, 4),
+        JBUI.Borders.empty(2),
         JBUI.Borders.customLine(SECTION_HEADER_SECONDARY_COLOR, 0, 0, 1, 0)
     )
 
@@ -470,23 +465,7 @@ class DesignSystemExplorerListView(
 
         private fun createHeaderComponent() = JPanel(BorderLayout()).apply {
             isOpaque = false
-
-            val expandAction = object : ExpandAction() {
-                override fun actionPerformed(e: AnActionEvent) {
-                    super.actionPerformed(e)
-                    list.isVisible = expanded
-                    // Clear selection to avoid interaction issues.
-                    list.selectionModel.clearSelection()
-                }
-            }
-
-            val toolbar = ActionToolbarImpl("AssetSection", DefaultActionGroup(expandAction), true).apply {
-                layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
-            }
-            toolbar.targetComponent = this@apply
-
             add(headerNameLabel, BorderLayout.WEST)
-            add(toolbar.component, BorderLayout.EAST)
             border = SECTION_HEADER_BORDER
         }
 
