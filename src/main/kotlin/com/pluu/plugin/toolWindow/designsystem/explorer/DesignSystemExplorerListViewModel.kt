@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.tools.idea.ui.resourcemanager.model.ResourceSection
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
@@ -65,15 +64,10 @@ interface DesignSystemExplorerListViewModel {
     fun clearImageCache(asset: DesignSystemItem)
 
     /**
-     * Returns a list of [ResourceSection] with one section per namespace, the first section being the
+     * Returns a list of [DesignSection] with one section per namespace, the first section being the
      * one containing the resource of the current module.
      */
-    fun getCurrentModuleResourceLists(): CompletableFuture<List<DesignSection>>
-
-    /**
-     * Similar to [getCurrentModuleResourceLists], but fetches resources for all other modules excluding the ones being displayed.
-     */
-    fun getOtherModulesResourceLists(): CompletableFuture<List<DesignSection>>
+    fun getDesignSections(): CompletableFuture<List<DesignSection>>
 
     /**
      * Triggers an [AndroidFacet] change through [facetUpdaterCallback].

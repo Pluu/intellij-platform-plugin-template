@@ -6,7 +6,6 @@ import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.EdtExecutorService
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
-import com.pluu.plugin.toolWindow.designsystem.findCompatibleFacets
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -53,7 +52,7 @@ class DesignSystemExplorerListViewModelImpl(
         DesignAssetPreviewManagerImpl(facet, listViewImageCache, contextFile)
 
     override fun clearCacheForCurrentResources() {
-        getCurrentModuleResourceLists().whenCompleteAsync({ lists, throwable ->
+        getDesignSections().whenCompleteAsync({ lists, throwable ->
             if (throwable == null) {
                 lists.flatMap {
                     it.assetSets.map { it.asset }
@@ -67,18 +66,8 @@ class DesignSystemExplorerListViewModelImpl(
         listViewImageCache.clear(asset)
     }
 
-    override fun getCurrentModuleResourceLists() = resourceExplorerSupplyAsync {
+    override fun getDesignSections() = resourceExplorerSupplyAsync {
         getResourceSections(facet)
-    }
-
-    override fun getOtherModulesResourceLists() = resourceExplorerSupplyAsync supplier@{
-        val displayedModuleNames = mutableSetOf(facet.module.name)
-        return@supplier findCompatibleFacets(facet.module.project).filter { facet ->
-            // Don't include modules that are already being displayed.
-            !displayedModuleNames.contains(facet.module.name)
-        }.flatMap { facet ->
-            getResourceSections(facet)
-        }
     }
 
     override fun facetUpdated(newFacet: AndroidFacet) {

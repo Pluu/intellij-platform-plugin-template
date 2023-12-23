@@ -208,7 +208,7 @@ class DesignSystemExplorerListView(
         val scrollPosition = getScrollPosition()
         updatePending = true
         populateResourcesFuture?.cancel(true)
-        populateResourcesFuture = viewModel.getCurrentModuleResourceLists()
+        populateResourcesFuture = viewModel.getDesignSections()
             .whenCompleteAsync({ resourceLists, _ ->
                 updatePending = false
                 displayResources(resourceLists)
