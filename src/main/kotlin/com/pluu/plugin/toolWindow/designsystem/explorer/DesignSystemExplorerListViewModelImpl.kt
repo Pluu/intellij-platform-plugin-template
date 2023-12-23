@@ -41,6 +41,8 @@ class DesignSystemExplorerListViewModelImpl(
         }
     }
 
+    override val selectedTabName: String get() = currentDesignSystemType.displayName
+
     override val speedSearch = SpeedSearch(true).apply {
         if (filterOptions.searchString.isNotEmpty()) {
             updatePattern(filterOptions.searchString)
