@@ -3,7 +3,6 @@ package com.pluu.plugin.toolWindow.designsystem
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerToolbar
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerToolbarViewModel
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerView
@@ -57,8 +56,6 @@ class DesignSystemExplorer private constructor(
     }
 
     companion object {
-        private val DIALOG_PREFERRED_SIZE get() = JBUI.size(850, 620)
-
         /**
          * Create a new instance of [DesignSystemExplorer] optimized to be used in a [com.intellij.openapi.wm.ToolWindow]
          */

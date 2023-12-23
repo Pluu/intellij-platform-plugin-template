@@ -1,26 +1,16 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.SdkConstants
-import com.android.ide.common.resources.ResourceResolver
-import com.android.ide.common.resources.configuration.FolderConfiguration
-import com.android.tools.configurations.Configuration
-import com.android.tools.idea.configurations.ConfigurationManager
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCache
-import org.jetbrains.android.dom.manifest.getPrimaryManifestXml
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.android.sdk.StudioEmbeddedRenderTarget
 import java.util.concurrent.CompletableFuture
-import java.util.function.Supplier
 import kotlin.properties.Delegates
 
 class DesignSystemExplorerViewModel(
@@ -38,13 +28,8 @@ class DesignSystemExplorerViewModel(
     //endregion
 
     val filterOptions = FilterOptions.create(
-        {
-            updateFilterParamsInModelState()
-            refreshListModel()
-        },
-        {
-            updateListModelSpeedSearch(it)
-        }
+        { refreshListModel() },
+        { updateListModelSpeedSearch(it) }
     )
 
     private val listViewImageCache = ImageCache.createImageCache(
@@ -101,37 +86,23 @@ class DesignSystemExplorerViewModel(
     fun createResourceListViewModel(): CompletableFuture<DesignSystemExplorerListViewModel> {
         (listViewModel as? Disposable)?.let { Disposer.dispose(it) }
         listViewModel = null
-        val configurationFuture = getConfiguration(facet, contextFileForConfiguration)
-        return getResourceResolver(facet, configurationFuture)
-            .thenApplyAsync(
-                { resourceResolver ->
-                    DesignSystemExplorerListViewModelImpl(
-                        facet,
-                        contextFileForConfiguration,
-                        listViewImageCache,
-                        filterOptions,
-                        supportedTypes[supportTypeIndex]
-                    ).also {
-                        listViewModel = it
-                        it.facetUpdaterCallback = { newFacet -> this@DesignSystemExplorerViewModel.facet = newFacet }
-                        updateListModelIfNeeded()
-                    }
-                }, EdtExecutorService.getInstance()
-            )
+        return CompletableFuture.supplyAsync({
+            DesignSystemExplorerListViewModelImpl(
+                facet,
+                contextFileForConfiguration,
+                listViewImageCache,
+                filterOptions,
+                supportedTypes[supportTypeIndex]
+            ).also {
+                listViewModel = it
+                it.facetUpdaterCallback = { newFacet -> this@DesignSystemExplorerViewModel.facet = newFacet }
+                updateListModelIfNeeded()
+            }
+        }, EdtExecutorService.getInstance())
     }
 
     override fun dispose() {
 
-    }
-
-    private fun updateFilterParamsInModelState() {
-//        modelState.filterParams = FilterOptionsParams(
-//            moduleDependenciesInitialValue = filterOptions.isShowModuleDependencies,
-//            librariesInitialValue = filterOptions.isShowLibraries,
-//            androidResourcesInitialValue = filterOptions.isShowFramework,
-//            themeAttributesInitialValue = filterOptions.isShowThemeAttributes,
-//            showSampleData = filterOptions.isShowSampleData
-//        )
     }
 
     //region ListModel update functions
@@ -188,44 +159,4 @@ class DesignSystemExplorerViewModel(
             )
         }
     }
-}
-
-private fun getConfiguration(facet: AndroidFacet, contextFile: VirtualFile? = null): CompletableFuture<Configuration?> =
-    CompletableFuture.supplyAsync(Supplier {
-        val configManager = ConfigurationManager.getOrCreateInstance(facet.module)
-        var configuration: Configuration? = null
-        contextFile?.let {
-            configuration = configManager.getConfiguration(contextFile)
-        }
-        if (configuration == null) {
-            runReadAction { facet.getPrimaryManifestXml() }?.let { manifestFile ->
-                configuration = configManager.getConfiguration(manifestFile.virtualFile)
-            }
-        }
-        return@Supplier configuration
-    }, AppExecutorUtil.getAppExecutorService())
-
-/**
- * Initializes the [ResourceResolver] in a background thread.
- *
- * @param facet The current [AndroidFacet], used to fallback to get a [ResourceResolver] in case [configurationFuture] cannot provide a
- * [Configuration].
- * @param configurationFuture A [CompletableFuture] that may return a [Configuration], if it does, it'll get the [ResourceResolver] from it.
- */
-private fun getResourceResolver(
-    facet: AndroidFacet,
-    configurationFuture: CompletableFuture<Configuration?>
-): CompletableFuture<ResourceResolver> {
-    return configurationFuture.thenApplyAsync({ configuration ->
-        configuration?.let { return@thenApplyAsync it.resourceResolver }
-        val configurationManager = ConfigurationManager.getOrCreateInstance(facet.module)
-        val theme = SdkConstants.ANDROID_STYLE_RESOURCE_PREFIX + "Theme.Material.Light"
-        val target =
-            configurationManager.highestApiTarget?.let { StudioEmbeddedRenderTarget.getCompatibilityTarget(it) }
-        return@thenApplyAsync configurationManager.resolverCache.getResourceResolver(
-            target,
-            theme,
-            FolderConfiguration.createDefault()
-        )
-    }, AppExecutorUtil.getAppExecutorService())
 }
