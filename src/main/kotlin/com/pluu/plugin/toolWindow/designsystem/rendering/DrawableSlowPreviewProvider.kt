@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.rendering
 
-import com.android.ide.common.resources.ResourceResolver
 import com.android.tools.idea.ui.resourcemanager.plugin.DesignAssetRendererManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.scale.JBUIScale
@@ -14,18 +13,16 @@ import java.awt.image.BufferedImage
  */
 class DrawableSlowPreviewProvider(
     private val facet: AndroidFacet,
-    private val resourceResolver: ResourceResolver,
     private val contextFile: VirtualFile?
 ) : SlowResourcePreviewProvider {
-    private val project = facet.module.project
 
     override val previewPlaceholder: BufferedImage =
         createDrawablePlaceholderImage(JBUIScale.scale(20), JBUIScale.scale(20))
 
-    override fun getSlowPreview(width: Int, height: Int, designAsset: DesignSystemItem): BufferedImage? {
-        val configContext = contextFile ?: designAsset.file
+    override fun getSlowPreview(width: Int, height: Int, asset: DesignSystemItem): BufferedImage? {
+        val configContext = contextFile ?: asset.file
         val dimension = Dimension(width, height)
-        val file = designAsset.file
+        val file = asset.file
         return DesignAssetRendererManager.getInstance().getViewer(file)
             .getImage(file, facet.module, dimension, configContext).get()
     }

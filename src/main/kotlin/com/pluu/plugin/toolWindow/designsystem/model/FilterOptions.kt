@@ -8,12 +8,6 @@ class FilterOptions internal constructor(
     moduleDependenciesInitialValue: Boolean,
 ) {
     /**
-     * If true, the resources from the dependent modules will be shown.
-     */
-    var isShowModuleDependencies: Boolean
-            by Delegates.observable(moduleDependenciesInitialValue) { _, old, new -> if (new != old) refreshResourcesCallback() }
-
-    /**
      * The search string to use to filter resources
      */
     var searchString: String by Delegates.observable("") { _, old, new ->

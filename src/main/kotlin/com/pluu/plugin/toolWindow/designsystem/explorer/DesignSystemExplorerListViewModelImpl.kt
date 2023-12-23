@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.ide.common.resources.ResourceResolver
 import com.android.tools.idea.ui.resourcemanager.model.TypeFilter
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
@@ -23,7 +22,6 @@ import kotlin.properties.Delegates
 class DesignSystemExplorerListViewModelImpl(
     override val facet: AndroidFacet,
     private val contextFile: VirtualFile?,
-    private val resourceResolver: ResourceResolver,
     private val listViewImageCache: ImageCache,
     override val filterOptions: FilterOptions,
     designSystemType: DesignSystemType
@@ -49,7 +47,7 @@ class DesignSystemExplorerListViewModelImpl(
     }
 
     override val assetPreviewManager: DesignAssetPreviewManager =
-        DesignAssetPreviewManagerImpl(facet, listViewImageCache, resourceResolver, contextFile)
+        DesignAssetPreviewManagerImpl(facet, listViewImageCache, contextFile)
 
     override fun getCurrentModuleResourceLists() = resourceExplorerSupplyAsync {
         getResourceSections(

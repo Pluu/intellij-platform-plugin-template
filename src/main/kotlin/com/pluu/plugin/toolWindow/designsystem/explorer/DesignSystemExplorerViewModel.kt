@@ -108,7 +108,6 @@ class DesignSystemExplorerViewModel(
                     DesignSystemExplorerListViewModelImpl(
                         facet,
                         contextFileForConfiguration,
-                        resourceResolver,
                         listViewImageCache,
                         filterOptions,
                         supportedTypes[supportTypeIndex]

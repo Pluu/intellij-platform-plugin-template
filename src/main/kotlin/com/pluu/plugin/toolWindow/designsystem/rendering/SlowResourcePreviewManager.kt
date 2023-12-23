@@ -41,7 +41,7 @@ interface SlowResourcePreviewProvider {
 }
 
 /**
- * [AssetIconProvider] that helps rendering complex resources that take a significant time to render and updates
+ * [DesignAssetIconProvider] that helps rendering complex resources that take a significant time to render and updates
  * an [ImageIcon] each time [getIcon] is called. This means that the returned icon should
  * not be cached because it will change next time [getIcon] is called.
  *
@@ -197,7 +197,7 @@ class SlowDesignResourcePreviewManager(
 }
 
 /**
- * Single-threaded executor, used to render previews for [SlowResourcePreviewManager].
+ * Single-threaded executor, used to render previews for [SlowDesignResourcePreviewManager].
  *
  * Is an Application Service, backed by the AppExecutorService.
  */
