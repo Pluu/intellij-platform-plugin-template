@@ -1,18 +1,15 @@
 package com.pluu.plugin.toolWindow.designsystem.widget
 
-import com.android.tools.adtui.common.AdtUiUtils
 import com.android.tools.adtui.common.border
 import com.android.tools.adtui.common.secondaryPanelBackground
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.components.JBLabel
-import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.NamedColorUtil
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
-import icons.StudioIcons
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
@@ -22,7 +19,6 @@ import java.awt.RenderingHints
 import java.awt.font.TextAttribute
 import javax.swing.BorderFactory
 import javax.swing.Box
-import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingConstants
@@ -30,12 +26,6 @@ import javax.swing.border.Border
 import kotlin.properties.Delegates
 
 // Graphic constant for the view
-
-/**
- * Ratio of the height on the width of the thumbnail
- * These values come from the UI specs.
- */
-private const val THUMBNAIL_HEIGHT_WIDTH_RATIO = 23 / 26f
 
 private val LARGE_MAIN_CELL_BORDER_SELECTED
     get() = BorderFactory.createCompoundBorder(
@@ -76,13 +66,6 @@ private val SECONDARY_FONT_COLOR
     )
 
 private const val DEFAULT_WIDTH = 120
-
-enum class IssueLevel(internal val icon: Icon) {
-    NONE(EmptyIcon.ICON_16),
-    INFO(StudioIcons.Common.INFO),
-    WARNING(StudioIcons.Common.WARNING),
-    ERROR(StudioIcons.Common.ERROR)
-}
 
 /**
  * Abstract class to represent a graphical asset in the resource explorer.
@@ -160,10 +143,6 @@ abstract class AssetView : JPanel(BorderLayout()) {
         showChessboard = withChessboard
     }
 
-    var issueLevel: IssueLevel by Delegates.observable(IssueLevel.NONE) { _, _, level -> issueIcon.icon = level.icon }
-
-    protected val issueIcon = JBLabel(issueLevel.icon)
-
     var isNew: Boolean by Delegates.observable(false) { _, _, new -> newLabel.isVisible = new }
 
     protected val newLabel = object : JBLabel(" NEW ", SwingConstants.CENTER) {
@@ -216,65 +195,6 @@ abstract class AssetView : JPanel(BorderLayout()) {
  * Component in the shape of a card with a large preview
  * and some textual info below.
  */
-class SingleAssetCard : AssetView() {
-    override var selected by Delegates.observable(false) { _, _, selected ->
-        border = getBorder(selected, focused)
-    }
-
-    override var focused: Boolean by Delegates.observable(false) { _, _, focused ->
-        border = getBorder(selected, focused)
-    }
-
-    private val bottomPanel = JPanel(BorderLayout(0, JBUI.scale(2))).apply {
-        background = secondaryPanelBackground
-        isOpaque = true
-        border = BOTTOM_PANEL_BORDER
-    }
-
-    private val emptyLabel = JBLabel("Nothing to show", SwingConstants.CENTER).apply {
-        foreground = AdtUiUtils.DEFAULT_FONT_COLOR
-        font = JBUI.Fonts.label(10f)
-    }
-
-    init {
-        isOpaque = false
-        border = LARGE_MAIN_CELL_BORDER
-
-        with(bottomPanel) {
-            add(titleLabel, BorderLayout.NORTH)
-            add(Box.createVerticalBox().apply {
-                add(secondLineLabel)
-                add(thirdLineLabel)
-            })
-        }
-
-        add(contentWrapper)
-        add(bottomPanel, BorderLayout.SOUTH)
-        viewWidth = DEFAULT_WIDTH
-    }
-
-    override fun computeThumbnailSize(width: Int) = Dimension(width, (width * THUMBNAIL_HEIGHT_WIDTH_RATIO).toInt())
-
-    override fun getBorder(selected: Boolean, focused: Boolean): Border = when {
-        selected && focused -> LARGE_MAIN_CELL_BORDER_SELECTED
-        selected && !focused -> LARGE_MAIN_CELL_BORDER_UNFOCUSED
-        else -> LARGE_MAIN_CELL_BORDER
-    }
-
-    override fun setIconLayout() {
-        // No need to do anything.
-    }
-
-    override fun setNonIconLayout() {
-        contentWrapper.removeAll()
-        contentWrapper.add(emptyLabel)
-    }
-}
-
-/**
- * Component in the shape of a card with a large preview
- * and some textual info below.
- */
 class RowAssetView : AssetView() {
 
     override var selected by Delegates.observable(false) { _, _, selected ->
@@ -308,7 +228,7 @@ class RowAssetView : AssetView() {
         viewWidth = DEFAULT_WIDTH
     }
 
-    override fun computeThumbnailSize(width: Int) = Dimension(width, (width * 3).toInt())
+    override fun computeThumbnailSize(width: Int) = Dimension(width, (width * 3))
 
     override fun getBorder(selected: Boolean, focused: Boolean): Border = when {
         selected && focused -> LARGE_MAIN_CELL_BORDER_SELECTED

@@ -9,14 +9,11 @@ import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.widget.AssetView
 import com.pluu.plugin.toolWindow.designsystem.widget.RowAssetView
-import com.pluu.plugin.toolWindow.designsystem.widget.SingleAssetCard
 import java.awt.event.MouseEvent
 import javax.swing.JList
 import kotlin.properties.Delegates
 
 private val DEFAULT_PREVIEW_SIZE = JBUI.scale(50)
-
-private const val DEFAULT_GRID_MODE = false
 
 /**
  * [JList] to display [ResourceAssetSet] and handle switching
@@ -26,23 +23,8 @@ class AssetListView(
     assets: List<DesignAssetSet>,
     speedSearch: SpeedSearch? = null
 ) : JBList<DesignAssetSet>() {
-
-    var isGridMode: Boolean by Delegates.observable(DEFAULT_GRID_MODE) { _, _, isGridMode ->
-        if (isGridMode) {
-            layoutOrientation = JList.HORIZONTAL_WRAP
-            assetView = SingleAssetCard()
-            setExpandableItemsEnabled(false)
-        } else {
-            layoutOrientation = JList.VERTICAL
-            assetView = RowAssetView()
-            setExpandableItemsEnabled(true)
-        }
-        updateCellSize()
-    }
-
-    lateinit var assetView: AssetView
+    var assetView: AssetView
         private set
-
 
     /**
      * Width of the [AssetView] thumbnail container
@@ -58,7 +40,13 @@ class AssetListView(
     init {
         isOpaque = false
         visibleRowCount = 0
-        isGridMode = DEFAULT_GRID_MODE
+
+        // Row Layout
+        layoutOrientation = JList.VERTICAL
+        assetView = RowAssetView()
+        setExpandableItemsEnabled(true)
+        updateCellSize()
+
         val collectionListModel = CollectionListModel(assets)
         if (speedSearch != null) {
             speedSearch.setEnabled(true)

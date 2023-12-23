@@ -68,7 +68,6 @@ private val TOOLBAR_BORDER
         JBUI.Borders.empty(4, 2)
     )
 
-private val GRID_MODE_BACKGROUND = UIUtil.getPanelBackground()
 private val LIST_MODE_BACKGROUND = UIUtil.getListBackground()
 
 /**
@@ -370,7 +369,6 @@ class DesignSystemExplorerListView(
 //                updateSummaryPreview()
             }
             thumbnailWidth = this@DesignSystemExplorerListView.previewSize
-            isGridMode = false
         }
         return AssetSection(section.type.name, assetList.getFilteredSize(), assetList)
     }
