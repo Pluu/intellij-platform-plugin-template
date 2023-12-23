@@ -389,7 +389,7 @@ class DesignSystemExplorerListView(
             fileToSelect = virtualFile
         } else {
             doSelectAsset { assetSet ->
-                (assetSet.asset.virtualFile == virtualFile).also { if (it) fileToSelect = null }
+                (assetSet.asset.file == virtualFile).also { if (it) fileToSelect = null }
             }
         }
     }

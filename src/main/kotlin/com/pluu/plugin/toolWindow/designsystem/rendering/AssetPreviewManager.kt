@@ -1,7 +1,6 @@
 package com.pluu.plugin.toolWindow.designsystem.rendering
 
 import com.android.ide.common.resources.ResourceResolver
-import com.android.tools.idea.ui.resourcemanager.rendering.ImageCache
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem

@@ -19,7 +19,7 @@ object MyViewFindModel {
             DesignSystemItem(
                 type = type,
                 name = it.nameWithoutExtension,
-                virtualFile = it
+                file = it
             )
         }
     }

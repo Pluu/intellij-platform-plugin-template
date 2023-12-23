@@ -24,6 +24,11 @@
         <moduleDescriptionProvider
                 implementation="com.pluu.plugin.module.sample.FeatureSampleModuleDescriptionProvider"/>
     </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.pluu.plugin.toolWindow.designsystem.rendering.FetchImageExecutor"/>
+    </extensions>
+
     <extensions defaultExtensionNs="com.intellij">
         <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl"/>
         <internalFileTemplate name="ActivityTest"/>

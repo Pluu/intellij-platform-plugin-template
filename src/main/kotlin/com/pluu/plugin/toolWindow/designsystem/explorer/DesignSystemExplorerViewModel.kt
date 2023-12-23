@@ -5,7 +5,6 @@ import com.android.ide.common.resources.ResourceResolver
 import com.android.ide.common.resources.configuration.FolderConfiguration
 import com.android.tools.configurations.Configuration
 import com.android.tools.idea.configurations.ConfigurationManager
-import com.android.tools.idea.ui.resourcemanager.rendering.ImageCache
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.util.Disposer
@@ -16,6 +15,7 @@ import com.intellij.util.ui.update.MergingUpdateQueue
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
+import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCache
 import org.jetbrains.android.dom.manifest.getPrimaryManifestXml
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.android.sdk.StudioEmbeddedRenderTarget

@@ -2,7 +2,6 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.ide.common.resources.ResourceResolver
 import com.android.tools.idea.ui.resourcemanager.model.TypeFilter
-import com.android.tools.idea.ui.resourcemanager.rendering.ImageCache
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -15,6 +14,7 @@ import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.model.getModuleResources
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManagerImpl
+import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCache
 import org.jetbrains.android.facet.AndroidFacet
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.supplyAsync
