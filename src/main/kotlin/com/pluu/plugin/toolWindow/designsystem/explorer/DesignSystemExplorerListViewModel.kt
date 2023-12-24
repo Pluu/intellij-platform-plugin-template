@@ -68,12 +68,4 @@ interface DesignSystemExplorerListViewModel {
      * one containing the resource of the current module.
      */
     fun getDesignSections(): CompletableFuture<List<DesignSection>>
-
-    /**
-     * Triggers an [AndroidFacet] change through [facetUpdaterCallback].
-     *
-     * Eg: Searching for resources matching 'ic' and clicking the LinkLabel to switch to module Foo that contains resources matching the
-     * filter. All components of the ResourceExplorer should update to module Foo.
-     */
-    fun facetUpdated(newFacet: AndroidFacet)
 }

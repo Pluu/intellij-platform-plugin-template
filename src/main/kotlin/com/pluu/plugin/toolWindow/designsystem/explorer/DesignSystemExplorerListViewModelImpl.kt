@@ -70,10 +70,6 @@ class DesignSystemExplorerListViewModelImpl(
         getResourceSections(facet)
     }
 
-    override fun facetUpdated(newFacet: AndroidFacet) {
-        facetUpdaterCallback?.invoke(newFacet)
-    }
-
     private fun getResourceSections(forFacet: AndroidFacet): List<DesignSection> {
         val resourceType = currentDesignSystemType
         val resources = mutableListOf<DesignSection>()
