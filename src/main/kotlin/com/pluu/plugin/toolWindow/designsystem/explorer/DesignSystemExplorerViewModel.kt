@@ -45,24 +45,16 @@ class DesignSystemExplorerViewModel(
         )
     )
 
-    /**
-     * View callback for when the DesignSystemType has changed.
-     */
+    /** View callback for when the DesignSystemType has changed. */
     var updateSupportTypeTabCallback: (() -> Unit) = {}
 
-    /**
-     * View callback whenever the resources lists needs to be repopulated.
-     */
+    /** View callback whenever the resources lists needs to be repopulated. */
     var populateResourcesCallback: (() -> Unit) = {}
 
-    /**
-     * Callback called when the [AndroidFacet] has changed.
-     */
+    /** Callback called when the [AndroidFacet] has changed. */
     var facetUpdaterCallback: ((facet: AndroidFacet) -> Unit) = {}
 
-    /**
-     * Callback called when the current [DesignSystemType] has changed.
-     */
+    /** Callback called when the current [DesignSystemType] has changed. */
     var designSystemTypeUpdaterCallback: ((resourceType: DesignSystemType) -> Unit) = {}
 
     var facet: AndroidFacet by Delegates.observable(defaultFacet) { _, oldFacet, newFacet ->
@@ -110,7 +102,7 @@ class DesignSystemExplorerViewModel(
     }
 
     //region ListModel update functions
-    private fun refreshListModel() {
+    fun refreshListModel() {
         val listModel = listViewModel
         if (listModel == null) {
             refreshListModel = true

@@ -93,8 +93,6 @@ class DesignSystemExplorerView(
     }
 
     private fun createResourcesListView(viewModel: DesignSystemExplorerListViewModel): DesignSystemExplorerListView {
-        return DesignSystemExplorerListView(
-            viewModel
-        )
+        return DesignSystemExplorerListView(viewModel)
     }
 }

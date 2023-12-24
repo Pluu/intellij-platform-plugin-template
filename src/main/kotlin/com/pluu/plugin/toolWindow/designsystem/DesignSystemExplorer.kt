@@ -25,6 +25,7 @@ class DesignSystemExplorer private constructor(
     init {
         toolbarViewModel.facetUpdaterCallback = { newValue -> this.facet = newValue }
         toolbarViewModel.refreshResourcesPreviewsCallback = { designSystemExplorerViewModel.refreshPreviews() }
+        toolbarViewModel.populateResourcesCallback = { designSystemExplorerViewModel.refreshListModel() }
         designSystemExplorerViewModel.facetUpdaterCallback = { newValue -> this.facet = newValue }
         designSystemExplorerViewModel.designSystemTypeUpdaterCallback = this::updateResourceType
 

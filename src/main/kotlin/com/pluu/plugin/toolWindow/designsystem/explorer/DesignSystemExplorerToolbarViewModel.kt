@@ -29,6 +29,9 @@ class DesignSystemExplorerToolbarViewModel(
      */
     var updateUICallback = {}
 
+    /** View callback whenever the resources lists needs to be repopulated. */
+    var populateResourcesCallback: (() -> Unit) = {}
+
     /** Called when a new facet is selected. */
     var facetUpdaterCallback: (AndroidFacet) -> Unit = {}
 

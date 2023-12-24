@@ -94,7 +94,7 @@ private class RefreshAction(
     AllIcons.Actions.Refresh
 ) {
     override fun actionPerformed(e: AnActionEvent) {
-        viewModel.refreshResourcesPreviewsCallback()
+        viewModel.populateResourcesCallback()
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
