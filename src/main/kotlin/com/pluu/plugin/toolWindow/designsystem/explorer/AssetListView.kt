@@ -44,7 +44,7 @@ class AssetListView(
         // Row Layout
         layoutOrientation = JList.VERTICAL
         assetView = RowAssetView()
-        setExpandableItemsEnabled(true)
+        setExpandableItemsEnabled(false)
         updateCellSize()
 
         val collectionListModel = CollectionListModel(assets)

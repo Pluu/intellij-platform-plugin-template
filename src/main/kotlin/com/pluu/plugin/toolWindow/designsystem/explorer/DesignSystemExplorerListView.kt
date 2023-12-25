@@ -15,6 +15,7 @@ import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
+import com.pluu.plugin.toolWindow.designsystem.explorer.drag.resourceDragHandler
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.widget.Section
@@ -43,7 +44,7 @@ private val DEFAULT_LIST_MODE_WIDTH get() = JBUI.scale(60)
 private val MAX_CELL_WIDTH get() = JBUI.scale(300)
 private val LIST_CELL_SIZE get() = JBUI.scale(60)
 private val MIN_CELL_WIDTH get() = JBUI.scale(150)
-private val DEFAULT_CELL_WIDTH get() = LIST_CELL_SIZE
+private val DEFAULT_CELL_WIDTH get() = MIN_CELL_WIDTH
 private val SECTION_HEADER_SECONDARY_COLOR get() = JBColor.border()
 
 private val SECTION_HEADER_BORDER
@@ -62,12 +63,6 @@ private val SECTION_HEADER_LABEL_FONT
         )
     )
 
-private val TOOLBAR_BORDER
-    get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0),
-        JBUI.Borders.empty(4, 2)
-    )
-
 private val LIST_MODE_BACKGROUND = UIUtil.getListBackground()
 
 /**
@@ -79,7 +74,7 @@ private val LIST_MODE_BACKGROUND = UIUtil.getListBackground()
 private const val MS_DELAY_BEFORE_LOADING_STATE = 100L // ms
 private val UNIT_DELAY_BEFORE_LOADING_STATE = TimeUnit.MILLISECONDS
 
-private const val PREVIEW_SIZE = "resourceExplorer.previewSize"
+private const val PREVIEW_SIZE = "designResourceExplorer.previewSize"
 
 class DesignSystemExplorerListView(
     private val viewModel: DesignSystemExplorerListViewModel,
@@ -97,7 +92,7 @@ class DesignSystemExplorerListView(
     private var fileToSelect: VirtualFile? = null
     private var resourceToSelect: String? = null
 
-    private var previewSize = DEFAULT_CELL_WIDTH
+    private var previewSize = PropertiesComponent.getInstance().getInt(PREVIEW_SIZE, DEFAULT_CELL_WIDTH)
         set(value) {
             if (value != field) {
                 PropertiesComponent.getInstance().setValue(PREVIEW_SIZE, value, DEFAULT_CELL_WIDTH)
@@ -109,6 +104,7 @@ class DesignSystemExplorerListView(
         }
 
     private val sectionListModel: SectionListModel = SectionListModel()
+    private val dragHandler = resourceDragHandler()
 
     private val topActionsPanel = JPanel().apply {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
@@ -143,8 +139,7 @@ class DesignSystemExplorerListView(
         }
     }
 
-    private val contentPanel: JPanel =
-        JPanel(BorderLayout()).apply {
+    private val contentPanel: JPanel = JPanel(BorderLayout()).apply {
             add(topActionsPanel, BorderLayout.NORTH)
             add(centerPanel)
         }
@@ -356,7 +351,7 @@ class DesignSystemExplorerListView(
     private fun createSection(section: DesignSection): AssetSection<DesignAssetSet> {
         val assetList = AssetListView(section.assetSets, viewModel.speedSearch).apply {
             cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager)
-//            dragHandler.registerSource(this)
+            dragHandler.registerSource(this)
 //            addMouseListener(popupHandler)
 //            addMouseListener(mouseClickListener)
 //            addKeyListener(keyListener)

@@ -1,5 +1,6 @@
 package com.pluu.plugin.toolWindow.designsystem.widget
 
+import com.android.tools.adtui.common.AdtUiUtils
 import com.android.tools.adtui.common.border
 import com.android.tools.adtui.common.secondaryPanelBackground
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
@@ -26,7 +27,6 @@ import javax.swing.border.Border
 import kotlin.properties.Delegates
 
 // Graphic constant for the view
-
 private val LARGE_MAIN_CELL_BORDER_SELECTED
     get() = BorderFactory.createCompoundBorder(
         JBUI.Borders.empty(3),
@@ -205,11 +205,16 @@ class RowAssetView : AssetView() {
         border = getBorder(selected, focused)
     }
 
-    private val bottomPanel = JPanel(BorderLayout(0, JBUI.scale(2)).apply {
+    private val bottomPanel = JPanel(BorderLayout(0, JBUI.scale(2))).apply {
         background = secondaryPanelBackground
         isOpaque = true
         border = BOTTOM_PANEL_BORDER
-    })
+    }
+
+    private val emptyLabel = JBLabel("Nothing to show", SwingConstants.CENTER).apply {
+        foreground = AdtUiUtils.DEFAULT_FONT_COLOR
+        font = JBUI.Fonts.label(10f)
+    }
 
     init {
         isOpaque = false
@@ -219,7 +224,6 @@ class RowAssetView : AssetView() {
             add(titleLabel, BorderLayout.NORTH)
             add(Box.createVerticalBox().apply {
                 add(secondLineLabel)
-                add(thirdLineLabel)
             })
         }
 
@@ -228,7 +232,7 @@ class RowAssetView : AssetView() {
         viewWidth = DEFAULT_WIDTH
     }
 
-    override fun computeThumbnailSize(width: Int) = Dimension(width, (width * 3))
+    override fun computeThumbnailSize(width: Int) = Dimension(width, (width * 0.75f).toInt())
 
     override fun getBorder(selected: Boolean, focused: Boolean): Border = when {
         selected && focused -> LARGE_MAIN_CELL_BORDER_SELECTED
@@ -236,12 +240,13 @@ class RowAssetView : AssetView() {
         else -> LARGE_MAIN_CELL_BORDER
     }
 
-    override fun setNonIconLayout() {
-        contentWrapper.isVisible = false
+    override fun setIconLayout() {
+        // No need to do anything.
     }
 
-    override fun setIconLayout() {
-        contentWrapper.isVisible = true
+    override fun setNonIconLayout() {
+        contentWrapper.removeAll()
+        contentWrapper.add(emptyLabel)
     }
 }
 

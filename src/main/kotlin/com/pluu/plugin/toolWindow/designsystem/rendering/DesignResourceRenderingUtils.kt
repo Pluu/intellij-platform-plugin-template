@@ -68,8 +68,7 @@ private fun createImageAndPaint(width: Int, height: Int, doPaint: (Graphics2D) -
         val g = createGraphics()
         try {
             doPaint(g)
-        }
-        finally {
+        } finally {
             g.dispose()
         }
     }
