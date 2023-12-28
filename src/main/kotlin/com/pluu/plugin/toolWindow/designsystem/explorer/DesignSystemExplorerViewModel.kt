@@ -7,6 +7,7 @@ import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCache
 import org.jetbrains.android.facet.AndroidFacet
@@ -16,7 +17,8 @@ import kotlin.properties.Delegates
 class DesignSystemExplorerViewModel(
     defaultFacet: AndroidFacet,
     private var contextFileForConfiguration: VirtualFile?,
-    var supportedTypes: Array<DesignSystemType>
+    var supportedTypes: Array<DesignSystemType>,
+    private val selectAssetAction: ((asset: DesignSystemItem) -> Unit)? = null,
 ) : Disposable {
 
     private var listViewModel: DesignSystemExplorerListViewModel? = null
@@ -88,7 +90,8 @@ class DesignSystemExplorerViewModel(
                 contextFileForConfiguration,
                 listViewImageCache,
                 filterOptions,
-                supportedTypes[supportTypeIndex]
+                supportedTypes[supportTypeIndex],
+                selectAssetAction
             ).also {
                 listViewModel = it
                 it.facetUpdaterCallback = { newFacet -> this@DesignSystemExplorerViewModel.facet = newFacet }
@@ -151,7 +154,8 @@ class DesignSystemExplorerViewModel(
             return DesignSystemExplorerViewModel(
                 facet,
                 null,
-                DesignSystemType.values()
+                DesignSystemType.values(),
+                null
             )
         }
     }

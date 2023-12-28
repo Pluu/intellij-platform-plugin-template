@@ -5,10 +5,12 @@ import com.android.tools.idea.ui.resourcemanager.widget.LinkLabelSearchView
 import com.intellij.concurrency.JobScheduler
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
+import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ModalityUiUtil
 import com.intellij.util.concurrency.EdtExecutorService
@@ -26,6 +28,8 @@ import java.awt.Component
 import java.awt.Container
 import java.awt.Dimension
 import java.awt.Point
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.awt.font.TextAttribute
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ScheduledFuture
@@ -140,9 +144,67 @@ class DesignSystemExplorerListView(
     }
 
     private val contentPanel: JPanel = JPanel(BorderLayout()).apply {
-            add(topActionsPanel, BorderLayout.NORTH)
-            add(centerPanel)
+        add(topActionsPanel, BorderLayout.NORTH)
+        add(centerPanel)
+    }
+
+    /**
+     * Mouse listener to invoke the popup menu.
+     *
+     * This custom implementation is needed to ensure that the clicked element is selected
+     * before invoking the menu.
+     */
+    private val popupHandler = object : PopupHandler() {
+        val actionManager = ActionManager.getInstance()
+//        val group = DefaultActionGroup().apply {
+//            add(RefreshDesignAssetAction { assets ->
+//                assets.forEach { viewModel.clearImageCache(it) }
+//                repaint()
+//            })
+//            addSeparator()
+//            add(actionManager.getAction("ResourceExplorer") as ActionGroup)
+//        }
+
+        override fun invokePopup(comp: Component?, x: Int, y: Int) {
+            val list = comp as JList<*>
+            // Select the element before invoking the popup menu
+            val clickedIndex = list.locationToIndex(Point(x, y))
+//            if (!list.isSelectedIndex(clickedIndex)) {
+//                list.selectedIndex = clickedIndex
+//            }
+//            val popupMenu = actionManager.createActionPopupMenu("ResourceExplorer", group)
+//            popupMenu.setTargetComponent(list)
+//            val menu = popupMenu.component
+//            menu.show(comp, x, y)
         }
+    }
+
+    /**
+     * A mouse listener that opens a [ResourceDetailView] when double clicking
+     * on an item from the list.
+     * @see doSelectAssetAction
+     */
+    private val mouseClickListener = object : MouseAdapter() {
+        override fun mouseClicked(e: MouseEvent) {
+            if (!(e.clickCount == 2 && e.button == MouseEvent.BUTTON1)) {
+                return
+            }
+            val assetListView = e.source as AssetListView
+            val index = assetListView.locationToIndex(e.point)
+            if (index >= 0) {
+                val designAssetSet = assetListView.model.getElementAt(index)
+                doSelectAssetAction(designAssetSet)
+            }
+        }
+    }
+
+    /**
+     * Replace the content of the view with a [DesignAssetSet] for the provided [designAssetSet].
+     */
+    private fun doSelectAssetAction(designAssetSet: DesignAssetSet) {
+        val asset = designAssetSet.asset
+        viewModel.doSelectAssetAction(asset)
+    }
 
     init {
         viewModel.updateUiCallback = { reason ->
@@ -352,8 +414,8 @@ class DesignSystemExplorerListView(
         val assetList = AssetListView(section.assetSets, viewModel.speedSearch).apply {
             cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager)
             dragHandler.registerSource(this)
-//            addMouseListener(popupHandler)
-//            addMouseListener(mouseClickListener)
+            addMouseListener(popupHandler)
+            addMouseListener(mouseClickListener)
 //            addKeyListener(keyListener)
             selectionMode = ListSelectionModel.SINGLE_SELECTION
             this.addListSelectionListener {

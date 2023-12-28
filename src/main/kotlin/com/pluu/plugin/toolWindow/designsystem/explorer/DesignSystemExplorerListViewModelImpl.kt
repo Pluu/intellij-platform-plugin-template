@@ -1,5 +1,6 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+import com.intellij.codeInsight.navigation.NavigationUtil.openFileWithPsiElement
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -10,6 +11,7 @@ import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
+import com.pluu.plugin.toolWindow.designsystem.model.ResourceDataManager
 import com.pluu.plugin.toolWindow.designsystem.model.getModuleResources
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManagerImpl
@@ -24,7 +26,8 @@ class DesignSystemExplorerListViewModelImpl(
     private val contextFile: VirtualFile?,
     private val listViewImageCache: ImageCache,
     override val filterOptions: FilterOptions,
-    designSystemType: DesignSystemType
+    designSystemType: DesignSystemType,
+    selectAssetAction: ((asset: DesignSystemItem) -> Unit)? = null,
 ) : DesignSystemExplorerListViewModel {
 
     /**
@@ -39,6 +42,8 @@ class DesignSystemExplorerListViewModelImpl(
             updateUiCallback?.invoke(UpdateUiReason.DESIGN_SYSTEM_TYPE_CHANGED)
         }
     }
+
+    private val dataManager = ResourceDataManager(facet)
 
     override val selectedTabName: String get() = currentDesignSystemType.displayName
 
@@ -82,6 +87,13 @@ class DesignSystemExplorerListViewModelImpl(
             )
         )
         return resources
+    }
+
+    override val doSelectAssetAction: (asset: DesignSystemItem) -> Unit = selectAssetAction ?: { asset ->
+        val psiElement = dataManager.findPsiElement(asset)
+        psiElement?.let {
+            openFileWithPsiElement(it, true, true)
+        }
     }
 }
 

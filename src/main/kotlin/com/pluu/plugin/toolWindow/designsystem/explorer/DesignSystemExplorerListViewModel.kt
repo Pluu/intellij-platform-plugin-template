@@ -68,4 +68,9 @@ interface DesignSystemExplorerListViewModel {
      * one containing the resource of the current module.
      */
     fun getDesignSections(): CompletableFuture<List<DesignSection>>
+
+    /**
+     * Action when selecting an [DesignSystemItem] (double click or select + ENTER key).
+     */
+    val doSelectAssetAction: (asset: DesignSystemItem) -> Unit
 }
