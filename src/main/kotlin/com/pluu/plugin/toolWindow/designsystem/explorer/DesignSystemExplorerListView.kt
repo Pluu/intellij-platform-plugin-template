@@ -459,8 +459,7 @@ class DesignSystemExplorerListView(
         }
     }
 
-    override fun getData(p0: String): Any? {
-//        viewModel.getData(dataId, getSelectedAssets())
+    override fun getData(dataId: String): Any? {
         return null
     }
 

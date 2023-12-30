@@ -8,6 +8,15 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.android.facet.AndroidFacet
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
+import java.awt.datatransfer.UnsupportedFlavorException
+
+/**
+ * [DataFlavor] for [DesignSystemItem]
+ */
+@JvmField
+val DESIGN_SYSTEM_URL_FLAVOR = DataFlavor(DesignSystemItem::class.java, "DesignSystem File Url")
+
+private val SUPPORTED_DATA_FLAVORS = arrayOf(DESIGN_SYSTEM_URL_FLAVOR, DataFlavor.stringFlavor)
 
 class ResourceDataManager(var facet: AndroidFacet) : CopyProvider {
 
@@ -37,16 +46,17 @@ class ResourceDataManager(var facet: AndroidFacet) : CopyProvider {
 }
 
 fun createTransferable(asset: DesignSystemItem): Transferable {
-    val resourceUrl = asset.file
-
     return object : Transferable {
         override fun getTransferData(flavor: DataFlavor?): Any {
-            return resourceUrl
+            return when (flavor) {
+                DESIGN_SYSTEM_URL_FLAVOR -> asset
+                DataFlavor.stringFlavor -> asset.toString()
+                else -> UnsupportedFlavorException(flavor)
+            }
         }
 
-        override fun isDataFlavorSupported(flavor: DataFlavor?): Boolean = false
+        override fun isDataFlavorSupported(flavor: DataFlavor?): Boolean = flavor in SUPPORTED_DATA_FLAVORS
 
-        override fun getTransferDataFlavors(): Array<DataFlavor> = emptyArray()
-
+        override fun getTransferDataFlavors(): Array<DataFlavor> = SUPPORTED_DATA_FLAVORS
     }
 }

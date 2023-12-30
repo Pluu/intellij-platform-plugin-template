@@ -46,15 +46,14 @@ private class ResourceFilesTransferHandler(
     private val assetList: JList<DesignAssetSet>
 ): TransferHandler() {
 
-    override fun canImport(support: TransferSupport?): Boolean {
-        if (support == null) return false
+    override fun canImport(support: TransferSupport): Boolean {
         if (support.sourceDropActions and COPY != COPY) return false
         return FileCopyPasteUtil.isFileListFlavorAvailable(support.dataFlavors)
     }
 
     override fun importData(comp: JComponent?, t: Transferable?): Boolean {
         if (t == null) return false
-        return false
+        return true
     }
 
     override fun getSourceActions(c: JComponent?) = COPY_OR_MOVE
@@ -62,7 +61,7 @@ private class ResourceFilesTransferHandler(
     override fun getDragImage() = createDragPreview(assetList)
 
     override fun createTransferable(c: JComponent?): Transferable {
-        c?.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+        c?.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
         return com.pluu.plugin.toolWindow.designsystem.model.createTransferable(assetList.selectedValue.asset)
     }
 

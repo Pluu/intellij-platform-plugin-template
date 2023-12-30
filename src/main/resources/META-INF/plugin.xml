@@ -27,6 +27,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.pluu.plugin.toolWindow.designsystem.rendering.FetchImageExecutor"/>
+        <customPasteProvider implementation="com.pluu.plugin.toolWindow.designsystem.model.ResourcePasteProvider"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
