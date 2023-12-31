@@ -1,22 +1,32 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.PresentationFactory
+import com.intellij.openapi.project.DumbAware
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.SearchTextField
 import com.intellij.util.ui.JBUI
+import java.awt.Component
+import java.awt.event.MouseEvent
 import javax.swing.GroupLayout
+import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
 private const val SEARCH_FIELD_LABEL = "Search resources by name"
+private const val FILTERS_BUTTON_LABEL = "Filter displayed resources"
 private const val MODULE_PREFIX = "Module: "
 
 private val MIN_FIELD_SIZE = JBUI.scale(40)
@@ -36,13 +46,17 @@ class DesignSystemExplorerToolbar(
     init {
         layout = GroupLayout(this)
         val groupLayout = layout as GroupLayout
+        val filterAction = action(FilterAction(toolbarViewModel))
+
         val sequentialGroup = groupLayout.createSequentialGroup()
             .addFixedSizeComponent(refreshAction, true)
             .addComponent(searchAction, MIN_FIELD_SIZE, PREF_FIELD_SIZE, Int.MAX_VALUE)
+            .addFixedSizeComponent(filterAction)
 
         val verticalGroup = groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addComponent(refreshAction)
             .addComponent(searchAction)
+            .addComponent(filterAction)
 
         groupLayout.setHorizontalGroup(sequentialGroup)
         groupLayout.setVerticalGroup(verticalGroup)
@@ -84,6 +98,33 @@ class DesignSystemExplorerToolbar(
 }
 
 /**
+ * Button to add new resources
+ */
+private abstract class PopupAction internal constructor(val icon: Icon?, description: String)
+    : AnAction(description, description, icon), DumbAware {
+
+    override fun actionPerformed(e: AnActionEvent) {
+        var x = 0
+        var y = 0
+        val inputEvent = e.inputEvent
+        if (inputEvent is MouseEvent) {
+            x = 0
+            y = inputEvent.component.height
+        }
+
+        showAddPopup(inputEvent!!.component, x, y)
+    }
+
+    private fun showAddPopup(component: Component, x: Int, y: Int) {
+        ActionManager.getInstance()
+            .createActionPopupMenu(ActionPlaces.TOOLWINDOW_POPUP, createAddPopupGroup())
+            .component.show(component, x, y)
+    }
+
+    protected abstract fun createAddPopupGroup(): ActionGroup
+}
+
+/**
  * Action to refresh the previews of a particular type of resources.
  */
 private class RefreshAction(
@@ -104,6 +145,23 @@ private class RefreshAction(
         e.presentation.text = templatePresentation.text
         e.presentation.description = templatePresentation.description
         e.presentation.isEnabled = true
+    }
+}
+
+private class FilterAction(
+    val viewModel: DesignSystemExplorerToolbarViewModel
+) : PopupAction(AllIcons.General.Filter, FILTERS_BUTTON_LABEL) {
+    override fun createAddPopupGroup() = DefaultActionGroup().apply {
+        add(ShowSampleImageAction(viewModel))
+    }
+}
+
+private class ShowSampleImageAction(
+    val viewModel: DesignSystemExplorerToolbarViewModel
+) : ToggleAction("Show sample images") {
+    override fun isSelected(e: AnActionEvent) = viewModel.isShowSampleImage
+    override fun setSelected(e: AnActionEvent, state: Boolean) {
+        viewModel.isShowSampleImage = state
     }
 }
 

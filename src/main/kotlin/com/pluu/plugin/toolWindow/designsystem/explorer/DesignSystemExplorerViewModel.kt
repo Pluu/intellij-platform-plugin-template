@@ -1,23 +1,28 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.update.MergingUpdateQueue
+import com.pluu.plugin.toolWindow.designsystem.DESIGN_RES_MANAGER_PREF_KEY
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
+import com.pluu.plugin.toolWindow.designsystem.model.FilterOptionsParams
 import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCache
 import org.jetbrains.android.facet.AndroidFacet
 import java.util.concurrent.CompletableFuture
 import kotlin.properties.Delegates
 
-class DesignSystemExplorerViewModel(
+internal class DesignSystemExplorerViewModel(
     defaultFacet: AndroidFacet,
     private var contextFileForConfiguration: VirtualFile?,
     var supportedTypes: Array<DesignSystemType>,
+    private val modelState: ViewModelState,
     private val selectAssetAction: ((asset: DesignSystemItem) -> Unit)? = null,
 ) : Disposable {
 
@@ -30,8 +35,12 @@ class DesignSystemExplorerViewModel(
     //endregion
 
     val filterOptions = FilterOptions.create(
-        { refreshListModel() },
-        { updateListModelSpeedSearch(it) }
+        {
+            updateFilterParamsInModelState()
+            refreshListModel()
+        },
+        { updateListModelSpeedSearch(it) },
+        modelState.filterParams
     )
 
     private val listViewImageCache = ImageCache.createImageCache(
@@ -71,6 +80,7 @@ class DesignSystemExplorerViewModel(
         set(value) {
             if (value != field && supportedTypes.indices.contains(value)) {
                 field = value
+                modelState.selectedResourceType = supportedTypes[value]
                 updateListModelDesignSystemType(supportedTypes[value])
                 designSystemTypeUpdaterCallback(supportedTypes[value])
                 updateSupportTypeTabCallback()
@@ -102,6 +112,12 @@ class DesignSystemExplorerViewModel(
 
     override fun dispose() {
 
+    }
+
+    private fun updateFilterParamsInModelState() {
+        modelState.filterParams = FilterOptionsParams(
+            isShowSampleImageInitialValue = filterOptions.isShowSampleImage
+        )
     }
 
     //region ListModel update functions
@@ -155,8 +171,77 @@ class DesignSystemExplorerViewModel(
                 facet,
                 null,
                 DesignSystemType.values(),
-                null
+                ViewModelState(
+                    FilterOptionsParams(
+                        isShowSampleImageInitialValue = true,
+                    ),
+                    DesignSystemType.values()[0],
+                    ViewModelStateSaveParams(facet.module.project, DESIGN_RES_MANAGER_PREF_KEY)
+                )
             )
         }
     }
 }
+
+private const val FILTER_PARAMS_KEY = "FilterParams"
+private const val SHOW_SAMPLE_IMAGE = "ShowSampleImage"
+private const val DESIGN_SYSTEM_TYPE_KEY = "DesignSystemType"
+
+/**
+ * Class that holds the initial state of [DesignSystemExplorerViewModel].
+ *
+ * If [saveParams] is not-null, it will save the latest changes of this state.
+ */
+internal class ViewModelState(
+    filterParams: FilterOptionsParams,
+    selectedResourceType: DesignSystemType,
+    private val saveParams: ViewModelStateSaveParams? = null
+) {
+
+    private val defaultFilterParams: FilterOptionsParams = kotlin.run {
+        return@run if (saveParams != null) {
+            val filterKey = "${saveParams.preferencesKey}.$FILTER_PARAMS_KEY"
+            val propertiesComponent = PropertiesComponent.getInstance(saveParams.project)
+            val showSampleImage = propertiesComponent.getBoolean("$filterKey.$SHOW_SAMPLE_IMAGE")
+            FilterOptionsParams(
+                isShowSampleImageInitialValue = showSampleImage
+            )
+        } else {
+            filterParams
+        }
+    }
+
+    private val defaultSelectedResourceType: DesignSystemType = kotlin.run {
+        return@run if (saveParams != null) {
+            PropertiesComponent.getInstance(saveParams.project)
+                .getValue("${saveParams.preferencesKey}.$DESIGN_SYSTEM_TYPE_KEY")?.let {
+                    DesignSystemType.valueOf(it)
+            } ?: selectedResourceType
+        } else {
+            selectedResourceType
+        }
+    }
+
+    var filterParams: FilterOptionsParams by Delegates.observable(defaultFilterParams) { _, _, newValue ->
+        saveParams?.let {
+            val filterKey = "${saveParams.preferencesKey}.$FILTER_PARAMS_KEY"
+            val propertiesComponent = PropertiesComponent.getInstance(saveParams.project)
+            propertiesComponent.setValue("$filterKey.$SHOW_SAMPLE_IMAGE", newValue.isShowSampleImageInitialValue)
+        }
+    }
+
+    var selectedResourceType: DesignSystemType by Delegates.observable(defaultSelectedResourceType) { _, _, newValue ->
+        saveParams?.let {
+            PropertiesComponent.getInstance(saveParams.project)
+                .setValue("${saveParams.preferencesKey}.$DESIGN_SYSTEM_TYPE_KEY", newValue.name)
+        }
+    }
+}
+
+/**
+ * Necessary parameters to save the state of [ViewModelState] on a project-level basis.
+ */
+internal class ViewModelStateSaveParams(
+    val project: Project,
+    val preferencesKey: String
+)

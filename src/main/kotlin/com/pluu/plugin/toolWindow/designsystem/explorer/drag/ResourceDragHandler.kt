@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer.drag
 
-import com.intellij.ide.dnd.FileCopyPasteUtil
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import java.awt.Cursor
 import java.awt.GraphicsEnvironment
@@ -48,7 +47,7 @@ private class ResourceFilesTransferHandler(
 
     override fun canImport(support: TransferSupport): Boolean {
         if (support.sourceDropActions and COPY != COPY) return false
-        return FileCopyPasteUtil.isFileListFlavorAvailable(support.dataFlavors)
+        return false
     }
 
     override fun importData(comp: JComponent?, t: Transferable?): Boolean {

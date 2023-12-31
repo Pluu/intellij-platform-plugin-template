@@ -58,6 +58,12 @@ class DesignSystemExplorerToolbarViewModel(
         }
     }
 
+    var isShowSampleImage: Boolean
+        get() = filterOptions.isShowSampleImage
+        set(value) {
+            filterOptions.isShowSampleImage = value
+        }
+
     override fun getDirectories(): Array<PsiDirectory> =
         SourceProviderManager.getInstance(facet).mainIdeaSourceProvider.resDirectories.mapNotNull {
             runReadAction {

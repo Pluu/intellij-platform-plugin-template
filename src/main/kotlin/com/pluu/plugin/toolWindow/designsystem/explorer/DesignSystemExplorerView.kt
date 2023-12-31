@@ -11,7 +11,7 @@ import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.JTabbedPane
 
-class DesignSystemExplorerView(
+internal class DesignSystemExplorerView(
     private val viewModel: DesignSystemExplorerViewModel,
 ) : JPanel(BorderLayout()), Disposable {
 

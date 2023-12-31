@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.actions.PasteAction
+import com.intellij.openapi.project.Project
 
 class ResourcePasteProvider : PasteProvider {
     override fun performPaste(dataContext: DataContext) {
@@ -16,7 +17,8 @@ class ResourcePasteProvider : PasteProvider {
         if (psiFile.fileType != XmlFileType.INSTANCE) {
             return
         }
-        performForXml(dataContext, caret)
+        val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return
+        performForXml(dataContext, caret, project)
     }
 
     /**
@@ -28,21 +30,24 @@ class ResourcePasteProvider : PasteProvider {
      */
     private fun performForXml(
         dataContext: DataContext,
-        caret: Caret
+        caret: Caret,
+        project: Project
     ) {
         val resourceUrl = getResourceUrl(dataContext) ?: return
         val resourceReference = resourceUrl.file.name
-        pasteAtCaret(caret, resourceReference)
+        val text = buildString {
+            appendLine(">>>>>> Template Start")
+            appendLine(resourceReference)
+            appendLine(">>>>>> Template End")
+        }
+        pasteAtCaret(caret, text)
     }
 
-    private fun pasteAtCaret(
-        caret: Caret,
-        resourceReference: String
-    ) {
+    private fun pasteAtCaret(caret: Caret, text: String) {
         runWriteAction {
-            caret.editor.document.insertString(caret.offset, resourceReference)
+            caret.editor.document.insertString(caret.offset, text)
         }
-        caret.selectStringFromOffset(resourceReference, caret.offset)
+        caret.selectStringFromOffset(text, caret.offset)
     }
 
     override fun isPastePossible(dataContext: DataContext): Boolean {

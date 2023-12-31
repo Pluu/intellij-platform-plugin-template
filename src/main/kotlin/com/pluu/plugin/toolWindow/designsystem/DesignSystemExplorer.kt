@@ -12,6 +12,8 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 import kotlin.properties.Delegates
 
+internal const val DESIGN_RES_MANAGER_PREF_KEY = "DesignResourceManagerPrefKey"
+
 class DesignSystemExplorer private constructor(
     facet: AndroidFacet,
     private val designSystemExplorerViewModel: DesignSystemExplorerViewModel,
