@@ -3,7 +3,6 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
 import com.android.tools.idea.ui.resourcemanager.widget.LinkLabelSearchView
 import com.intellij.concurrency.JobScheduler
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataProvider
@@ -44,11 +43,6 @@ import javax.swing.JSeparator
 import javax.swing.LayoutFocusTraversalPolicy
 import javax.swing.ListSelectionModel
 
-private val DEFAULT_LIST_MODE_WIDTH get() = JBUI.scale(60)
-private val MAX_CELL_WIDTH get() = JBUI.scale(300)
-private val LIST_CELL_SIZE get() = JBUI.scale(60)
-private val MIN_CELL_WIDTH get() = JBUI.scale(150)
-private val DEFAULT_CELL_WIDTH get() = MIN_CELL_WIDTH
 private val SECTION_HEADER_SECONDARY_COLOR get() = JBColor.border()
 
 private val SECTION_HEADER_BORDER
@@ -78,8 +72,6 @@ private val LIST_MODE_BACKGROUND = UIUtil.getListBackground()
 private const val MS_DELAY_BEFORE_LOADING_STATE = 100L // ms
 private val UNIT_DELAY_BEFORE_LOADING_STATE = TimeUnit.MILLISECONDS
 
-private const val PREVIEW_SIZE = "designResourceExplorer.previewSize"
-
 class DesignSystemExplorerListView(
     private val viewModel: DesignSystemExplorerListViewModel,
     withMultiModuleSearch: Boolean = true,
@@ -95,17 +87,6 @@ class DesignSystemExplorerListView(
 
     private var fileToSelect: VirtualFile? = null
     private var resourceToSelect: String? = null
-
-    private var previewSize = PropertiesComponent.getInstance().getInt(PREVIEW_SIZE, DEFAULT_CELL_WIDTH)
-        set(value) {
-            if (value != field) {
-                PropertiesComponent.getInstance().setValue(PREVIEW_SIZE, value, DEFAULT_CELL_WIDTH)
-                field = value
-                sectionList.getLists().forEach {
-                    (it as AssetListView).thumbnailWidth = previewSize
-                }
-            }
-        }
 
     private val sectionListModel: SectionListModel = SectionListModel()
     private val dragHandler = resourceDragHandler()
@@ -411,21 +392,24 @@ class DesignSystemExplorerListView(
     }
 
     private fun createSection(section: DesignSection): AssetSection<DesignAssetSet> {
-        val assetList = AssetListView(section.assetSets, viewModel.speedSearch).apply {
+        val assetList = AssetListView(
+            section.assetSets,
+            viewModel.speedSearch,
+            viewModel.filterOptions.isShowSampleImage
+        ).apply {
             cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager)
             dragHandler.registerSource(this)
-            addMouseListener(popupHandler)
+//            addMouseListener(popupHandler)
             addMouseListener(mouseClickListener)
 //            addKeyListener(keyListener)
             selectionMode = ListSelectionModel.SINGLE_SELECTION
-            this.addListSelectionListener {
+//            this.addListSelectionListener {
 //                listeners.forEach { listener ->
 //                    listener.onDesignAssetSetSelected(sectionList.selectedValue as? ResourceAssetSet)
 //                }
 //                (sectionList.selectedValue as? ResourceAssetSet)?.let { viewModel.updateSelectedAssetSet(it) }
 //                updateSummaryPreview()
-            }
-            thumbnailWidth = this@DesignSystemExplorerListView.previewSize
+//            }
         }
         return AssetSection(section.type.name, assetList.getFilteredSize(), assetList)
     }

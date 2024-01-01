@@ -19,7 +19,7 @@ import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.font.TextAttribute
 import javax.swing.BorderFactory
-import javax.swing.Box
+import javax.swing.BoxLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingConstants
@@ -71,7 +71,9 @@ private const val DEFAULT_WIDTH = 120
  * Abstract class to represent a graphical asset in the resource explorer.
  * This allows to set
  */
-abstract class AssetView : JPanel(BorderLayout()) {
+abstract class AssetView(
+    val isShowSampleImage: Boolean
+) : JPanel(BorderLayout()) {
 
     /**
      * If true, draw a chessboard as in background of [thumbnail]
@@ -106,22 +108,23 @@ abstract class AssetView : JPanel(BorderLayout()) {
     /**
      * Set the width of the whole view.
      */
-    var viewWidth: Int by Delegates.observable(DEFAULT_WIDTH) { _, _, newValue -> onViewWidthChanged(newValue) }
+    var thumbnailWidth: Int by Delegates.observable(DEFAULT_WIDTH) { _, _, newValue ->
+        onViewWidthChanged(newValue)
+    }
 
     /**
      * Set the title label of this card
      */
-    var title: String by Delegates.observable("") { _, _, newValue -> titleLabel.text = newValue }
+    var title: String by Delegates.observable("") { _, _, newValue ->
+        titleLabel.text = newValue
+    }
 
     /**
      * Set the subtitle label of this card
      */
-    var subtitle: String by Delegates.observable("") { _, _, newValue -> secondLineLabel.text = newValue }
-
-    /**
-     * Set the subtitle label of this card
-     */
-    var metadata: String by Delegates.observable("") { _, _, newValue -> thirdLineLabel.text = newValue }
+    var subtitle: String by Delegates.observable("") { _, _, newValue ->
+        secondLineLabel.text = newValue
+    }
 
     protected val titleLabel = JBLabel().apply {
         font = PRIMARY_FONT
@@ -167,7 +170,7 @@ abstract class AssetView : JPanel(BorderLayout()) {
     }
 
     /**
-     * Called when [viewWidth] is changed
+     * Called when [thumbnailWidth] is changed
      */
     private fun onViewWidthChanged(width: Int) {
         val thumbnailSize = computeThumbnailSize(width)
@@ -195,7 +198,9 @@ abstract class AssetView : JPanel(BorderLayout()) {
  * Component in the shape of a card with a large preview
  * and some textual info below.
  */
-class RowAssetView : AssetView() {
+class RowAssetView(
+    isShowSampleImage: Boolean
+) : AssetView(isShowSampleImage) {
 
     override var selected by Delegates.observable(false) { _, _, selected ->
         border = getBorder(selected, focused)
@@ -205,10 +210,14 @@ class RowAssetView : AssetView() {
         border = getBorder(selected, focused)
     }
 
-    private val bottomPanel = JPanel(BorderLayout(0, JBUI.scale(2))).apply {
+    private val bottomPanel = JPanel().apply {
+        layout = BoxLayout(this, BoxLayout.Y_AXIS)
         background = secondaryPanelBackground
         isOpaque = true
         border = BOTTOM_PANEL_BORDER
+
+        add(titleLabel)
+        add(secondLineLabel)
     }
 
     private val emptyLabel = JBLabel("Nothing to show", SwingConstants.CENTER).apply {
@@ -220,16 +229,16 @@ class RowAssetView : AssetView() {
         isOpaque = false
         border = LARGE_MAIN_CELL_BORDER
 
-        with(bottomPanel) {
-            add(titleLabel, BorderLayout.NORTH)
-            add(Box.createVerticalBox().apply {
-                add(secondLineLabel)
-            })
+        if (isShowSampleImage) {
+            add(contentWrapper, BorderLayout.NORTH)
         }
-
-        add(contentWrapper)
         add(bottomPanel, BorderLayout.SOUTH)
-        viewWidth = DEFAULT_WIDTH
+
+        thumbnailWidth = if (isShowSampleImage) {
+            DEFAULT_WIDTH
+        } else {
+            (DEFAULT_WIDTH / 2f).toInt()
+        }
     }
 
     override fun computeThumbnailSize(width: Int) = Dimension(width, (width * 0.75f).toInt())

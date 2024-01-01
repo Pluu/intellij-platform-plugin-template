@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent
 import javax.swing.JList
 import kotlin.properties.Delegates
 
-private val DEFAULT_PREVIEW_SIZE = JBUI.scale(50)
+private val DEFAULT_PREVIEW_SIZE = JBUI.scale(150)
 
 /**
  * [JList] to display [ResourceAssetSet] and handle switching
@@ -21,7 +21,8 @@ private val DEFAULT_PREVIEW_SIZE = JBUI.scale(50)
  */
 class AssetListView(
     assets: List<DesignAssetSet>,
-    speedSearch: SpeedSearch? = null
+    speedSearch: SpeedSearch? = null,
+    isShowSampleImage: Boolean = true
 ) : JBList<DesignAssetSet>() {
     var assetView: AssetView
         private set
@@ -43,7 +44,7 @@ class AssetListView(
 
         // Row Layout
         layoutOrientation = JList.VERTICAL
-        assetView = RowAssetView()
+        assetView = RowAssetView(isShowSampleImage)
         setExpandableItemsEnabled(false)
         updateCellSize()
 
@@ -70,9 +71,7 @@ class AssetListView(
     }
 
     private fun updateCellSize() {
-        assetView.viewWidth = thumbnailWidth
-        fixedCellWidth = assetView.preferredSize.width
-        fixedCellHeight = assetView.preferredSize.height
+        assetView.thumbnailWidth = thumbnailWidth
         revalidate()
         repaint()
     }
