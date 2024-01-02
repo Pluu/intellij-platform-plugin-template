@@ -1,6 +1,8 @@
 package com.pluu.plugin.toolWindow.designsystem.provider
 
 import com.android.annotations.concurrency.WorkerThread
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.intellij.openapi.project.BaseProjectDirectories.Companion.getBaseDirectories
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -16,21 +18,24 @@ object DesignSystemManager {
 
     @WorkerThread
     fun findDesignKit(forFacet: AndroidFacet, type: DesignSystemType): List<DesignSystemItem> {
-        val project = forFacet.module.project.getBaseDirectories()
+        val rootPath = forFacet.module.project.getBaseDirectories()
             .firstOrNull()
-            ?.findChild("pluu")
-            ?.findChild(type.name.lowercase())
-            ?.takeIf { it.isDirectory }
-            ?: return emptyList()
-        return project.children.asSequence()
-            .filter { supportImageExtension.contains(it.extension) }
+            ?.findChild("pluu") ?: return emptyList()
+
+        val jsonObject = rootPath.findChild("sample.json")
+            ?.let {
+                JsonParser.parseReader(it.inputStream.reader(Charsets.UTF_8)) as? JsonObject
+            } ?: return emptyList()
+
+        return jsonObject.getAsJsonArray(type.name.lowercase())
+            .map { it.asJsonObject }
             .map {
                 DesignSystemItem(
                     type = type,
-                    name = it.nameWithoutExtension,
-                    file = it
+                    name = it.get("id").asString,
+                    file = rootPath.findChild(type.name.lowercase())?.findChild(it.get("thumbnail").asString),
+                    sampleCode = it.get("code").asString
                 )
-            }.sortedBy { it.name }
-            .toList()
+            }
     }
 }

@@ -9,7 +9,7 @@ fun getItemPsiFile(project: Project, item: DesignSystemItem): PsiFile? {
     if (project.isDisposed) {
         return null
     }
-    val virtualFile = item.file
+    val virtualFile = item.file ?: return null
     val psiManager = PsiManager.getInstance(project)
     return psiManager.findFile(virtualFile)
 }

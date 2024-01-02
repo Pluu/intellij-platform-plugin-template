@@ -34,16 +34,11 @@ class ResourcePasteProvider : PasteProvider {
         project: Project
     ) {
         val resourceUrl = getResourceUrl(dataContext) ?: return
-        val resourceReference = resourceUrl.file.name
-        val text = buildString {
-            appendLine(">>>>>> Template Start")
-            appendLine(resourceReference)
-            appendLine(">>>>>> Template End")
-        }
-        pasteAtCaret(caret, text)
+        val sampleCode = resourceUrl.sampleCode?.takeIf { it.isNotEmpty() } ?: return
+        pasteAtCaret(caret, sampleCode, project)
     }
 
-    private fun pasteAtCaret(caret: Caret, text: String) {
+    private fun pasteAtCaret(caret: Caret, text: String, project: Project) {
         runWriteAction {
             caret.editor.document.insertString(caret.offset, text)
         }

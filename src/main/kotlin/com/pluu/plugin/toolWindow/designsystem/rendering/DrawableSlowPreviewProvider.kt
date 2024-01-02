@@ -20,9 +20,9 @@ class DrawableSlowPreviewProvider(
         createDrawablePlaceholderImage(JBUIScale.scale(20), JBUIScale.scale(20))
 
     override fun getSlowPreview(width: Int, height: Int, asset: DesignSystemItem): BufferedImage? {
-        val configContext = contextFile ?: asset.file
+        val configContext = contextFile ?: asset.file ?: return null
         val dimension = Dimension(width, height)
-        val file = asset.file
+        val file = asset.file ?: return null
         return DesignAssetRendererManager.getInstance().getViewer(file)
             .getImage(file, facet.module, dimension, configContext).get()
     }

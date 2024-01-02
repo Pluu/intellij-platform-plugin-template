@@ -7,10 +7,11 @@ import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCacheValue
 data class DesignSystemItem(
     val type: DesignSystemType,
     override val name: String,
-    val file: VirtualFile
+    val file: VirtualFile?,
+    val sampleCode: String?
 ) : ImageCacheValue {
     override val modificationStamp: Long
-        get() = file.modificationStamp
+        get() = file?.modificationStamp ?: -1L
 
     override val key: Any
         get() = AssetKey(name, type, null)
