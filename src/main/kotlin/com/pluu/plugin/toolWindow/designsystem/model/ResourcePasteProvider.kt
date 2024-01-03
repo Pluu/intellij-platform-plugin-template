@@ -1,5 +1,6 @@
 package com.pluu.plugin.toolWindow.designsystem.model
 
+import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.ide.PasteProvider
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -9,6 +10,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.actions.PasteAction
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 
 class ResourcePasteProvider : PasteProvider {
     override fun performPaste(dataContext: DataContext) {
@@ -43,6 +45,13 @@ class ResourcePasteProvider : PasteProvider {
             caret.editor.document.insertString(caret.offset, text)
         }
         caret.selectStringFromOffset(text, caret.offset)
+
+        // Reformat code
+        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(caret.editor.document) ?: return
+        ReformatCodeProcessor(
+            psiFile,
+            caret.editor.selectionModel
+        ).run()
     }
 
     override fun isPastePossible(dataContext: DataContext): Boolean {
