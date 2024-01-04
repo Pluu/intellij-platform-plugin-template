@@ -28,7 +28,8 @@ object DesignSystemManager {
             } ?: return emptyList()
 
         return jsonObject.getAsJsonArray(type.name.lowercase())
-            .map { it.asJsonObject }
+            ?.map { it.asJsonObject }
+            .orEmpty()
             .map {
                 DesignSystemItem(
                     type = type,
