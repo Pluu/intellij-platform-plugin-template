@@ -11,6 +11,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.NamedColorUtil
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
+import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
@@ -72,7 +73,7 @@ private const val DEFAULT_WIDTH = 120
  * This allows to set
  */
 abstract class AssetView(
-    val isShowSampleImage: Boolean
+    val sampleImageSize: FilterImageSize
 ) : JPanel(BorderLayout()) {
 
     /**
@@ -199,8 +200,8 @@ abstract class AssetView(
  * and some textual info below.
  */
 class RowAssetView(
-    isShowSampleImage: Boolean
-) : AssetView(isShowSampleImage) {
+    sampleImageSize: FilterImageSize
+) : AssetView(sampleImageSize) {
 
     override var selected by Delegates.observable(false) { _, _, selected ->
         border = getBorder(selected, focused)
@@ -229,12 +230,12 @@ class RowAssetView(
         isOpaque = false
         border = LARGE_MAIN_CELL_BORDER
 
-        if (isShowSampleImage) {
+        if (sampleImageSize.isVisible()) {
             add(contentWrapper, BorderLayout.NORTH)
         }
         add(bottomPanel, BorderLayout.SOUTH)
 
-        thumbnailWidth = if (isShowSampleImage) {
+        thumbnailWidth = if (sampleImageSize.isVisible()) {
             DEFAULT_WIDTH
         } else {
             (DEFAULT_WIDTH / 2f).toInt()

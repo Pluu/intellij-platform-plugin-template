@@ -11,9 +11,9 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
-import com.pluu.plugin.toolWindow.designsystem.findCompatibleFacets
-import com.pluu.plugin.toolWindow.designsystem.getFacetForModuleName
+import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
+import com.pluu.plugin.toolWindow.designsystem.model.TypeFiltersModel
 import org.jetbrains.android.facet.AndroidFacet
 import kotlin.properties.Delegates
 
@@ -58,10 +58,10 @@ class DesignSystemExplorerToolbarViewModel(
         }
     }
 
-    var isShowSampleImage: Boolean
-        get() = filterOptions.isShowSampleImage
+    var sampleImageSize: FilterImageSize
+        get() = filterOptions.sampleImageSize
         set(value) {
-            filterOptions.isShowSampleImage = value
+            filterOptions.sampleImageSize = value
         }
 
     override fun getDirectories(): Array<PsiDirectory> =
@@ -86,18 +86,7 @@ class DesignSystemExplorerToolbarViewModel(
         else -> null
     }
 
-    /**
-     * Return the [AnAction]s to switch to another module.
-     * This method only returns Android modules.
-     */
-    fun getAvailableModules(): List<String> = findCompatibleFacets(facet.module.project).map { it.module.name }.sorted()
-
-    /**
-     * Calls [facetUpdaterCallback] when a new module is selected in the ComboBox.
-     */
-    fun onModuleSelected(moduleName: String?) {
-        getFacetForModuleName(moduleName, facet.module.project)?.run(facetUpdaterCallback)
-    }
+    var typeFiltersModel: TypeFiltersModel = filterOptions.typeFiltersModel
 
     /**
      * Returns one of the existing directories used for the current [DesignSystemType], or the default 'res' directory.

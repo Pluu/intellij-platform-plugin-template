@@ -7,13 +7,19 @@ import com.intellij.ui.speedSearch.FilteringListModel
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
+import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.widget.AssetView
 import com.pluu.plugin.toolWindow.designsystem.widget.RowAssetView
 import java.awt.event.MouseEvent
 import javax.swing.JList
 import kotlin.properties.Delegates
 
-private val DEFAULT_PREVIEW_SIZE = JBUI.scale(150)
+private fun FilterImageSize.thumbnailWidth(): Int = when (this) {
+    FilterImageSize.None -> JBUI.scale(0)
+    FilterImageSize.S -> JBUI.scale(100)
+    FilterImageSize.M -> JBUI.scale(150)
+    FilterImageSize.L -> JBUI.scale(200)
+}
 
 /**
  * [JList] to display [ResourceAssetSet] and handle switching
@@ -22,7 +28,7 @@ private val DEFAULT_PREVIEW_SIZE = JBUI.scale(150)
 class AssetListView(
     assets: List<DesignAssetSet>,
     speedSearch: SpeedSearch? = null,
-    isShowSampleImage: Boolean = true
+    sampleImageSize: FilterImageSize = FilterImageSize.M
 ) : JBList<DesignAssetSet>() {
     var assetView: AssetView
         private set
@@ -30,7 +36,7 @@ class AssetListView(
     /**
      * Width of the [AssetView] thumbnail container
      */
-    var thumbnailWidth: Int by Delegates.observable(DEFAULT_PREVIEW_SIZE) { _, oldWidth, newWidth ->
+    var thumbnailWidth: Int by Delegates.observable(sampleImageSize.thumbnailWidth()) { _, oldWidth, newWidth ->
         if (oldWidth != newWidth) {
             updateCellSize()
         }
@@ -44,7 +50,7 @@ class AssetListView(
 
         // Row Layout
         layoutOrientation = JList.VERTICAL
-        assetView = RowAssetView(isShowSampleImage)
+        assetView = RowAssetView(sampleImageSize)
         setExpandableItemsEnabled(false)
         updateCellSize()
 

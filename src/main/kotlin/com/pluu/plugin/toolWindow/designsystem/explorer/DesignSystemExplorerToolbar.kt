@@ -17,6 +17,8 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.SearchTextField
 import com.intellij.util.ui.JBUI
+import com.pluu.plugin.toolWindow.designsystem.action.HeaderAction
+import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import java.awt.Component
 import java.awt.event.MouseEvent
 import javax.swing.GroupLayout
@@ -100,8 +102,8 @@ class DesignSystemExplorerToolbar(
 /**
  * Button to add new resources
  */
-private abstract class PopupAction internal constructor(val icon: Icon?, description: String)
-    : AnAction(description, description, icon), DumbAware {
+private abstract class PopupAction internal constructor(val icon: Icon?, description: String) :
+    AnAction(description, description, icon), DumbAware {
 
     override fun actionPerformed(e: AnActionEvent) {
         var x = 0
@@ -122,6 +124,23 @@ private abstract class PopupAction internal constructor(val icon: Icon?, descrip
     }
 
     protected abstract fun createAddPopupGroup(): ActionGroup
+}
+
+private class ImageSizeFilterAction(
+    val viewModel: DesignSystemExplorerToolbarViewModel,
+    private val typeFilter: FilterImageSize
+) : ToggleAction(
+    typeFilter.name,
+    "Filter ${typeFilter.name}",
+    null
+) {
+    override fun isSelected(e: AnActionEvent): Boolean {
+        return viewModel.sampleImageSize == typeFilter
+    }
+
+    override fun setSelected(e: AnActionEvent, state: Boolean) {
+        viewModel.sampleImageSize = typeFilter
+    }
 }
 
 /**
@@ -152,22 +171,26 @@ private class FilterAction(
     val viewModel: DesignSystemExplorerToolbarViewModel
 ) : PopupAction(AllIcons.General.Filter, FILTERS_BUTTON_LABEL) {
     override fun createAddPopupGroup() = DefaultActionGroup().apply {
-        add(ShowSampleImageAction(viewModel))
-    }
-}
-
-private class ShowSampleImageAction(
-    val viewModel: DesignSystemExplorerToolbarViewModel
-) : ToggleAction("Show sample images") {
-    override fun isSelected(e: AnActionEvent) = viewModel.isShowSampleImage
-    override fun setSelected(e: AnActionEvent, state: Boolean) {
-        viewModel.isShowSampleImage = state
+        addRelatedTypeFilterActions(viewModel)
     }
 }
 
 private fun action(
     addAction: AnAction
 ) = ActionButton(addAction, PresentationFactory().getPresentation(addAction), "", BUTTON_SIZE)
+
+private fun DefaultActionGroup.addRelatedTypeFilterActions(viewModel: DesignSystemExplorerToolbarViewModel) {
+    // Group the supported filters by their display name. So that one menu-item applies to the related filters.
+    val supportedImageSize = viewModel.typeFiltersModel.getSupportedImageSize().toList()
+    if (supportedImageSize.isNotEmpty()) {
+        addSeparator()
+        val header = "By Image Size Type"
+        add(HeaderAction(header, header))
+        supportedImageSize.forEach { filters ->
+            add(ImageSizeFilterAction(viewModel, filters))
+        }
+    }
+}
 
 private fun GroupLayout.SequentialGroup.addFixedSizeComponent(
     jComponent: JComponent,

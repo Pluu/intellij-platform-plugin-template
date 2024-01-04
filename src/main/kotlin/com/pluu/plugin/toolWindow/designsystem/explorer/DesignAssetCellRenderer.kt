@@ -30,7 +30,7 @@ class DesignAssetCellRenderer(
         val assetView = (list as AssetListView).assetView
         val designSystemItem = value.asset
 
-        if (assetView.isShowSampleImage) {
+        if (assetView.sampleImageSize.isVisible()) {
             val thumbnailSize = assetView.thumbnailSize
             val iconProvider: DesignAssetIconProvider = assetPreviewManager.getPreviewProvider(designSystemItem.type)
             label.icon = iconProvider.getIcon(designSystemItem,

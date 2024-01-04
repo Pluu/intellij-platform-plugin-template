@@ -395,7 +395,7 @@ class DesignSystemExplorerListView(
         val assetList = AssetListView(
             section.assetSets,
             viewModel.speedSearch,
-            viewModel.filterOptions.isShowSampleImage
+            viewModel.filterOptions.sampleImageSize
         ).apply {
             cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager)
             dragHandler.registerSource(this)
@@ -410,6 +410,7 @@ class DesignSystemExplorerListView(
 //                (sectionList.selectedValue as? ResourceAssetSet)?.let { viewModel.updateSelectedAssetSet(it) }
 //                updateSummaryPreview()
 //            }
+
         }
         return AssetSection(section.type.name, assetList.getFilteredSize(), assetList)
     }

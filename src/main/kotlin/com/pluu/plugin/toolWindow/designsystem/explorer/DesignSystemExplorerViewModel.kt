@@ -11,6 +11,7 @@ import com.pluu.plugin.toolWindow.designsystem.DESIGN_RES_MANAGER_PREF_KEY
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptionsParams
 import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCache
@@ -116,7 +117,7 @@ internal class DesignSystemExplorerViewModel(
 
     private fun updateFilterParamsInModelState() {
         modelState.filterParams = FilterOptionsParams(
-            isShowSampleImageInitialValue = filterOptions.isShowSampleImage
+            sampleImageSizeInitialValue = filterOptions.sampleImageSize
         )
     }
 
@@ -173,7 +174,7 @@ internal class DesignSystemExplorerViewModel(
                 DesignSystemType.values(),
                 ViewModelState(
                     FilterOptionsParams(
-                        isShowSampleImageInitialValue = true,
+                        sampleImageSizeInitialValue = FilterImageSize.M,
                     ),
                     DesignSystemType.values()[0],
                     ViewModelStateSaveParams(facet.module.project, DESIGN_RES_MANAGER_PREF_KEY)
@@ -184,7 +185,7 @@ internal class DesignSystemExplorerViewModel(
 }
 
 private const val FILTER_PARAMS_KEY = "FilterParams"
-private const val SHOW_SAMPLE_IMAGE = "ShowSampleImage"
+private const val SAMPLE_IMAGE_SIZE = "SampleImageSize"
 private const val DESIGN_SYSTEM_TYPE_KEY = "DesignSystemType"
 
 /**
@@ -202,9 +203,11 @@ internal class ViewModelState(
         return@run if (saveParams != null) {
             val filterKey = "${saveParams.preferencesKey}.$FILTER_PARAMS_KEY"
             val propertiesComponent = PropertiesComponent.getInstance(saveParams.project)
-            val showSampleImage = propertiesComponent.getBoolean("$filterKey.$SHOW_SAMPLE_IMAGE")
+            val sampleImageSize = propertiesComponent.getValue("$filterKey.$SAMPLE_IMAGE_SIZE")?.let {
+                FilterImageSize.valueOf(it)
+            } ?: FilterImageSize.M
             FilterOptionsParams(
-                isShowSampleImageInitialValue = showSampleImage
+                sampleImageSizeInitialValue = sampleImageSize
             )
         } else {
             filterParams
@@ -216,7 +219,7 @@ internal class ViewModelState(
             PropertiesComponent.getInstance(saveParams.project)
                 .getValue("${saveParams.preferencesKey}.$DESIGN_SYSTEM_TYPE_KEY")?.let {
                     DesignSystemType.valueOf(it)
-            } ?: selectedResourceType
+                } ?: selectedResourceType
         } else {
             selectedResourceType
         }
@@ -226,7 +229,7 @@ internal class ViewModelState(
         saveParams?.let {
             val filterKey = "${saveParams.preferencesKey}.$FILTER_PARAMS_KEY"
             val propertiesComponent = PropertiesComponent.getInstance(saveParams.project)
-            propertiesComponent.setValue("$filterKey.$SHOW_SAMPLE_IMAGE", newValue.isShowSampleImageInitialValue)
+            propertiesComponent.setValue("$filterKey.$SAMPLE_IMAGE_SIZE", newValue.sampleImageSizeInitialValue.name)
         }
     }
 
