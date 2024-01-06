@@ -1,16 +1,27 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.tools.idea.projectsystem.SourceProviderManager
+import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeView
 import com.intellij.ide.util.DirectoryChooserUtil
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.fileChooser.FileChooser
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.util.Comparing
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialog
+import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialogViewModel
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.model.TypeFiltersModel
@@ -51,6 +62,23 @@ class DesignSystemExplorerToolbarViewModel(
                 updateUICallback()
             }
         }
+
+    val addAction
+        get() = NewSampleAction()
+    /**
+     * Prompts user to choose a file.
+     *
+     * @return filePath or null if user cancels the operation
+     */
+    private fun chooseFile(supportedFileTypes: Set<String>, supportsBatchImport: Boolean): Collection<String> {
+        val fileChooserDescriptor = FileChooserDescriptor(true, true, false, false, false, supportsBatchImport)
+            .withFileFilter { file ->
+                supportedFileTypes.any { Comparing.equal(file.extension, it, file.isCaseSensitive) }
+            }
+        return FileChooser.chooseFiles(fileChooserDescriptor, facet.module.project, null)
+            .map(VirtualFile::getPath)
+            .map(FileUtil::toSystemDependentName)
+    }
 
     var searchString: String by Delegates.observable("") { _, old, new ->
         if (new != old) {
@@ -100,5 +128,17 @@ class DesignSystemExplorerToolbarViewModel(
 //        }
 //        return (subDir ?: resDirs.firstOrNull())?.let { PsiManager.getInstance(facet.module.project).findDirectory(it) }
         return null
+    }
+
+    inner class NewSampleAction : AnAction(
+        "New Sample Design System",
+        "New sample from disk",
+        AllIcons.General.Add
+    ), DumbAware {
+        override fun actionPerformed(e: AnActionEvent) {
+            ResourceImportDialog(
+                ResourceImportDialogViewModel(facet, emptySequence())
+            ).show()
+        }
     }
 }

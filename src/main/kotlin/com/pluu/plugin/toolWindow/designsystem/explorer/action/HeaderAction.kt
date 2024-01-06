@@ -1,4 +1,4 @@
-package com.pluu.plugin.toolWindow.designsystem.action
+package com.pluu.plugin.toolWindow.designsystem.explorer.action
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
