@@ -20,6 +20,7 @@ const val MAX_IMPORT_FILES = 400
 class ResourceImportDialogViewModel(
     val facet: AndroidFacet,
     assets: Sequence<DesignSystemItem>,
+    private val designAssetImporter: DesignAssetImporter = DesignAssetImporter(),
     private val importersProvider: ImportersProvider = ImportersProvider()
 ) {
     /**
@@ -44,12 +45,8 @@ class ResourceImportDialogViewModel(
 
     private val fileViewModels = mutableMapOf<DesignSystemItem, FileImportRowViewModel>()
 
-    /**
-     * Passes the [assetSetsToImport] to the [SummaryScreenViewModel].
-     * @see summaryScreenViewModel
-     */
     fun commit() {
-//        summaryScreenViewModel.assetSetsToImport = assetSetsToImport
+        designAssetImporter.importDesignAssets(assetSetsToImport, facet)
     }
 
     /**

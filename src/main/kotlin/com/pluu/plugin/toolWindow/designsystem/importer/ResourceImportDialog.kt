@@ -142,7 +142,6 @@ class ResourceImportDialog(
 
             override fun getComponent() = root
         })
-//        addStep(SummaryStep(dialogViewModel.summaryScreenViewModel))
     }
 
     override fun createNorthPanel() = northPanel
