@@ -126,7 +126,8 @@ class ResourceImportDialogViewModel(
     private val resourceDuplicateValidator = IdeResourceNameValidator.forFilename(
         ResourceFolderType.DRAWABLE,
         null,
-        StudioResourceRepositoryManager.getAppResources(facet))
+        StudioResourceRepositoryManager.getAppResources(facet)
+    )
 
     fun getAssetPreview(asset: DesignSystemItem): CompletableFuture<out Image?> {
         return asset.file?.let { file ->
@@ -143,10 +144,8 @@ class ResourceImportDialogViewModel(
     fun removeAsset(asset: DesignSystemItem): DesignAssetSet {
         val designAssetSet = assetSetsToImport.first { it.asset == asset }
         assetSetsToImport.remove(designAssetSet)
-        val renamedDesignAssetSet = designAssetSet.copy(asset = asset)
-        assetSetsToImport.add(renamedDesignAssetSet)
         updateCallback()
-        return renamedDesignAssetSet
+        return designAssetSet
     }
 
     /**
@@ -203,8 +202,10 @@ class ResourceImportDialogViewModel(
     private fun hasDuplicate(newName: String) = resourceDuplicateValidator.doesResourceExist(newName)
 
     private fun createDuplicateValidationInfo(field: JTextField?) =
-        ValidationInfo("A resource with this name already exists and might be overridden if the qualifiers are the same.",
-            field).asWarning()
+        ValidationInfo(
+            "A resource with this name already exists and might be overridden if the qualifiers are the same.",
+            field
+        ).asWarning()
 
     private fun getSameNameIsImportedValidationInfo(field: JTextField?) =
         ValidationInfo("A resource with the same name is also being imported.", field)
