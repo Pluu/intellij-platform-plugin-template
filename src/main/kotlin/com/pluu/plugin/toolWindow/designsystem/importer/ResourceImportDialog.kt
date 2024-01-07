@@ -9,28 +9,41 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTextField
 import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.JBUI
+import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.awt.BorderLayout
+import java.awt.FlowLayout
 import java.awt.KeyboardFocusManager
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.beans.PropertyChangeListener
 import java.util.*
+import java.util.function.Supplier
 import javax.swing.BorderFactory
+import javax.swing.ImageIcon
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.JTextField
+import javax.swing.event.DocumentEvent
 
 private const val DIALOG_TITLE = "Import drawables"
 
 private val DIALOG_SIZE = JBUI.size(1000, 700)
+
+private val ASSET_GROUP_BORDER = BorderFactory.createCompoundBorder(
+    JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0),
+    JBUI.Borders.empty(12, 0, 8, 0))
 
 private val NORTH_PANEL_BORDER = BorderFactory.createCompoundBorder(
     JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0),
@@ -196,14 +209,77 @@ class ResourceImportDialog(
         private var assetSet: DesignAssetSet
     ) : JPanel(BorderLayout(0, 0)) {
 
+        val assetNameLabel = JBTextField(assetSet.name, 20).apply {
+            this.font = StartupUiUtil.labelFont.deriveFont(JBUI.scaleFontSize(14f))
+            document.addDocumentListener(object : DocumentAdapter() {
+                override fun textChanged(e: DocumentEvent) {
+                    performRename(e.document.getText(0, document.length))
+                    ComponentValidator.getInstance(this@apply).ifPresent(ComponentValidator::revalidate)
+                }
+            })
+            installValidator()
+        }
+
+        private fun JTextField.installValidator() {
+            ComponentValidator(disposable).withValidator(Supplier {
+                dialogViewModel.validateName(this.text, this).also {
+                    updateButtons()
+                }
+            })
+                .installOn(this)
+                .revalidate()
+        }
+
         val fileViewContainer = JPanel(VerticalFlowLayout(true, false)).apply {
-//            assetSet.designAssets.forEach { asset ->
-//                add(singleAssetView(asset))
-//            }
+            add(singleAssetView(assetSet.asset))
+        }
+
+        private val header = JPanel(BorderLayout()).apply {
+            border = ASSET_GROUP_BORDER
+            add(JPanel(FlowLayout(FlowLayout.LEFT, 5, 0)).apply {
+                (layout as FlowLayout).alignOnBaseline = true
+                add(assetNameLabel)
+            }, BorderLayout.WEST)
+        }
+
+        init {
+            add(header, BorderLayout.NORTH)
+            add(fileViewContainer)
         }
 
         fun addAssetView(asset: DesignSystemItem) {
-//            fileViewContainer.add(singleAssetView(asset))
+            fileViewContainer.add(singleAssetView(asset))
+        }
+
+        private fun singleAssetView(asset: DesignSystemItem): FileImportRow {
+            val viewModel = dialogViewModel.createFileViewModel(asset, removeCallback = this::removeAsset)
+            val fileImportRow = FileImportRow(viewModel)
+            dialogViewModel.getAssetPreview(asset).whenComplete { image, _ ->
+                image?.let {
+                    fileImportRow.preview.icon = ImageIcon(it)
+                    fileImportRow.preview.repaint()
+                }
+            }
+            return fileImportRow
+        }
+
+        private fun performRename(assetName: String) {
+            dialogViewModel.rename(assetSet, assetName) { renamedAssetSet ->
+                val assetSetView = assetSetToView.remove(assetSet)!!
+                assetSet = renamedAssetSet
+                assetSetToView[renamedAssetSet] = assetSetView
+            }
+        }
+
+        private fun removeAsset(it: DesignSystemItem) {
+            dialogViewModel.removeAsset(it)
+            if (fileViewContainer.componentCount == 0) {
+                assetSetToView.remove(this.assetSet, this)
+                parent.remove(this)
+                root.revalidate()
+                root.repaint()
+                updateStep()
+            }
         }
 
     }
