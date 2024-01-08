@@ -17,6 +17,7 @@ import org.jdesktop.swingx.prompt.PromptSupport
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
+import java.awt.event.ItemEvent
 import javax.swing.BorderFactory
 import javax.swing.JPanel
 import javax.swing.JTextArea
@@ -53,9 +54,9 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
 
         addItemListener { itemEvent ->
             when (itemEvent.stateChange) {
-                java.awt.event.ItemEvent.SELECTED -> {
+                ItemEvent.SELECTED -> {
                     val designSystemType = itemEvent.item as DesignSystemType
-//                    updateValuePanel(viewModel.selectDesignSystemType(designSystemType))
+                    viewModel.selectDesignSystemType(designSystemType)
                 }
             }
         }
@@ -63,22 +64,22 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
 
     private val sampleCodeLabel = JBLabel("Sample code:")
 
-    private val sampleCodeTextArea = JTextArea().apply {
+    private val sampleCodeTextArea = JTextArea(
+        """
+<FrameLayout
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content" />
+""".trimIndent()
+    ).apply {
         setLineWrap(true)
         setWrapStyleWord(true)
         PromptSupport.setPrompt("Input sample code", this)
 
         document.addDocumentListener(object : DocumentAdapter() {
             override fun textChanged(event: DocumentEvent) {
-                // TODO:
+                viewModel.updateSampleCode(this@apply.text)
             }
         })
-
-        text = """
-<FrameLayout
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content" />
-        """.trimIndent()
     }
 
     private val configurationPanel = JPanel(BorderLayout(1, 0)).apply {

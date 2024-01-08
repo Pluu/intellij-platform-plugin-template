@@ -135,11 +135,11 @@ class ResourceImportDialogViewModel(
     }
 
     /**
-     * Remove the [asset] from the list of [DesignSystemItem]s to import.
-     * @return the [DesignAssetSet] that was containing the [asset]
+     * Remove the [assetSet] from the list of [DesignAssetSet]s to import.
+     * @return the [DesignAssetSet] that was containing the [assetSet]
      */
-    fun removeAsset(asset: DesignSystemItem): DesignAssetSet {
-        val designAssetSet = assetSetsToImport.first { it.asset == asset }
+    fun removeAsset(assetSet: DesignAssetSet): DesignAssetSet {
+        val designAssetSet = assetSetsToImport.first { it === assetSet }
         assetSetsToImport.remove(designAssetSet)
         updateCallback()
         return designAssetSet
@@ -174,14 +174,21 @@ class ResourceImportDialogViewModel(
      */
     fun createFileViewModel(
         asset: DesignSystemItem,
-        removeCallback: (DesignSystemItem) -> Unit
+        updateDesignSystemTypeCallback: (DesignSystemType) -> Unit,
+        updateSampleCodeCallback: (String) -> Unit,
+        removeCallback: () -> Unit
     ): FileImportRowViewModel {
-        val viewModelRemoveCallback: (DesignSystemItem) -> Unit = {
-            removeCallback(asset)
+        val viewModelRemoveCallback: () -> Unit = {
+            removeCallback()
             fileViewModels.remove(asset)
         }
-        val fileImportRowViewModel =
-            FileImportRowViewModel(asset, DesignSystemType.BUTTON, removeCallback = viewModelRemoveCallback)
+
+        val fileImportRowViewModel = FileImportRowViewModel(
+            asset,
+            updateDesignSystemTypeCallback = updateDesignSystemTypeCallback,
+            updateSampleCodeCallback = updateSampleCodeCallback,
+            removeCallback = viewModelRemoveCallback
+        )
         fileViewModels[asset] = fileImportRowViewModel
         return fileImportRowViewModel
     }
@@ -218,5 +225,29 @@ class ResourceImportDialogViewModel(
                 }
                 false
             }
+    }
+
+    fun updateDesignSystemType(
+        assetSet: DesignAssetSet,
+        newType: DesignSystemType,
+        assetUpdateCallback: (newAssetSet: DesignAssetSet) -> Unit
+    ) {
+        require(assetSetsToImport.contains(assetSet)) { "The assetSet \"${assetSet.name}\" should already exist" }
+        val newAssetSet = assetSet.copy(asset = assetSet.asset.copy(type = newType))
+        assetSetsToImport.remove(assetSet)
+        assetSetsToImport.add(newAssetSet)
+        assetUpdateCallback(newAssetSet)
+    }
+
+    fun updateSampleCode(
+        assetSet: DesignAssetSet,
+        sampleCode: String,
+        assetUpdateCallback: (newAssetSet: DesignAssetSet) -> Unit
+    ) {
+        require(assetSetsToImport.contains(assetSet)) { "The assetSet \"${assetSet.name}\" should already exist" }
+        val newAssetSet = assetSet.copy(asset = assetSet.asset.copy(sampleCode = sampleCode))
+        assetSetsToImport.remove(assetSet)
+        assetSetsToImport.add(newAssetSet)
+        assetUpdateCallback(newAssetSet)
     }
 }

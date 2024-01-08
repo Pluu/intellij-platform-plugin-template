@@ -19,6 +19,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.JBUI
+import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -43,7 +44,8 @@ private val DIALOG_SIZE = JBUI.size(1000, 700)
 
 private val ASSET_GROUP_BORDER = BorderFactory.createCompoundBorder(
     JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0),
-    JBUI.Borders.empty(12, 0, 8, 0))
+    JBUI.Borders.empty(12, 0, 8, 0)
+)
 
 private val NORTH_PANEL_BORDER = BorderFactory.createCompoundBorder(
     JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0),
@@ -251,7 +253,12 @@ class ResourceImportDialog(
         }
 
         private fun singleAssetView(asset: DesignSystemItem): FileImportRow {
-            val viewModel = dialogViewModel.createFileViewModel(asset, removeCallback = this::removeAsset)
+            val viewModel = dialogViewModel.createFileViewModel(
+                asset,
+                updateDesignSystemTypeCallback = this::updateDesignSystemType,
+                updateSampleCodeCallback = this::updateSampleCode,
+                removeCallback = this::removeAsset,
+            )
             val fileImportRow = FileImportRow(viewModel)
             dialogViewModel.getAssetPreview(asset).whenComplete { image, _ ->
                 image?.let {
@@ -262,16 +269,26 @@ class ResourceImportDialog(
             return fileImportRow
         }
 
-        private fun performRename(assetName: String) {
-            dialogViewModel.rename(assetSet, assetName) { renamedAssetSet ->
-                val assetSetView = assetSetToView.remove(assetSet)!!
-                assetSet = renamedAssetSet
-                assetSetToView[renamedAssetSet] = assetSetView
-            }
+        private fun updateDesignSystemType(designSystemType: DesignSystemType) {
+            dialogViewModel.updateDesignSystemType(assetSet, designSystemType, ::updateNewAssetSet)
         }
 
-        private fun removeAsset(it: DesignSystemItem) {
-            dialogViewModel.removeAsset(it)
+        private fun updateSampleCode(sampleCode: String) {
+            dialogViewModel.updateSampleCode(assetSet, sampleCode, ::updateNewAssetSet)
+        }
+
+        private fun performRename(assetName: String) {
+            dialogViewModel.rename(assetSet, assetName, ::updateNewAssetSet)
+        }
+
+        private fun updateNewAssetSet(newDesignAssetSet: DesignAssetSet) {
+            val assetSetView = assetSetToView.remove(assetSet)!!
+            assetSet = newDesignAssetSet
+            assetSetToView[newDesignAssetSet] = assetSetView
+        }
+
+        private fun removeAsset() {
+            dialogViewModel.removeAsset(this.assetSet)
             if (fileViewContainer.componentCount == 0) {
                 assetSetToView.remove(this.assetSet, this)
                 parent.remove(this)
