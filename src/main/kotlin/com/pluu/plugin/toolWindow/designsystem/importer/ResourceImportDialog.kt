@@ -38,7 +38,7 @@ import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.event.DocumentEvent
 
-private const val DIALOG_TITLE = "Import drawables"
+private const val DIALOG_TITLE = "Import component"
 
 private val DIALOG_SIZE = JBUI.size(1000, 700)
 
@@ -151,7 +151,7 @@ class ResourceImportDialog(
     private fun updateValues() {
         val importedAssetCount = dialogViewModel.fileCount
         fileCountLabel.text =
-            "$importedAssetCount ${StringUtil.pluralize("resource", importedAssetCount)} ready to be imported"
+            "$importedAssetCount ${StringUtil.pluralize("component", importedAssetCount)} ready to be imported"
     }
 
     private fun addDesignAssetSet(assetSet: DesignAssetSet) {
