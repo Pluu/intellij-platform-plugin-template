@@ -46,7 +46,7 @@ object DesignSystemManager {
 
     fun saveSample(facet: AndroidFacet, type: DesignSystemType, items: List<DesignAssetSet>): Boolean {
         val project = facet.module.project
-        val jsonObject = loadJsonFromSampleFile(facet)
+        val jsonObject = loadJsonFromSampleFile(facet, true)
 
         val j = jsonObject.getAsJsonArray(type.jsonKey) ?: JsonArray().also {
             jsonObject.add(type.jsonKey, it)
@@ -68,18 +68,23 @@ object DesignSystemManager {
         return true
     }
 
-    private fun loadJsonFromSampleFile(facet: AndroidFacet): JsonObject {
-        return rootPath(facet)
-            ?.findChild(sampleJsonFileName)
+    private fun loadJsonFromSampleFile(facet: AndroidFacet, isRequiredFile: Boolean): JsonObject {
+        val rootPath = getOrCreateDefaultRootDirectory(facet)
+        return rootPath.findChild(sampleJsonFileName)
             ?.let {
                 JsonParser.parseReader(it.inputStream.reader(Charsets.UTF_8)) as? JsonObject
-            } ?: JsonObject()
+            } ?: run {
+            if (isRequiredFile) {
+                VfsUtil.createChildSequent(this, rootPath, "sample", "json")
+            }
+            JsonObject()
+        }
     }
 
     @WorkerThread
     fun findDesignKit(facet: AndroidFacet, type: DesignSystemType): List<DesignSystemItem> {
         val rootPath = rootPath(facet) ?: return emptyList()
-        val jsonObject = loadJsonFromSampleFile(facet)
+        val jsonObject = loadJsonFromSampleFile(facet, false)
         return jsonObject.getAsJsonArray(type.jsonKey)
             ?.map { it.asJsonObject }
             .orEmpty()
