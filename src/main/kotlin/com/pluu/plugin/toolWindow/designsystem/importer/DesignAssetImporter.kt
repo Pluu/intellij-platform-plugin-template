@@ -22,6 +22,7 @@ class DesignAssetImporter {
         WriteCommandAction.runWriteCommandAction(facet.module.project, "Write samples", null, {
             groupedAssets.forEach { (designSystemType, items) ->
                 copyAssetsInFolder(designSystemType, items, sampleRoot)
+                DesignSystemManager.saveSample(facet, designSystemType, items)
             }
         })
     }

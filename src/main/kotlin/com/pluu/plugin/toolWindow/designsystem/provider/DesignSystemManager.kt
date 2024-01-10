@@ -1,20 +1,26 @@
 package com.pluu.plugin.toolWindow.designsystem.provider
 
 import com.android.annotations.concurrency.WorkerThread
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.rd.util.string.printToString
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import org.jetbrains.android.facet.AndroidFacet
+import java.nio.file.Files
 import javax.imageio.ImageIO
 
 object DesignSystemManager {
 
     private val sampleDirName = "pluu"
+
+    private val sampleJsonFileName = "sample.json"
 
     // https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/plugin/RasterAssetRenderer.kt
     private val supportImageExtension by lazy {
@@ -38,26 +44,65 @@ object DesignSystemManager {
         return requireNotNull(rootPath(facet))
     }
 
+    fun saveSample(facet: AndroidFacet, type: DesignSystemType, items: List<DesignAssetSet>): Boolean {
+        val project = facet.module.project
+        val jsonObject = loadJsonFromSampleFile(facet)
+
+        val j = jsonObject.getAsJsonArray(type.jsonKey) ?: JsonArray().also {
+            jsonObject.add(type.jsonKey, it)
+        }
+        items.forEach { assetSet ->
+            j.add(assetSet.asJson())
+        }
+
+        WriteCommandAction.runWriteCommandAction(project, "Write json", null, {
+            rootPath(facet)
+                ?.findChild(sampleJsonFileName)
+                ?.let {
+                    Files.newBufferedWriter(it.toNioPath(), Charsets.UTF_8).use { writer ->
+                        writer.write(jsonObject.printToString())
+                    }
+                }
+        })
+
+        return true
+    }
+
+    private fun loadJsonFromSampleFile(facet: AndroidFacet): JsonObject {
+        return rootPath(facet)
+            ?.findChild(sampleJsonFileName)
+            ?.let {
+                JsonParser.parseReader(it.inputStream.reader(Charsets.UTF_8)) as? JsonObject
+            } ?: JsonObject()
+    }
+
     @WorkerThread
     fun findDesignKit(facet: AndroidFacet, type: DesignSystemType): List<DesignSystemItem> {
         val rootPath = rootPath(facet) ?: return emptyList()
-
-        val jsonObject = rootPath.findChild("sample.json")
-            ?.let {
-                JsonParser.parseReader(it.inputStream.reader(Charsets.UTF_8)) as? JsonObject
-            } ?: return emptyList()
-
+        val jsonObject = loadJsonFromSampleFile(facet)
         return jsonObject.getAsJsonArray(type.jsonKey)
             ?.map { it.asJsonObject }
             .orEmpty()
             .map {
-                DesignSystemItem(
-                    type = type,
-                    name = it.get("id").asString,
-                    file = rootPath.findChild(type.sampleDirName)?.findChild(it.get("thumbnail").asString),
-                    sampleCode = it.get("code").asString
-                )
+                it.asDesignSystemItem(rootPath, type)
             }
+    }
+
+    private fun JsonObject.asDesignSystemItem(rootPath: VirtualFile, type: DesignSystemType): DesignSystemItem {
+        return DesignSystemItem(
+            type = type,
+            name = get("id").asString,
+            file = rootPath.findChild(type.sampleDirName)?.findChild(get("thumbnail").asString),
+            sampleCode = get("code").asString
+        )
+    }
+
+    private fun DesignAssetSet.asJson(): JsonObject {
+        val json = JsonObject()
+        json.addProperty("id", asset.name)
+        json.addProperty("thumbnail", "${name}.${asset.file!!.extension}")
+        json.addProperty("code", asset.sampleCode)
+        return json
     }
 }
 
