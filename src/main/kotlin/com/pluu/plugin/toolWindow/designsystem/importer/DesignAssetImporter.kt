@@ -1,6 +1,8 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
+import com.android.tools.idea.util.toIoFile
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
@@ -14,7 +16,11 @@ class DesignAssetImporter {
         assetSets: Set<DesignAssetSet>,
         facet: AndroidFacet
     ) {
+        if (assetSets.isEmpty()) return
+        
         val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
+
+        LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
 
         val groupedAssets = assetSets.groupBy {
             it.asset.type
