@@ -3,10 +3,11 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
 import com.android.tools.idea.ui.resourcemanager.widget.Separator
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
-import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.labels.LinkLabel
@@ -19,11 +20,12 @@ import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.event.ItemEvent
 import javax.swing.BorderFactory
+import javax.swing.JList
 import javax.swing.JPanel
 import javax.swing.JTextArea
 import javax.swing.event.DocumentEvent
 
-private val PREVIEW_SIZE = JBUI.size(100)
+private val PREVIEW_SIZE = JBUI.size(150)
 private val COMPONENT_GAP = JBUI.scale(4)
 
 class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout()) {
@@ -50,7 +52,7 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
     private val designSystemTypeLabel = JBLabel("Design system Type:")
 
     private val designSystemTypeComboBox = ComboBox(viewModel.designSystemTypes).apply {
-        renderer = SimpleListCellRenderer.create("", DesignSystemType::displayName)
+        renderer = getRenderer("Select a type", DesignSystemType::displayName)
 
         addItemListener { itemEvent ->
             when (itemEvent.stateChange) {
@@ -60,6 +62,8 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
                 }
             }
         }
+
+        selectedItem = null
     }
 
     private val sampleCodeLabel = JBLabel("Sample code:")
@@ -144,4 +148,17 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
     }
 
     private fun separator() = Separator(8, 4)
+
+    private fun <T> getRenderer(placeholderValue: String?, textRenderer: ((T) -> String?)?) = object : ColoredListCellRenderer<T?>() {
+        override fun customizeCellRenderer(list: JList<out T?>,
+                                           value: T?,
+                                           index: Int,
+                                           selected: Boolean,
+                                           hasFocus: Boolean) {
+            when (value) {
+                null -> append(placeholderValue ?: "Select a value...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES)
+                else -> append(textRenderer?.let { it(value) } ?: value.toString())
+            }
+        }
+    }
 }
