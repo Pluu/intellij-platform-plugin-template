@@ -285,6 +285,7 @@ class ResourceImportDialog(
             val assetSetView = assetSetToView.remove(assetSet)!!
             assetSet = newDesignAssetSet
             assetSetToView[newDesignAssetSet] = assetSetView
+            updateButtons()
         }
 
         private fun removeAsset() {
@@ -298,6 +299,15 @@ class ResourceImportDialog(
             }
         }
 
+        fun isValidate(): Boolean {
+            return assetSet.isValidate()
+        }
+    }
+
+    override fun canFinish(): Boolean {
+        return assetSetToView.isNotEmpty() && assetSetToView.all {
+            it.value.isValidate()
+        }
     }
 
     override fun getHelpID(): String {

@@ -15,6 +15,10 @@ data class DesignSystemItem(
 
     override val key: Any
         get() = AssetKey(name, type, null)
+
+    fun isValidate(): Boolean {
+        return name.isNotEmpty() && file != null && !sampleCode.isNullOrEmpty()
+    }
 }
 
 /**
