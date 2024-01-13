@@ -30,25 +30,25 @@ import kotlin.properties.Delegates
 // Graphic constant for the view
 private val LARGE_MAIN_CELL_BORDER_SELECTED
     get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(3),
-        RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(4), JBUI.scale(2))
+        JBUI.Borders.empty(2),
+        RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(2), JBUI.scale(1))
     )
 
 private val LARGE_MAIN_CELL_BORDER_UNFOCUSED
     get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(3),
-        RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(4), JBUI.scale(2))
+        JBUI.Borders.empty(2),
+        RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(2), JBUI.scale(1))
     )
 
 private var PREVIEW_BORDER_COLOR: Color = border
 
 private val LARGE_MAIN_CELL_BORDER
     get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(4),
-        RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(4), JBUI.scale(1))
+        JBUI.Borders.empty(2),
+        RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(2), JBUI.scale(1))
     )
 
-private val BOTTOM_PANEL_BORDER get() = JBUI.Borders.empty(5, 8, 5, 5)
+private val BOTTOM_PANEL_BORDER get() = JBUI.Borders.empty(4)
 
 private val PRIMARY_FONT
     get() = StartupUiUtil.labelFont.deriveFont(
