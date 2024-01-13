@@ -81,9 +81,11 @@ class DesignSystemExplorerListViewModelImpl(
         resources.add(
             DesignSection(
                 resourceType,
-                getModuleResources(forFacet, resourceType).map {
-                    DesignAssetSet(it.name, it)
-                }
+                getModuleResources(forFacet, resourceType)
+                    .sortedBy { it.name }
+                    .map {
+                        DesignAssetSet(it.name, it)
+                    }
             )
         )
         return resources
