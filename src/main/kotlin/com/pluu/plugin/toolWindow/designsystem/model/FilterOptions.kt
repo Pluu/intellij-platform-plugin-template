@@ -11,7 +11,7 @@ class FilterOptions internal constructor(
     /**
      * Model for filters by type. Eg: To filter Drawables by 'vector-drawables' files.
      *
-     * @see TypeFilter
+     * @see FilterOption
      */
     val typeFiltersModel = TypeFiltersModel().apply { valueChangedCallback = refreshResourcesCallback }
 
@@ -61,12 +61,12 @@ class TypeFiltersModel {
     private val resourceTypeToFilter = getTypeFiltersMap().toMutableMap()
 
     /**
-     * For the given [type], returns a list of the supported [TypeFilter]s.
+     * Returns a list of the supported [FilterOption]s.
      */
     fun getSupportedImageSize() = FilterImageSize.values()
 
     /**
-     * The current state for the given [TypeFilter], returns false if it doesn't exist for the given [DesignSystemType].
+     * The current state for the given [FilterOption], returns false if it doesn't exist for the given [DesignSystemType].
      */
     fun isEnabled(type: FilterType, filter: FilterOption): Boolean =
         resourceTypeToFilter[type]?.let {
@@ -74,7 +74,7 @@ class TypeFiltersModel {
         } ?: false
 
     /**
-     * Set the state for a given [TypeFilter] if it exists for the given [DesignSystemType]. If it results in value change Eg: false ->
+     * Set the state for a given [FilterOption] if it exists for the given [DesignSystemType]. If it results in value change Eg: false ->
      * true. Triggers the [valueChangedCallback] function.
      */
     fun setEnabled(type: FilterType, filter: FilterOption, value: Boolean) {
@@ -83,7 +83,7 @@ class TypeFiltersModel {
     }
 
     /**
-     * Sets all the [TypeFilter]s under the given [DesignSystemType] to false (ie: disabled).
+     * Sets all the [FilterOption]s under the given [DesignSystemType] to false (ie: disabled).
      */
     fun clearAll(type: DesignSystemType) {
 
