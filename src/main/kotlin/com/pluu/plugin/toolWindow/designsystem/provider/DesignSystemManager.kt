@@ -1,6 +1,7 @@
 package com.pluu.plugin.toolWindow.designsystem.provider
 
 import com.android.annotations.concurrency.WorkerThread
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -8,7 +9,6 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.rd.util.string.printToString
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -55,12 +55,15 @@ object DesignSystemManager {
             j.add(assetSet.asJson())
         }
 
+        val gson = GsonBuilder().setLenient().setPrettyPrinting()
+            .create()
+
         WriteCommandAction.runWriteCommandAction(project, "Write json", null, {
             rootPath(facet)
                 ?.findChild(sampleJsonFileName)
                 ?.let {
                     Files.newBufferedWriter(it.toNioPath(), Charsets.UTF_8).use { writer ->
-                        writer.write(jsonObject.printToString())
+                        gson.toJson(jsonObject, writer)
                     }
                 }
         })
