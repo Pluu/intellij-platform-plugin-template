@@ -1,8 +1,10 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import javax.swing.JTextArea
 
 class FileImportRowViewModel(
     asset: DesignSystemItem,
@@ -28,5 +30,13 @@ class FileImportRowViewModel(
 
     fun removeFile() {
         removeCallback()
+    }
+
+    fun validateText(text: String?, textArea: JTextArea): ValidationInfo? {
+        return if (text.isNullOrEmpty()) {
+            ValidationInfo("Cannot be empty", textArea)
+        } else {
+            null
+        }
     }
 }

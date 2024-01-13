@@ -2,7 +2,9 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
 import com.android.tools.idea.ui.resourcemanager.widget.Separator
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
@@ -28,7 +30,9 @@ import javax.swing.event.DocumentEvent
 private val PREVIEW_SIZE = JBUI.size(150)
 private val COMPONENT_GAP = JBUI.scale(4)
 
-class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout()) {
+class FileImportRow(
+    val viewModel: FileImportRowViewModel
+) : JPanel(BorderLayout()), Disposable {
     val preview = JBLabel().apply {
         horizontalAlignment = JBLabel.CENTER
     }
@@ -76,8 +80,14 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
         document.addDocumentListener(object : DocumentAdapter() {
             override fun textChanged(event: DocumentEvent) {
                 viewModel.updateSampleCode(this@apply.text)
+                ComponentValidator.getInstance(this@apply).ifPresent(ComponentValidator::revalidate)
             }
         })
+
+        ComponentValidator(this@FileImportRow).withValidator { ->
+            viewModel.validateText(this.text, this)
+        }.installOn(this)
+            .revalidate()
     }
 
     private val configurationPanel = JPanel(BorderLayout(1, 0)).apply {
@@ -104,6 +114,8 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
     }
 
     private val middlePane = JPanel(BorderLayout()).apply {
+        border = JBUI.Borders.empty(COMPONENT_GAP)
+
         add(JPanel(FlowLayout(FlowLayout.LEFT, 5, 0)).apply {
             add(fileName)
             add(separator())
@@ -143,16 +155,23 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
 
     private fun separator() = Separator(8, 4)
 
-    private fun <T> getRenderer(placeholderValue: String?, textRenderer: ((T) -> String?)?) = object : ColoredListCellRenderer<T?>() {
-        override fun customizeCellRenderer(list: JList<out T?>,
-                                           value: T?,
-                                           index: Int,
-                                           selected: Boolean,
-                                           hasFocus: Boolean) {
-            when (value) {
-                null -> append(placeholderValue ?: "Select a value...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES)
-                else -> append(textRenderer?.let { it(value) } ?: value.toString())
+    private fun <T> getRenderer(placeholderValue: String?, textRenderer: ((T) -> String?)?) =
+        object : ColoredListCellRenderer<T?>() {
+            override fun customizeCellRenderer(
+                list: JList<out T?>,
+                value: T?,
+                index: Int,
+                selected: Boolean,
+                hasFocus: Boolean
+            ) {
+                when (value) {
+                    null -> append(placeholderValue ?: "Select a value...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES)
+                    else -> append(textRenderer?.let { it(value) } ?: value.toString())
+                }
             }
         }
+
+    override fun dispose() {
+
     }
 }

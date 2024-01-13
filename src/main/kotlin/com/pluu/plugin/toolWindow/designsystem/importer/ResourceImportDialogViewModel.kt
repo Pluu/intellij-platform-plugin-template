@@ -194,12 +194,11 @@ class ResourceImportDialogViewModel(
     }
 
     fun validateName(newName: String, field: JTextField? = null): ValidationInfo? {
-        val errorText = resourceNameValidator.getErrorText(newName)
-        when {
-            errorText != null -> return ValidationInfo(errorText, field)
-            hasDuplicate(newName) -> return createDuplicateValidationInfo(field)
-            checkIfNameUnique(newName) -> return getSameNameIsImportedValidationInfo(field)
-            else -> return null
+        return when {
+            newName.isEmpty() -> ValidationInfo("Cannot be empty", field)
+            hasDuplicate(newName) -> createDuplicateValidationInfo(field)
+            checkIfNameUnique(newName) -> getSameNameIsImportedValidationInfo(field)
+            else -> null
         }
     }
 

@@ -30,12 +30,10 @@ import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.beans.PropertyChangeListener
 import java.util.*
-import java.util.function.Supplier
 import javax.swing.BorderFactory
 import javax.swing.ImageIcon
 import javax.swing.JComponent
 import javax.swing.JPanel
-import javax.swing.JTextField
 import javax.swing.event.DocumentEvent
 
 private const val DIALOG_TITLE = "Import component"
@@ -185,9 +183,6 @@ class ResourceImportDialog(
         ) {
             override fun actionPerformed(e: AnActionEvent) {
                 dialogViewModel.importMoreAssets { designAssetSet, newDesignAssets ->
-//                    if (newDesignAssets.isNotEmpty()) {
-//                        jumpToImportStep()
-//                    }
                     addAssets(designAssetSet, newDesignAssets)
                 }
             }
@@ -210,7 +205,7 @@ class ResourceImportDialog(
         private var assetSet: DesignAssetSet
     ) : JPanel(BorderLayout(0, 0)) {
 
-        val assetNameLabel = JBTextField(assetSet.name, 20).apply {
+        val assetNameLabel = JBTextField(assetSet.name, 30).apply {
             this.font = StartupUiUtil.labelFont.deriveFont(JBUI.scaleFontSize(14f))
             document.addDocumentListener(object : DocumentAdapter() {
                 override fun textChanged(e: DocumentEvent) {
@@ -218,16 +213,12 @@ class ResourceImportDialog(
                     ComponentValidator.getInstance(this@apply).ifPresent(ComponentValidator::revalidate)
                 }
             })
-            installValidator()
-        }
 
-        private fun JTextField.installValidator() {
-            ComponentValidator(disposable).withValidator(Supplier {
+            ComponentValidator(disposable).withValidator {  ->
                 dialogViewModel.validateName(this.text, this).also {
                     updateButtons()
                 }
-            })
-                .installOn(this)
+            }.installOn(this)
                 .revalidate()
         }
 
@@ -239,6 +230,7 @@ class ResourceImportDialog(
             border = ASSET_GROUP_BORDER
             add(JPanel(FlowLayout(FlowLayout.LEFT, 5, 0)).apply {
                 (layout as FlowLayout).alignOnBaseline = true
+                add(JBLabel("Component name:"))
                 add(assetNameLabel)
             }, BorderLayout.WEST)
         }
@@ -298,15 +290,11 @@ class ResourceImportDialog(
                 updateStep()
             }
         }
-
-        fun isValidate(): Boolean {
-            return assetSet.isValidate()
-        }
     }
 
     override fun canFinish(): Boolean {
         return assetSetToView.isNotEmpty() && assetSetToView.all {
-            it.value.isValidate()
+            it.key.isValidate()
         }
     }
 
