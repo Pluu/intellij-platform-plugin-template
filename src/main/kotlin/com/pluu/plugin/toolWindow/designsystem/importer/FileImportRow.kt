@@ -68,13 +68,7 @@ class FileImportRow(val viewModel: FileImportRowViewModel) : JPanel(BorderLayout
 
     private val sampleCodeLabel = JBLabel("Sample code:")
 
-    private val sampleCodeTextArea = JTextArea(
-        """
-<FrameLayout
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content" />
-""".trimIndent()
-    ).apply {
+    private val sampleCodeTextArea = JTextArea().apply {
         setLineWrap(true)
         setWrapStyleWord(true)
         PromptSupport.setPrompt("Input sample code", this)
