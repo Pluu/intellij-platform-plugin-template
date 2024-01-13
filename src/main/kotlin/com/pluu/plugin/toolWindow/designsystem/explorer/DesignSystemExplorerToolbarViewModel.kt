@@ -137,7 +137,9 @@ class DesignSystemExplorerToolbarViewModel(
     ), DumbAware {
         override fun actionPerformed(e: AnActionEvent) {
             ResourceImportDialog(
-                ResourceImportDialogViewModel(facet, emptySequence())
+                ResourceImportDialogViewModel(facet, emptySequence()) {
+                    populateResourcesCallback()
+                }
             ).show()
         }
     }

@@ -21,7 +21,8 @@ class ResourceImportDialogViewModel(
     val facet: AndroidFacet,
     assets: Sequence<DesignSystemItem>,
     private val designAssetImporter: DesignAssetImporter = DesignAssetImporter(),
-    private val importersProvider: ImportersProvider = ImportersProvider()
+    private val importersProvider: ImportersProvider = ImportersProvider(),
+    private val importDoneCallback: () -> Unit
 ) {
     /**
      *  The [DesignSystemItem]s to be imported.
@@ -47,6 +48,7 @@ class ResourceImportDialogViewModel(
 
     fun commit() {
         designAssetImporter.importDesignAssets(assetSetsToImport, facet)
+        importDoneCallback()
     }
 
     /**

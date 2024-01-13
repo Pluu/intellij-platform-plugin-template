@@ -9,7 +9,6 @@ class ImportersProvider(
     private val typeToImporter = importer.getSupportedFileTypes().map { Pair(it, importer) }.toList()
         .groupBy({ it.first }, { it.second })
 
-
     /**
      * Returns the all the file extension supported by the available plugins
      */

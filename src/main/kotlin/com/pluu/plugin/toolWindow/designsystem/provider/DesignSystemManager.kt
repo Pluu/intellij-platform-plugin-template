@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
@@ -73,6 +74,8 @@ object DesignSystemManager {
 
     private fun loadJsonFromSampleFile(facet: AndroidFacet, isRequiredFile: Boolean): JsonObject {
         val rootPath = getOrCreateDefaultRootDirectory(facet)
+        LocalFileSystem.getInstance().refreshFiles(listOf(rootPath))
+        
         return rootPath.findChild(sampleJsonFileName)
             ?.let {
                 JsonParser.parseReader(it.inputStream.reader(Charsets.UTF_8)) as? JsonObject
@@ -87,6 +90,8 @@ object DesignSystemManager {
     @WorkerThread
     fun findDesignKit(facet: AndroidFacet, type: DesignSystemType): List<DesignSystemItem> {
         val rootPath = rootPath(facet) ?: return emptyList()
+        LocalFileSystem.getInstance().refreshFiles(listOf(rootPath))
+
         val jsonObject = loadJsonFromSampleFile(facet, false)
         return jsonObject.getAsJsonArray(type.jsonKey)
             ?.map { it.asJsonObject }
