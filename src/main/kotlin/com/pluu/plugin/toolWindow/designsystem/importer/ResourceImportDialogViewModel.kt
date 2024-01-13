@@ -114,11 +114,6 @@ class ResourceImportDialogViewModel(
     }
 
     /**
-     * This validator only check for the name
-     */
-    private val resourceNameValidator = IdeResourceNameValidator.forFilename(ResourceFolderType.DRAWABLE, null)
-
-    /**
      * We use a a separate validator for duplicate because if a duplicate is found, we just
      * want to show a warning - a user can override an existing resource.
      */

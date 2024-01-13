@@ -11,12 +11,7 @@ import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.fileChooser.FileChooser
-import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.util.Comparing
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
@@ -65,20 +60,6 @@ class DesignSystemExplorerToolbarViewModel(
 
     val addAction
         get() = NewSampleAction()
-    /**
-     * Prompts user to choose a file.
-     *
-     * @return filePath or null if user cancels the operation
-     */
-    private fun chooseFile(supportedFileTypes: Set<String>, supportsBatchImport: Boolean): Collection<String> {
-        val fileChooserDescriptor = FileChooserDescriptor(true, true, false, false, false, supportsBatchImport)
-            .withFileFilter { file ->
-                supportedFileTypes.any { Comparing.equal(file.extension, it, file.isCaseSensitive) }
-            }
-        return FileChooser.chooseFiles(fileChooserDescriptor, facet.module.project, null)
-            .map(VirtualFile::getPath)
-            .map(FileUtil::toSystemDependentName)
-    }
 
     var searchString: String by Delegates.observable("") { _, old, new ->
         if (new != old) {
