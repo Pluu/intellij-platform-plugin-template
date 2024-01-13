@@ -228,11 +228,12 @@ class ResourceImportDialog(
 
         private val header = JPanel(BorderLayout()).apply {
             border = ASSET_GROUP_BORDER
-            add(JPanel(FlowLayout(FlowLayout.LEFT, 5, 0)).apply {
+            add(JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)).apply {
                 (layout as FlowLayout).alignOnBaseline = true
-                add(JBLabel("Component name:"))
+                add(JBLabel("Class name:"))
                 add(assetNameLabel)
-            }, BorderLayout.WEST)
+            }, BorderLayout.NORTH)
+            add(FileConfigurationPanel(), BorderLayout.SOUTH)
         }
 
         init {

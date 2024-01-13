@@ -1,0 +1,130 @@
+package com.pluu.plugin.toolWindow.designsystem.importer
+
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBTextField
+import com.intellij.ui.components.labels.LinkLabel
+import com.intellij.ui.components.panels.HorizontalLayout
+import com.intellij.ui.components.panels.VerticalLayout
+import com.intellij.util.ui.JBUI
+import icons.StudioIcons
+import java.awt.BorderLayout
+import javax.swing.JPanel
+import javax.swing.SwingConstants
+import javax.swing.event.DocumentEvent
+
+private val FLOW_LAYOUT_GAP = JBUI.scale(4)
+private val ADD_BUTTON_BORDER = JBUI.Borders.empty(4, 0)
+private val ADD_BUTTON_SIZE = JBUI.size(20)
+
+private const val CLEAR_ALIAS_NAME = "Clear alias name"
+
+class FileConfigurationPanel() : JPanel(BorderLayout(0, 0)) {
+
+    private val qualifierContainer = JPanel(VerticalLayout(0, SwingConstants.LEFT))
+
+    private val addQualifierButton = LinkLabel("Add another alias name", null, ::onAddQualifierLabelClicked)
+        .also { label ->
+            label.border = ADD_BUTTON_BORDER
+            label.isEnabled = canAddConfigurationRow()
+            label.isFocusable = true
+        }
+
+    private fun onAddQualifierLabelClicked(
+        label: LinkLabel<Any?>,
+        @Suppress("UNUSED_PARAMETER") ignored: Any?
+    ) {
+//        viewModel.applyConfiguration()
+        addConfigurationRow()
+        label.isEnabled = canAddConfigurationRow()
+    }
+
+    init {
+        validateAddConfiguration()
+
+        add(qualifierContainer)
+        add(addQualifierButton, BorderLayout.SOUTH)
+    }
+
+    private fun validateAddConfiguration() {
+        addQualifierButton.isEnabled = canAddConfigurationRow()
+    }
+
+    private fun addConfigurationRow() {
+        val configurationRow = ConfigurationRow()
+        qualifierContainer.add(configurationRow)
+        qualifierContainer.revalidate()
+        qualifierContainer.repaint()
+        configurationRow.assetNameTextField.requestFocus()
+    }
+
+    private fun canAddConfigurationRow(): Boolean =
+//        viewModel.canAddQualifier()
+//                && qualifierContainer.components
+        qualifierContainer.components
+            .filterIsInstance<ConfigurationRow>()
+            .map { it.assetNameTextField }
+            .all { it.text.isNotEmpty() }
+
+    private inner class ConfigurationRow(
+
+    ) : JPanel(HorizontalLayout(0, SwingConstants.CENTER)), Disposable {
+
+        val assetNameTextField = JBTextField("", 30).apply {
+            document.addDocumentListener(object : DocumentAdapter() {
+                override fun textChanged(e: DocumentEvent) {
+//                    performRename(e.document.getText(0, document.length))
+                    validateAddConfiguration()
+                }
+            })
+        }
+
+        private val deleteButton = createDeleteButton()
+
+        init {
+            add(JBLabel("Another alias name:"))
+            add(assetNameTextField)
+            add(deleteButton)
+        }
+
+        private fun createDeleteButton(): ActionButton {
+            val action = object : DumbAwareAction(CLEAR_ALIAS_NAME, CLEAR_ALIAS_NAME, StudioIcons.Common.CLOSE) {
+
+                override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+                override fun actionPerformed(e: AnActionEvent) {
+                    deleteRow()
+                    validateAddConfiguration()
+                }
+            }
+            return ActionButton(
+                action,
+                action.templatePresentation.clone(),
+                "Resource Explorer",
+                ADD_BUTTON_SIZE
+            ).apply { isFocusable = true }
+        }
+
+        private fun deleteRow() {
+            with(parent) {
+                remove(this@ConfigurationRow)
+                revalidate()
+                repaint()
+            }
+        }
+
+        private fun reset() {
+//            updateValuePanel(null)
+        }
+
+        override fun dispose() {
+
+        }
+    }
+
+}
