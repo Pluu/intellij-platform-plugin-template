@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
-import com.android.ide.common.resources.FileResourceNameValidator
 import com.android.tools.idea.ui.resourcemanager.importer.getAllLeafFiles
 import com.android.tools.idea.util.toIoFile
 import com.intellij.ide.util.PropertiesComponent
@@ -51,7 +50,7 @@ fun Sequence<File>.toDesignAsset(importersProvider: ImportersProvider): Sequence
  */
 fun Sequence<DesignSystemItem>.groupIntoDesignAssetSet(): List<DesignAssetSet> =
     map {
-        DesignAssetSet(FileResourceNameValidator.getValidResourceFileName(it.name), it)
+        DesignAssetSet(it.name, it)
     }.sortedBy { it.name }
         .toList()
 
