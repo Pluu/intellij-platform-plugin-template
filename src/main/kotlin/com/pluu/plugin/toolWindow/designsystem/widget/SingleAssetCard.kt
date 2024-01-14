@@ -134,10 +134,6 @@ abstract class AssetView(
         font = font.deriveFont(SECONDARY_FONT_SIZE)
         foreground = SECONDARY_FONT_COLOR
     }
-    protected val thirdLineLabel = JBLabel().apply {
-        font = font.deriveFont(SECONDARY_FONT_SIZE)
-        foreground = SECONDARY_FONT_COLOR
-    }
 
     abstract var selected: Boolean
 
