@@ -128,7 +128,7 @@ class ResourceImportDialogViewModel(
         return asset.file?.let { file ->
             rendererManager
                 .getViewer(file)
-                .getImage(file, facet.module, JBUI.size(50))
+                .getImage(file, facet.module, JBUI.size(150))
         } ?: CompletableFuture.completedFuture(null)
     }
 
