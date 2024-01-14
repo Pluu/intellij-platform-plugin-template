@@ -85,7 +85,7 @@ class FileConfigurationPanel(
         val assetNameTextField = JBTextField("", 30).apply {
             document.addDocumentListener(object : DocumentAdapter() {
                 override fun textChanged(e: DocumentEvent) {
-                    param.paramValue = e.document.getText(0, e.length)
+                    param.paramValue = this@apply.text
                 }
             })
         }

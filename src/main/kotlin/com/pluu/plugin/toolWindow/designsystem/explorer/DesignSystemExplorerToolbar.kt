@@ -80,7 +80,7 @@ class DesignSystemExplorerToolbar(
         textEditor.columns = GAP_SIZE
         textEditor.document.addDocumentListener(object : DocumentAdapter() {
             override fun textChanged(e: DocumentEvent) {
-                toolbarViewModel.searchString = e.document.getText(0, e.document.length)
+                toolbarViewModel.searchString = this@apply.text
             }
         })
     }

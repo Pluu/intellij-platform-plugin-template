@@ -209,7 +209,7 @@ class ResourceImportDialog(
             this.font = StartupUiUtil.labelFont.deriveFont(JBUI.scaleFontSize(14f))
             document.addDocumentListener(object : DocumentAdapter() {
                 override fun textChanged(e: DocumentEvent) {
-                    performRename(e.document.getText(0, document.length))
+                    performRename(this@apply.text)
                     ComponentValidator.getInstance(this@apply).ifPresent(ComponentValidator::revalidate)
                 }
             })
