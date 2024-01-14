@@ -21,6 +21,10 @@ class ResourceAssetSetFilteringListModel(
     private fun isMatch(assetSet: DesignAssetSet): Boolean {
         if (filter.value(assetSet.name)) {
             return true
+        } else if (assetSet.asset.aliasNames != null) {
+            return assetSet.asset.aliasNames.any {
+                filter.value(it)
+            }
         }
         return false
     }
