@@ -18,7 +18,7 @@ class FileImportRowViewModel(
     var fileSize: String = StringUtil.formatFileSize(asset.file?.length ?: 0)
 
     val designSystemTypes: Array<DesignSystemType>
-        get() = DesignSystemType.values()
+        get() = DesignSystemType.selectableTypes()
 
     fun selectDesignSystemType(designSystemType: DesignSystemType) {
         updateDesignSystemTypeCallback(designSystemType)

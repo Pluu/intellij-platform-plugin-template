@@ -171,12 +171,12 @@ internal class DesignSystemExplorerViewModel(
             return DesignSystemExplorerViewModel(
                 facet,
                 null,
-                DesignSystemType.values(),
+                DesignSystemType.selectableTypes(),
                 ViewModelState(
                     FilterOptionsParams(
                         sampleImageSizeInitialValue = FilterImageSize.M,
                     ),
-                    DesignSystemType.values()[0],
+                    DesignSystemType.defaultType,
                     ViewModelStateSaveParams(facet.module.project, DESIGN_RES_MANAGER_PREF_KEY)
                 )
             )

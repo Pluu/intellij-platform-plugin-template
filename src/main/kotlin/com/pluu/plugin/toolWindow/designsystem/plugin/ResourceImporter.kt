@@ -17,7 +17,7 @@ class ResourceImporter {
     fun processFile(file: File): DesignSystemItem? {
         val virtualFile = VfsUtil.findFileByIoFile(file, true) ?: return null
         return DesignSystemItem(
-            type = DesignSystemType.BUTTON,
+            type = DesignSystemType.NONE,
             name = virtualFile.nameWithoutExtension,
             aliasNames = null,
             file = virtualFile,

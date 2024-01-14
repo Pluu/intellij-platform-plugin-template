@@ -74,6 +74,7 @@ private val UNIT_DELAY_BEFORE_LOADING_STATE = TimeUnit.MILLISECONDS
 
 class DesignSystemExplorerListView(
     private val viewModel: DesignSystemExplorerListViewModel,
+    val facet: AndroidFacet,
     withMultiModuleSearch: Boolean = true,
 ) : JPanel(BorderLayout()), Disposable, DataProvider {
 

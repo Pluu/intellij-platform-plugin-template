@@ -1,8 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
-import com.android.resources.ResourceFolderType
-import com.android.tools.idea.res.IdeResourceNameValidator
-import com.android.tools.idea.res.StudioResourceRepositoryManager
 import com.android.tools.idea.ui.resourcemanager.plugin.DesignAssetRendererManager
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.util.ui.JBUI
@@ -114,16 +111,6 @@ class ResourceImportDialogViewModel(
         }
     }
 
-    /**
-     * We use a a separate validator for duplicate because if a duplicate is found, we just
-     * want to show a warning - a user can override an existing resource.
-     */
-    private val resourceDuplicateValidator = IdeResourceNameValidator.forFilename(
-        ResourceFolderType.DRAWABLE,
-        null,
-        StudioResourceRepositoryManager.getAppResources(facet)
-    )
-
     fun getAssetPreview(asset: DesignSystemItem): CompletableFuture<out Image?> {
         return asset.file?.let { file ->
             rendererManager
@@ -171,32 +158,35 @@ class ResourceImportDialogViewModel(
         return fileImportRowViewModel
     }
 
-    fun validateName(newName: String, field: JTextField? = null): ValidationInfo? {
+    fun validateName(type: DesignSystemType, newName: String, field: JTextField? = null): ValidationInfo? {
         return when {
             newName.isEmpty() -> ValidationInfo("Cannot be empty", field)
-            hasDuplicate(newName) -> createDuplicateValidationInfo(field)
-            checkIfNameUnique(newName) -> getSameNameIsImportedValidationInfo(field)
+            hasDuplicate(type, newName) -> createDuplicateValidationInfo(field)
+            checkIfNameUnique(type, newName) -> getSameNameIsImportedValidationInfo(field)
             else -> null
         }
     }
 
-    private fun hasDuplicate(newName: String) = resourceDuplicateValidator.doesResourceExist(newName)
+    private fun hasDuplicate(type: DesignSystemType, newName: String): Boolean {
+        // TODO: 선행 저장된 데이터 중복 체크
+        return false
+    }
 
     private fun createDuplicateValidationInfo(field: JTextField?) =
         ValidationInfo(
-            "A resource with this name already exists and might be overridden if the qualifiers are the same.",
+            "A component with this name already exists.",
             field
         ).asWarning()
 
     private fun getSameNameIsImportedValidationInfo(field: JTextField?) =
-        ValidationInfo("A resource with the same name is also being imported.", field)
+        ValidationInfo("A component with the same name and same type is also being imported.", field)
             .asWarning()
 
-    private fun checkIfNameUnique(newName: String?): Boolean {
+    private fun checkIfNameUnique(type: DesignSystemType, newName: String?): Boolean {
         var nameSeen = false
         return assetSetsToImport
             .any {
-                if (it.name == newName) {
+                if (it.name == newName && it.asset.type == type) {
                     if (nameSeen) return@any true
                     nameSeen = true
                 }
