@@ -29,6 +29,11 @@ class FileConfigurationViewModel {
                 .toList()
         )
     }
+
+    fun deleteAlias(param: AliasConfigParam) {
+        usedAliasName.remove(param)
+        applyConfiguration()
+    }
 }
 
 data class AliasConfigParam(

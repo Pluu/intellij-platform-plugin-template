@@ -106,6 +106,7 @@ class FileConfigurationPanel(
                 override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
                 override fun actionPerformed(e: AnActionEvent) {
+                    viewModel.deleteAlias(param)
                     deleteRow()
                     validateAddConfiguration()
                 }
