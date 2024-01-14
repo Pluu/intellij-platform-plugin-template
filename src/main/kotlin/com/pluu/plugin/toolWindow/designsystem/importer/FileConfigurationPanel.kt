@@ -14,17 +14,24 @@ import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.JBUI
 import icons.StudioIcons
 import java.awt.BorderLayout
+import java.util.*
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 import javax.swing.event.DocumentEvent
 
-private val FLOW_LAYOUT_GAP = JBUI.scale(4)
 private val ADD_BUTTON_BORDER = JBUI.Borders.empty(4, 0)
 private val ADD_BUTTON_SIZE = JBUI.size(20)
 
 private const val CLEAR_ALIAS_NAME = "Clear alias name"
 
-class FileConfigurationPanel() : JPanel(BorderLayout(0, 0)) {
+class FileConfigurationPanel(
+    val viewModel: FileConfigurationViewModel
+) : JPanel(BorderLayout(0, 0)) {
+
+    private val configurationChanged: (Observable, Any?) -> Unit = { _, _ ->
+        viewModel.applyConfiguration()
+        validateAddConfiguration()
+    }
 
     private val qualifierContainer = JPanel(VerticalLayout(0, SwingConstants.LEFT))
 
@@ -39,7 +46,6 @@ class FileConfigurationPanel() : JPanel(BorderLayout(0, 0)) {
         label: LinkLabel<Any?>,
         @Suppress("UNUSED_PARAMETER") ignored: Any?
     ) {
-//        viewModel.applyConfiguration()
         addConfigurationRow()
         label.isEnabled = canAddConfigurationRow()
     }
@@ -56,7 +62,7 @@ class FileConfigurationPanel() : JPanel(BorderLayout(0, 0)) {
     }
 
     private fun addConfigurationRow() {
-        val configurationRow = ConfigurationRow()
+        val configurationRow = ConfigurationRow(viewModel)
         qualifierContainer.add(configurationRow)
         qualifierContainer.revalidate()
         qualifierContainer.repaint()
@@ -72,14 +78,14 @@ class FileConfigurationPanel() : JPanel(BorderLayout(0, 0)) {
             .all { it.text.isNotEmpty() }
 
     private inner class ConfigurationRow(
-
+        private val viewModel: FileConfigurationViewModel,
+        private val param: AliasConfigParam = viewModel.newConfigKey()
     ) : JPanel(HorizontalLayout(0, SwingConstants.CENTER)), Disposable {
 
         val assetNameTextField = JBTextField("", 30).apply {
             document.addDocumentListener(object : DocumentAdapter() {
                 override fun textChanged(e: DocumentEvent) {
-//                    performRename(e.document.getText(0, document.length))
-                    validateAddConfiguration()
+                    param.paramValue = e.document.getText(0, e.length)
                 }
             })
         }
@@ -87,9 +93,11 @@ class FileConfigurationPanel() : JPanel(BorderLayout(0, 0)) {
         private val deleteButton = createDeleteButton()
 
         init {
-            add(JBLabel("Another alias name:"))
+            add(JBLabel("Alias name:"))
             add(assetNameTextField)
             add(deleteButton)
+
+            updateValuePanel(param)
         }
 
         private fun createDeleteButton(): ActionButton {
@@ -118,8 +126,11 @@ class FileConfigurationPanel() : JPanel(BorderLayout(0, 0)) {
             }
         }
 
-        private fun reset() {
-//            updateValuePanel(null)
+        private fun updateValuePanel(param: AliasConfigParam) {
+            assetNameTextField.text = param.paramValue
+            param.addObserver(configurationChanged)
+            revalidate()
+            repaint()
         }
 
         override fun dispose() {

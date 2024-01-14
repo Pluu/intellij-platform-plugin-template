@@ -75,7 +75,7 @@ object DesignSystemManager {
     private fun loadJsonFromSampleFile(facet: AndroidFacet, isRequiredFile: Boolean): JsonObject {
         val rootPath = getOrCreateDefaultRootDirectory(facet)
         LocalFileSystem.getInstance().refreshFiles(listOf(rootPath))
-        
+
         return rootPath.findChild(sampleJsonFileName)
             ?.let {
                 JsonParser.parseReader(it.inputStream.reader(Charsets.UTF_8)) as? JsonObject
@@ -106,6 +106,7 @@ object DesignSystemManager {
             type = type,
             name = get("id").asString,
             file = rootPath.findChild(type.sampleDirName)?.findChild(get("thumbnail").asString),
+            aliasNames = getAsJsonArray("alias")?.map { it.asString },
             sampleCode = get("code").asString
         )
     }
@@ -114,6 +115,15 @@ object DesignSystemManager {
         val json = JsonObject()
         json.addProperty("id", asset.name)
         json.addProperty("thumbnail", "${name}.${asset.file!!.extension}")
+
+        val alisNames = JsonArray()
+        asset.aliasNames?.forEach {
+            alisNames.add(it)
+        }
+        if (!alisNames.isEmpty) {
+            json.add("alias", alisNames)
+        }
+
         json.addProperty("code", asset.sampleCode)
         return json
     }

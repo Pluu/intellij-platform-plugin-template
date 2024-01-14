@@ -7,6 +7,7 @@ import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCacheValue
 data class DesignSystemItem(
     val type: DesignSystemType,
     override val name: String,
+    val aliasNames: List<String>?,
     val file: VirtualFile?,
     val sampleCode: String?
 ) : ImageCacheValue {

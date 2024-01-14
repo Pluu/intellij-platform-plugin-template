@@ -46,7 +46,7 @@ class DesignAssetCellRenderer(
         assetView.focused = cellHasFocus
 
         assetView.title = designSystemItem.name
-        assetView.subtitle = designSystemItem.type.name
+        assetView.subtitle = designSystemItem.aliasNames?.joinToString(", ") ?: "-"
         return assetView
     }
 }

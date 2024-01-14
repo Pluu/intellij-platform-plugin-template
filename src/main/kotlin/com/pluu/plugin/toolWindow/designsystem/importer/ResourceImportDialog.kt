@@ -214,7 +214,7 @@ class ResourceImportDialog(
                 }
             })
 
-            ComponentValidator(disposable).withValidator {  ->
+            ComponentValidator(disposable).withValidator { ->
                 dialogViewModel.validateName(this.text, this).also {
                     updateButtons()
                 }
@@ -233,12 +233,18 @@ class ResourceImportDialog(
                 add(JBLabel("Class name:"))
                 add(assetNameLabel)
             }, BorderLayout.NORTH)
-            add(FileConfigurationPanel(), BorderLayout.SOUTH)
+            add(
+                FileConfigurationPanel(
+                    dialogViewModel.fileConfigurationViewModel
+                ), BorderLayout.SOUTH
+            )
         }
 
         init {
             add(header, BorderLayout.NORTH)
             add(fileViewContainer)
+
+            dialogViewModel.fileConfigurationViewModel.onConfigurationUpdated = this::updateAliasName
         }
 
         fun addAssetView(asset: DesignSystemItem) {
@@ -271,7 +277,11 @@ class ResourceImportDialog(
         }
 
         private fun performRename(assetName: String) {
-            dialogViewModel.rename(assetSet, assetName, ::updateNewAssetSet)
+            dialogViewModel.updateName(assetSet, assetName, ::updateNewAssetSet)
+        }
+
+        private fun updateAliasName(aliasName: List<String>) {
+            dialogViewModel.updateAliasName(assetSet, aliasName, ::updateNewAssetSet)
         }
 
         private fun updateNewAssetSet(newDesignAssetSet: DesignAssetSet) {

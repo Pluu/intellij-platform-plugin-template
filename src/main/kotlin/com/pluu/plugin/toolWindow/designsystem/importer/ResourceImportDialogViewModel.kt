@@ -20,6 +20,7 @@ const val MAX_IMPORT_FILES = 400
 class ResourceImportDialogViewModel(
     val facet: AndroidFacet,
     assets: Sequence<DesignSystemItem>,
+    val fileConfigurationViewModel: FileConfigurationViewModel = FileConfigurationViewModel(),
     private val designAssetImporter: DesignAssetImporter = DesignAssetImporter(),
     private val importersProvider: ImportersProvider = ImportersProvider(),
     private val importDoneCallback: () -> Unit
@@ -143,26 +144,6 @@ class ResourceImportDialogViewModel(
     }
 
     /**
-     * Creates a copy of [assetSet] with [newName] set as the [DesignAssetSet]'s name.
-     * This method does not modify the underlying [DesignSystemItem], which is just passed to the newly
-     * created [DesignAssetSet].
-     *
-     * [assetRenamedCallback] is a callback with the old [assetSet] name and the newly created [DesignAssetSet].
-     * This meant to be used by the view to update itself when it is holding a map from view to [DesignAssetSet].
-     */
-    fun rename(
-        assetSet: DesignAssetSet,
-        newName: String,
-        assetRenamedCallback: (newAssetSet: DesignAssetSet) -> Unit
-    ) {
-        require(assetSetsToImport.contains(assetSet)) { "The assetSet \"${assetSet.name}\" should already exist" }
-        val renamedAssetSet = DesignAssetSet(newName, assetSet.asset)
-        assetSetsToImport.remove(assetSet)
-        assetSetsToImport.add(renamedAssetSet)
-        assetRenamedCallback(renamedAssetSet)
-    }
-
-    /**
      * Creates a [FileImportRowViewModel] for the provided [asset].
      *
      * To let the [FileImportRowViewModel] delete itself, a callback needs to
@@ -223,27 +204,63 @@ class ResourceImportDialogViewModel(
             }
     }
 
+    private fun update(
+        assetSet: DesignAssetSet,
+        callback: (newAssetSet: DesignAssetSet) -> Unit,
+        newAssetSetGenerator: (DesignAssetSet) -> DesignAssetSet
+    ) {
+        require(assetSetsToImport.contains(assetSet)) { "The assetSet \"${assetSet.name}\" should already exist" }
+        val newAssetSet = newAssetSetGenerator(assetSet)
+        assetSetsToImport.remove(assetSet)
+        assetSetsToImport.add(newAssetSet)
+        callback(newAssetSet)
+    }
+
+    /**
+     * Creates a copy of [assetSet] with [newName] set as the [DesignAssetSet]'s name.
+     * This method does not modify the underlying [DesignSystemItem], which is just passed to the newly
+     * created [DesignAssetSet].
+     *
+     * [callback] is a callback with the old [assetSet] name and the newly created [DesignAssetSet].
+     * This meant to be used by the view to update itself when it is holding a map from view to [DesignAssetSet].
+     */
+    fun updateName(
+        assetSet: DesignAssetSet,
+        newName: String,
+        callback: (newAssetSet: DesignAssetSet) -> Unit
+    ) {
+        update(assetSet, callback) {
+            DesignAssetSet(newName, assetSet.asset)
+        }
+    }
+
     fun updateDesignSystemType(
         assetSet: DesignAssetSet,
         newType: DesignSystemType,
-        assetUpdateCallback: (newAssetSet: DesignAssetSet) -> Unit
+        callback: (newAssetSet: DesignAssetSet) -> Unit
     ) {
-        require(assetSetsToImport.contains(assetSet)) { "The assetSet \"${assetSet.name}\" should already exist" }
-        val newAssetSet = assetSet.copy(asset = assetSet.asset.copy(type = newType))
-        assetSetsToImport.remove(assetSet)
-        assetSetsToImport.add(newAssetSet)
-        assetUpdateCallback(newAssetSet)
+        update(assetSet, callback) {
+            assetSet.copy(asset = assetSet.asset.copy(type = newType))
+        }
     }
 
     fun updateSampleCode(
         assetSet: DesignAssetSet,
         sampleCode: String,
-        assetUpdateCallback: (newAssetSet: DesignAssetSet) -> Unit
+        callback: (newAssetSet: DesignAssetSet) -> Unit
     ) {
-        require(assetSetsToImport.contains(assetSet)) { "The assetSet \"${assetSet.name}\" should already exist" }
-        val newAssetSet = assetSet.copy(asset = assetSet.asset.copy(sampleCode = sampleCode))
-        assetSetsToImport.remove(assetSet)
-        assetSetsToImport.add(newAssetSet)
-        assetUpdateCallback(newAssetSet)
+        update(assetSet, callback) {
+            assetSet.copy(asset = assetSet.asset.copy(sampleCode = sampleCode))
+        }
+    }
+
+    fun updateAliasName(
+        assetSet: DesignAssetSet,
+        alisNames: List<String>,
+        callback: (newAssetSet: DesignAssetSet) -> Unit
+    ) {
+        update(assetSet, callback) {
+            assetSet.copy(asset = assetSet.asset.copy(aliasNames = alisNames))
+        }
     }
 }
