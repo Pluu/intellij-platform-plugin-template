@@ -1,13 +1,29 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.util.*
 import kotlin.properties.Delegates
 
-class FileConfigurationViewModel {
+class FileConfigurationViewModel(
+    list: List<AliasConfigParam> = emptyList()
+) {
+    constructor(assets: Sequence<DesignSystemItem>) :
+            this(
+                assets.flatMap { it.aliasNames.orEmpty() }
+                    .mapIndexed { index, s ->
+                        AliasConfigParam(index) {
+                            it.isNotEmpty()
+                        }.apply {
+                            paramValue = s
+                        }
+                    }.toList()
+            )
 
     var onConfigurationUpdated: ((List<String>) -> Unit)? = null
 
-    private val usedAliasName = mutableListOf<AliasConfigParam>()
+    private val usedAliasName = mutableListOf(*list.toTypedArray())
+
+    fun getCurrentAliasName(): List<AliasConfigParam> = usedAliasName
 
     private var incrementalIndex = 0
 

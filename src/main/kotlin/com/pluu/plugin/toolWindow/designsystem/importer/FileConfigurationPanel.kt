@@ -51,6 +51,14 @@ class FileConfigurationPanel(
     }
 
     init {
+        val initConfig = viewModel.getCurrentAliasName()
+        if (initConfig.isNotEmpty()) {
+            initConfig.forEach {
+                val row = ConfigurationRow(viewModel, it)
+                qualifierContainer.add(row)
+            }
+        }
+
         validateAddConfiguration()
 
         add(qualifierContainer)

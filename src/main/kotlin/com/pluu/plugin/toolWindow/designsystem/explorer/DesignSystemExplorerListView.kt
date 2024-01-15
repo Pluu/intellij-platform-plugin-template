@@ -3,9 +3,14 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
 import com.android.tools.idea.ui.resourcemanager.widget.LinkLabelSearchView
 import com.intellij.concurrency.JobScheduler
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
@@ -17,11 +22,14 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.explorer.drag.resourceDragHandler
+import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialog
+import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialogViewModel
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.widget.Section
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionList
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionListModel
+import org.jetbrains.android.facet.AndroidFacet
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Container
@@ -138,26 +146,37 @@ class DesignSystemExplorerListView(
      */
     private val popupHandler = object : PopupHandler() {
         val actionManager = ActionManager.getInstance()
-//        val group = DefaultActionGroup().apply {
-//            add(RefreshDesignAssetAction { assets ->
-//                assets.forEach { viewModel.clearImageCache(it) }
-//                repaint()
-//            })
-//            addSeparator()
-//            add(actionManager.getAction("ResourceExplorer") as ActionGroup)
-//        }
 
-        override fun invokePopup(comp: Component?, x: Int, y: Int) {
+        val actionGroup = DefaultActionGroup().apply {
+            add(
+                EditComponentAction
+                {
+                    val assetListView = sectionList.getLists()
+                        .filterIsInstance<AssetListView>()
+                        .firstOrNull() ?: return@EditComponentAction
+                    val assetSet = assetListView.model.getElementAt(assetListView.selectedIndex)
+
+                    ResourceImportDialog(
+                        ResourceImportDialogViewModel(facet, sequenceOf(assetSet.asset)) {
+                            // TODO:
+                        }
+                    ).show()
+                }
+            )
+        }
+
+        override fun invokePopup(comp: Component, x: Int, y: Int) {
             val list = comp as JList<*>
             // Select the element before invoking the popup menu
             val clickedIndex = list.locationToIndex(Point(x, y))
-//            if (!list.isSelectedIndex(clickedIndex)) {
-//                list.selectedIndex = clickedIndex
-//            }
-//            val popupMenu = actionManager.createActionPopupMenu("ResourceExplorer", group)
-//            popupMenu.setTargetComponent(list)
-//            val menu = popupMenu.component
-//            menu.show(comp, x, y)
+            if (!list.isSelectedIndex(clickedIndex)) {
+                list.selectedIndex = clickedIndex
+            }
+
+            val popupMenu = actionManager.createActionPopupMenu("ResourceExplorer", actionGroup)
+            popupMenu.setTargetComponent(list)
+            val menu = popupMenu.component
+            menu.show(comp, x, y)
         }
     }
 
@@ -400,7 +419,7 @@ class DesignSystemExplorerListView(
         ).apply {
             cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager)
             dragHandler.registerSource(this)
-//            addMouseListener(popupHandler)
+            addMouseListener(popupHandler)
             addMouseListener(mouseClickListener)
 //            addKeyListener(keyListener)
             selectionMode = ListSelectionModel.SINGLE_SELECTION
@@ -453,5 +472,19 @@ class DesignSystemExplorerListView(
         populateResourcesFuture?.cancel(true)
         searchFuture?.cancel(true)
         showLoadingFuture?.cancel(true)
+    }
+
+    private class EditComponentAction(
+        val action: () -> Unit
+    ) : AnAction(
+        "Edit...",
+        "Edit component",
+        AllIcons.Actions.Edit
+    ) {
+        override fun actionPerformed(e: AnActionEvent) {
+            action()
+        }
+
+        override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
     }
 }

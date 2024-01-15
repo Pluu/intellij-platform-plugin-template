@@ -17,7 +17,7 @@ const val MAX_IMPORT_FILES = 400
 class ResourceImportDialogViewModel(
     val facet: AndroidFacet,
     assets: Sequence<DesignSystemItem>,
-    val fileConfigurationViewModel: FileConfigurationViewModel = FileConfigurationViewModel(),
+    val fileConfigurationViewModel: FileConfigurationViewModel = FileConfigurationViewModel(assets),
     private val designAssetImporter: DesignAssetImporter = DesignAssetImporter(),
     private val importersProvider: ImportersProvider = ImportersProvider(),
     private val importDoneCallback: () -> Unit

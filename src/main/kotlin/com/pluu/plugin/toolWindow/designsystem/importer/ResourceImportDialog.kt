@@ -285,7 +285,7 @@ class ResourceImportDialog(
         }
 
         private fun updateNewAssetSet(newDesignAssetSet: DesignAssetSet) {
-            val assetSetView = assetSetToView.remove(assetSet)!!
+            val assetSetView = assetSetToView.remove(assetSet) ?: return
             assetSet = newDesignAssetSet
             assetSetToView[newDesignAssetSet] = assetSetView
             updateButtons()

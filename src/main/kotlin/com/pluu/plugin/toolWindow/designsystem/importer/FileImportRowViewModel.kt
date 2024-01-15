@@ -16,15 +16,21 @@ class FileImportRowViewModel(
     var updateCallback: (() -> Unit)? = null
     var fileName: String = asset.file?.name.orEmpty()
     var fileSize: String = StringUtil.formatFileSize(asset.file?.length ?: 0)
+    var sampleCode: String = asset.sampleCode.orEmpty()
+    var designSystemType: DesignSystemType? = asset.type.takeIf { it.isSelectable() }
 
-    val designSystemTypes: Array<DesignSystemType>
+    val selectableDesignSystemTypes: Array<DesignSystemType>
         get() = DesignSystemType.selectableTypes()
 
     fun selectDesignSystemType(designSystemType: DesignSystemType) {
+        if (this.designSystemType == designSystemType) return
+        this.designSystemType = designSystemType
         updateDesignSystemTypeCallback(designSystemType)
     }
 
     fun updateSampleCode(text: String) {
+        if (this.sampleCode == text) return
+        this.sampleCode = text
         updateSampleCodeCallback(text)
     }
 

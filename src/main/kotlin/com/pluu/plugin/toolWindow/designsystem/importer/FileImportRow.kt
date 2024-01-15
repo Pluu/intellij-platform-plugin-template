@@ -55,7 +55,7 @@ class FileImportRow(
 
     private val designSystemTypeLabel = JBLabel("Design system Type:")
 
-    private val designSystemTypeComboBox = ComboBox(viewModel.designSystemTypes).apply {
+    private val designSystemTypeComboBox = ComboBox(viewModel.selectableDesignSystemTypes).apply {
         renderer = getRenderer("Select a type", DesignSystemType::displayName)
 
         addItemListener { itemEvent ->
@@ -67,12 +67,12 @@ class FileImportRow(
             }
         }
 
-        selectedItem = null
+        selectedItem = viewModel.designSystemType
     }
 
     private val sampleCodeLabel = JBLabel("Sample code:")
 
-    private val sampleCodeTextArea = JTextArea().apply {
+    private val sampleCodeTextArea = JTextArea(viewModel.sampleCode).apply {
         setLineWrap(true)
         setWrapStyleWord(true)
         PromptSupport.setPrompt("Input sample code", this)
