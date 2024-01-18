@@ -45,8 +45,9 @@ class DesignAssetCellRenderer(
         assetView.selected = isSelected
         assetView.focused = cellHasFocus
 
-        assetView.title = designSystemItem.name
+        assetView.title = designSystemItem.name + "ACBDJFDLSKJDJFLKJSD FJS fklsj fklj"
         assetView.subtitle = designSystemItem.aliasNames?.joinToString(", ") ?: "-"
+        assetView.supportFileType = "XML"
         return assetView
     }
 }

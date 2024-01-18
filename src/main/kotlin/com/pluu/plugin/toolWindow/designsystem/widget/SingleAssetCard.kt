@@ -127,12 +127,19 @@ abstract class AssetView(
         secondLineLabel.text = newValue
     }
 
+    var supportFileType: String by Delegates.observable("") { _, _, newValue ->
+        supportFileTypeLabel.text = newValue
+    }
+
     protected val titleLabel = JBLabel().apply {
         font = PRIMARY_FONT
     }
     protected val secondLineLabel = JBLabel().apply {
         font = font.deriveFont(SECONDARY_FONT_SIZE)
         foreground = SECONDARY_FONT_COLOR
+    }
+    protected val supportFileTypeLabel = JBLabel().apply {
+        font = font.deriveFont(SECONDARY_FONT_SIZE)
     }
 
     abstract var selected: Boolean
@@ -207,14 +214,25 @@ class RowAssetView(
         border = getBorder(selected, focused)
     }
 
+    private val firstPanel = JPanel().apply {
+        layout = BorderLayout(2, 2)
+        background = secondaryPanelBackground
+        add(titleLabel, BorderLayout.CENTER)
+        add(supportFileTypeLabel, BorderLayout.EAST)
+    }
+
     private val bottomPanel = JPanel().apply {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
         background = secondaryPanelBackground
         isOpaque = true
         border = BOTTOM_PANEL_BORDER
 
-        add(titleLabel)
-        add(secondLineLabel)
+        add(
+            JBUI.Panels.simplePanel(2, 2).apply {
+                add(firstPanel, BorderLayout.NORTH)
+                add(secondLineLabel, BorderLayout.SOUTH)
+            }
+        )
     }
 
     private val emptyLabel = JBLabel("Nothing to show", SwingConstants.CENTER).apply {
