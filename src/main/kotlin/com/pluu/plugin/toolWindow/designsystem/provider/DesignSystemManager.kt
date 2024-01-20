@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import org.jetbrains.android.facet.AndroidFacet
@@ -107,6 +108,7 @@ object DesignSystemManager {
             name = get("id").asString,
             file = rootPath.findChild(type.sampleDirName)?.findChild(get("thumbnail").asString),
             aliasNames = getAsJsonArray("alias")?.map { it.asString },
+            applicableFileType = ApplicableFileType.of(get("applicableFileType").asString),
             sampleCode = get("code").asString
         )
     }
@@ -124,6 +126,7 @@ object DesignSystemManager {
             json.add("alias", alisNames)
         }
 
+        json.addProperty("applicableFileType", asset.applicableFileType.name)
         json.addProperty("code", asset.sampleCode)
         return json
     }

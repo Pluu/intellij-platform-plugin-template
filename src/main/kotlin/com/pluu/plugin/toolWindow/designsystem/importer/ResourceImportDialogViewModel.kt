@@ -4,6 +4,7 @@ import com.android.tools.idea.ui.resourcemanager.plugin.DesignAssetRendererManag
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import org.jetbrains.android.facet.AndroidFacet
@@ -141,6 +142,7 @@ class ResourceImportDialogViewModel(
         asset: DesignSystemItem,
         updateDesignSystemTypeCallback: (DesignSystemType) -> Unit,
         updateSampleCodeCallback: (String) -> Unit,
+        updateApplicableFileTypeCallback: (ApplicableFileType) -> Unit,
         removeCallback: () -> Unit
     ): FileImportRowViewModel {
         val viewModelRemoveCallback: () -> Unit = {
@@ -152,6 +154,7 @@ class ResourceImportDialogViewModel(
             asset,
             updateDesignSystemTypeCallback = updateDesignSystemTypeCallback,
             updateSampleCodeCallback = updateSampleCodeCallback,
+            updateApplicableFileTypeCallback = updateApplicableFileTypeCallback,
             removeCallback = viewModelRemoveCallback
         )
         fileViewModels[asset] = fileImportRowViewModel
@@ -241,6 +244,16 @@ class ResourceImportDialogViewModel(
     ) {
         update(assetSet, callback) {
             assetSet.copy(asset = assetSet.asset.copy(sampleCode = sampleCode))
+        }
+    }
+
+    fun updateApplicableFileType(
+        assetSet: DesignAssetSet,
+        type: ApplicableFileType,
+        callback: (DesignAssetSet) -> Unit
+    ) {
+        update(assetSet, callback) {
+            assetSet.copy(asset = assetSet.asset.copy(applicableFileType = type))
         }
     }
 

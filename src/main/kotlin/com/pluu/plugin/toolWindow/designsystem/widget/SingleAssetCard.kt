@@ -11,6 +11,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.NamedColorUtil
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
+import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import java.awt.BorderLayout
 import java.awt.Color
@@ -116,29 +117,30 @@ abstract class AssetView(
     /**
      * Set the title label of this card
      */
-    var title: String by Delegates.observable("") { _, _, newValue ->
-        titleLabel.text = newValue
+    var componentName: String by Delegates.observable("") { _, _, newValue ->
+        componentNameLabel.text = newValue
     }
 
     /**
      * Set the subtitle label of this card
      */
-    var subtitle: String by Delegates.observable("") { _, _, newValue ->
-        secondLineLabel.text = newValue
+    var aliasName: String by Delegates.observable("") { _, _, newValue ->
+        aliasNameLabel.text = newValue
     }
 
-    var supportFileType: String by Delegates.observable("") { _, _, newValue ->
-        supportFileTypeLabel.text = newValue
+    var applicableFileType: ApplicableFileType? by Delegates.observable(null) { _, _, newValue ->
+        applicableFileTypeLabel.text = newValue?.name.orEmpty()
     }
 
-    protected val titleLabel = JBLabel().apply {
+    protected val componentNameLabel = JBLabel().apply {
         font = PRIMARY_FONT
     }
-    protected val secondLineLabel = JBLabel().apply {
+
+    protected val aliasNameLabel = JBLabel().apply {
         font = font.deriveFont(SECONDARY_FONT_SIZE)
         foreground = SECONDARY_FONT_COLOR
     }
-    protected val supportFileTypeLabel = JBLabel().apply {
+    protected val applicableFileTypeLabel = JBLabel().apply {
         font = font.deriveFont(SECONDARY_FONT_SIZE)
     }
 
@@ -217,8 +219,8 @@ class RowAssetView(
     private val firstPanel = JPanel().apply {
         layout = BorderLayout(2, 2)
         background = secondaryPanelBackground
-        add(titleLabel, BorderLayout.CENTER)
-        add(supportFileTypeLabel, BorderLayout.EAST)
+        add(componentNameLabel, BorderLayout.CENTER)
+        add(applicableFileTypeLabel, BorderLayout.EAST)
     }
 
     private val bottomPanel = JPanel().apply {
@@ -230,7 +232,7 @@ class RowAssetView(
         add(
             JBUI.Panels.simplePanel(2, 2).apply {
                 add(firstPanel, BorderLayout.NORTH)
-                add(secondLineLabel, BorderLayout.SOUTH)
+                add(aliasNameLabel, BorderLayout.SOUTH)
             }
         )
     }

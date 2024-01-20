@@ -16,6 +16,7 @@ import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import org.jdesktop.swingx.prompt.PromptSupport
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -70,6 +71,21 @@ class FileImportRow(
         selectedItem = viewModel.designSystemType
     }
 
+    private val applicableFileComboBox = ComboBox(viewModel.selectableApplicableFile).apply {
+        renderer = getRenderer("Select applicable File", ApplicableFileType::name)
+
+        addItemListener { itemEvent ->
+            when (itemEvent.stateChange) {
+                ItemEvent.SELECTED -> {
+                    val applicableFileType = itemEvent.item as ApplicableFileType
+                    viewModel.selectApplicableFile(applicableFileType)
+                }
+            }
+        }
+
+        selectedItem = viewModel.applicableFileType
+    }
+
     private val sampleCodeLabel = JBLabel("Sample code:")
 
     private val sampleCodeTextArea = JTextArea(viewModel.sampleCode).apply {
@@ -94,6 +110,9 @@ class FileImportRow(
         add(JPanel(FlowLayout(FlowLayout.LEFT, COMPONENT_GAP, 0)).apply {
             add(designSystemTypeLabel)
             add(designSystemTypeComboBox)
+
+            add(JBLabel("Applicable file:"))
+            add(applicableFileComboBox)
         }, BorderLayout.NORTH)
 
         val bottom = JPanel(BorderLayout(0, COMPONENT_GAP))
@@ -113,10 +132,10 @@ class FileImportRow(
         }
     }
 
-    private val middlePane = JPanel(BorderLayout()).apply {
+    private val middlePane = JPanel(BorderLayout(0, 4)).apply {
         border = JBUI.Borders.empty(COMPONENT_GAP)
 
-        add(JPanel(FlowLayout(FlowLayout.LEFT, 5, 0)).apply {
+        add(JPanel(FlowLayout(FlowLayout.LEFT, 5, 2)).apply {
             add(fileName)
             add(separator())
             add(fileSize)

@@ -21,6 +21,7 @@ import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
+import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.awt.BorderLayout
@@ -256,6 +257,7 @@ class ResourceImportDialog(
                 asset,
                 updateDesignSystemTypeCallback = this::updateDesignSystemType,
                 updateSampleCodeCallback = this::updateSampleCode,
+                updateApplicableFileTypeCallback = this::updateApplicableFileType,
                 removeCallback = this::removeAsset,
             )
             val fileImportRow = FileImportRow(viewModel)
@@ -274,6 +276,10 @@ class ResourceImportDialog(
 
         private fun updateSampleCode(sampleCode: String) {
             dialogViewModel.updateSampleCode(assetSet, sampleCode, ::updateNewAssetSet)
+        }
+
+        private fun updateApplicableFileType(type: ApplicableFileType) {
+            dialogViewModel.updateApplicableFileType(assetSet, type, ::updateNewAssetSet)
         }
 
         private fun performRename(assetName: String) {

@@ -9,6 +9,7 @@ data class DesignSystemItem(
     override val name: String,
     val aliasNames: List<String>?,
     val file: VirtualFile?,
+    val applicableFileType: ApplicableFileType,
     val sampleCode: String?
 ) : ImageCacheValue {
     override val modificationStamp: Long
@@ -19,6 +20,7 @@ data class DesignSystemItem(
 
     fun isValidate(): Boolean {
         return type.isSelectable() &&
+                applicableFileType.isSelectable() &&
                 name.isNotEmpty() &&
                 file != null && !sampleCode.isNullOrEmpty()
     }
@@ -32,3 +34,22 @@ data class AssetKey(
     val type: DesignSystemType,
     val path: String?
 )
+
+enum class ApplicableFileType {
+    NONE, XML, KOTLIN;
+
+    fun isSelectable(): Boolean = this != NONE
+
+    companion object {
+        fun selectableTypes(): Array<ApplicableFileType> = ApplicableFileType.values()
+            .filter { it.isSelectable() }
+            .toTypedArray()
+
+        fun of(name: String?): ApplicableFileType {
+            return ApplicableFileType.values()
+                .firstOrNull { it.name == name } ?: defaultType
+        }
+
+        val defaultType: ApplicableFileType = XML
+    }
+}

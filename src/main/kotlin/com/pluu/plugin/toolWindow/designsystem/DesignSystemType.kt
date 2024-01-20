@@ -11,7 +11,9 @@ enum class DesignSystemType(val displayName: String) {
     fun isSelectable(): Boolean = this != NONE
 
     companion object {
-        fun selectableTypes(): Array<DesignSystemType> = values().filter { it.isSelectable() }.toTypedArray()
+        fun selectableTypes(): Array<DesignSystemType> = values()
+            .filter { it.isSelectable() }
+            .toTypedArray()
 
         val defaultType: DesignSystemType = BUTTON
     }
