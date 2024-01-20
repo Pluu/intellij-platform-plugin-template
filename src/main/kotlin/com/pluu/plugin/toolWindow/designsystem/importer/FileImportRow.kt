@@ -1,32 +1,31 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
-import com.android.tools.idea.ui.resourcemanager.widget.Separator
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.ui.ColoredListCellRenderer
-import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.components.labels.LinkLabel
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.AlignY
+import com.intellij.ui.dsl.builder.bindItem
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.rows
+import com.intellij.ui.dsl.builder.whenItemSelectedFromUi
+import com.intellij.ui.dsl.builder.whenTextChangedFromUi
+import com.intellij.ui.util.preferredWidth
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import org.jdesktop.swingx.prompt.PromptSupport
 import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.FlowLayout
-import java.awt.event.ItemEvent
 import javax.swing.BorderFactory
 import javax.swing.JList
 import javax.swing.JPanel
-import javax.swing.JTextArea
-import javax.swing.event.DocumentEvent
 
 private val PREVIEW_SIZE = JBUI.size(150)
 private val COMPONENT_GAP = JBUI.scale(4)
@@ -45,117 +44,79 @@ class FileImportRow(
         add(preview)
     }
 
-    private val fileName = JBLabel(viewModel.fileName)
-    private val fileSize = JBLabel(viewModel.fileSize)
-
-    private val doNotImportButton = LinkLabel<Any?>("Do not import", null) { _, _ ->
-        removeButtonClicked()
-    }.apply {
-        isFocusable = true
-    }
-
-    private val designSystemTypeLabel = JBLabel("Design system Type:")
-
-    private val designSystemTypeComboBox = ComboBox(viewModel.selectableDesignSystemTypes).apply {
-        renderer = getRenderer("Select a type", DesignSystemType::displayName)
-        preferredSize = Dimension(200, preferredSize.height)
-
-        addItemListener { itemEvent ->
-            when (itemEvent.stateChange) {
-                ItemEvent.SELECTED -> {
-                    val designSystemType = itemEvent.item as DesignSystemType
-                    viewModel.selectDesignSystemType(designSystemType)
+    private val configurationPanel = panel {
+        row("Design system Type:") {
+            comboBox(
+                viewModel.selectableDesignSystemTypes.toList(),
+                getRenderer("Select a type", DesignSystemType::displayName)
+            ).bindItem(viewModel::designSystemType)
+                .whenItemSelectedFromUi {
+                    viewModel.selectDesignSystemType(it)
                 }
-            }
         }
-
-        selectedItem = viewModel.designSystemType
-    }
-
-    private val applicableFileComboBox = ComboBox(viewModel.selectableApplicableFile).apply {
-        renderer = getRenderer("Select applicable File", ApplicableFileType::name)
-        preferredSize = Dimension(200, preferredSize.height)
-
-        addItemListener { itemEvent ->
-            when (itemEvent.stateChange) {
-                ItemEvent.SELECTED -> {
-                    val applicableFileType = itemEvent.item as ApplicableFileType
-                    viewModel.selectApplicableFile(applicableFileType)
+        row {
+            label("Sample code:")
+                .applyToComponent { preferredWidth = 150 }
+            comboBox(
+                viewModel.selectableApplicableFile.toList(),
+                getRenderer("Select applicable File", ApplicableFileType::name)
+            ).label("Applicable file:")
+                .bindItem(viewModel::applicableFileType)
+                .whenItemSelectedFromUi {
+                    viewModel.selectApplicableFile(it)
                 }
-            }
         }
-
-        selectedItem = viewModel.applicableFileType
-    }
-
-    private val sampleCodeLabel = JBLabel("Sample code:").apply {
-        preferredSize = Dimension(150, preferredSize.height)
-    }
-
-    private val sampleCodeTextArea = JTextArea(viewModel.sampleCode).apply {
-        setLineWrap(true)
-        setWrapStyleWord(true)
-        PromptSupport.setPrompt("Input sample code", this)
-
-        document.addDocumentListener(object : DocumentAdapter() {
-            override fun textChanged(event: DocumentEvent) {
-                viewModel.updateSampleCode(this@apply.text)
-                ComponentValidator.getInstance(this@apply).ifPresent(ComponentValidator::revalidate)
-            }
-        })
-
-        ComponentValidator(this@FileImportRow).withValidator { ->
-            viewModel.validateText(this.text, this)
-        }.installOn(this)
-            .revalidate()
-    }
-
-    private val configurationPanel = JPanel(BorderLayout(1, 0)).apply {
-        add(JPanel(FlowLayout(FlowLayout.LEFT, COMPONENT_GAP, 0)).apply {
-            add(designSystemTypeLabel)
-            add(designSystemTypeComboBox)
-        }, BorderLayout.NORTH)
-
-        val bottom = JPanel(BorderLayout(0, COMPONENT_GAP))
-        add(bottom, BorderLayout.SOUTH)
-        with(bottom) {
-            border = JBUI.Borders.empty(COMPONENT_GAP)
-
-            add(JPanel(FlowLayout(FlowLayout.LEFT, COMPONENT_GAP, 0)).apply {
-                add(sampleCodeLabel)
-                add(JBLabel("Applicable file:"))
-                add(applicableFileComboBox)
-            }, BorderLayout.NORTH)
-
-            add(JBScrollPane(sampleCodeTextArea).apply {
-                border = BorderFactory.createCompoundBorder(
-                    RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), COMPONENT_GAP, JBUI.scale(2)),
-                    JBUI.Borders.empty(COMPONENT_GAP)
-                )
-                preferredSize = Dimension(sampleCodeTextArea.preferredSize.width, 100)
-                minimumSize = preferredSize
-                setViewportView(sampleCodeTextArea)
-            }, BorderLayout.SOUTH)
+        row {
+            textArea()
+                .align(Align.FILL)
+                .rows(4)
+                .bindText(viewModel::sampleCode)
+                .validationOnApply {
+                    if (it.text.isNullOrEmpty()) {
+                        error("Cannot be empty")
+                    } else {
+                        null
+                    }
+                }
+                .applyToComponent {
+                    border = BorderFactory.createCompoundBorder(
+                        RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), COMPONENT_GAP, JBUI.scale(2)),
+                        JBUI.Borders.empty(COMPONENT_GAP)
+                    )
+                    setLineWrap(true)
+                    setWrapStyleWord(true)
+                    PromptSupport.setPrompt("Input sample code", this)
+                }.whenTextChangedFromUi {
+                    viewModel.updateSampleCode(it)
+                }
         }
     }
 
-    private val middlePane = JPanel(BorderLayout(0, 4)).apply {
+    private val middlePane = panel {
         border = JBUI.Borders.empty(COMPONENT_GAP)
-
-        add(JPanel(FlowLayout(FlowLayout.LEFT, 5, 2)).apply {
-            add(fileName)
-            add(separator())
-            add(fileSize)
-        }, BorderLayout.WEST)
-        add(doNotImportButton, BorderLayout.EAST)
-        add(configurationPanel, BorderLayout.SOUTH)
+        row {
+            panel {
+                row {
+                    label(viewModel.fileName)
+                    label(viewModel.fileSize)
+                }
+            }
+            link("Do not import") {
+                removeButtonClicked()
+            }.align(AlignX.RIGHT)
+        }
+        row {
+            cell(configurationPanel).align(Align.FILL)
+        }
     }
 
     init {
-        add(JPanel().apply {
-            add(previewWrapper)
-        }, BorderLayout.WEST)
-        add(middlePane)
+        add(panel {
+            row {
+                cell(previewWrapper).align(AlignY.TOP)
+                cell(middlePane).align(Align.FILL)
+            }
+        })
         border = BorderFactory.createCompoundBorder(
             JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0),
             JBUI.Borders.empty(0, 4, 2, 4)
@@ -165,8 +126,6 @@ class FileImportRow(
     }
 
     fun update() {
-        fileName.text = viewModel.fileName
-        fileSize.text = viewModel.fileSize
         repaint()
     }
 
@@ -178,8 +137,6 @@ class FileImportRow(
         }
         viewModel.removeFile()
     }
-
-    private fun separator() = Separator(8, 4)
 
     private fun <T> getRenderer(placeholderValue: String?, textRenderer: ((T) -> String?)?) =
         object : ColoredListCellRenderer<T?>() {
