@@ -58,6 +58,7 @@ class FileImportRow(
 
     private val designSystemTypeComboBox = ComboBox(viewModel.selectableDesignSystemTypes).apply {
         renderer = getRenderer("Select a type", DesignSystemType::displayName)
+        preferredSize = Dimension(200, preferredSize.height)
 
         addItemListener { itemEvent ->
             when (itemEvent.stateChange) {
@@ -73,6 +74,7 @@ class FileImportRow(
 
     private val applicableFileComboBox = ComboBox(viewModel.selectableApplicableFile).apply {
         renderer = getRenderer("Select applicable File", ApplicableFileType::name)
+        preferredSize = Dimension(200, preferredSize.height)
 
         addItemListener { itemEvent ->
             when (itemEvent.stateChange) {
@@ -86,7 +88,9 @@ class FileImportRow(
         selectedItem = viewModel.applicableFileType
     }
 
-    private val sampleCodeLabel = JBLabel("Sample code:")
+    private val sampleCodeLabel = JBLabel("Sample code:").apply {
+        preferredSize = Dimension(150, preferredSize.height)
+    }
 
     private val sampleCodeTextArea = JTextArea(viewModel.sampleCode).apply {
         setLineWrap(true)
@@ -110,16 +114,19 @@ class FileImportRow(
         add(JPanel(FlowLayout(FlowLayout.LEFT, COMPONENT_GAP, 0)).apply {
             add(designSystemTypeLabel)
             add(designSystemTypeComboBox)
-
-            add(JBLabel("Applicable file:"))
-            add(applicableFileComboBox)
         }, BorderLayout.NORTH)
 
         val bottom = JPanel(BorderLayout(0, COMPONENT_GAP))
         add(bottom, BorderLayout.SOUTH)
         with(bottom) {
             border = JBUI.Borders.empty(COMPONENT_GAP)
-            add(sampleCodeLabel, BorderLayout.NORTH)
+
+            add(JPanel(FlowLayout(FlowLayout.LEFT, COMPONENT_GAP, 0)).apply {
+                add(sampleCodeLabel)
+                add(JBLabel("Applicable file:"))
+                add(applicableFileComboBox)
+            }, BorderLayout.NORTH)
+
             add(JBScrollPane(sampleCodeTextArea).apply {
                 border = BorderFactory.createCompoundBorder(
                     RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), COMPONENT_GAP, JBUI.scale(2)),
