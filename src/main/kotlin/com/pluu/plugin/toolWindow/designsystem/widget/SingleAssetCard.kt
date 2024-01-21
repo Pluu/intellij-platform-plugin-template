@@ -2,11 +2,14 @@ package com.pluu.plugin.toolWindow.designsystem.widget
 
 import com.android.tools.adtui.common.AdtUiUtils
 import com.android.tools.adtui.common.border
-import com.android.tools.adtui.common.secondaryPanelBackground
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.EmptySpacingConfiguration
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.NamedColorUtil
 import com.intellij.util.ui.UIUtil
@@ -21,7 +24,6 @@ import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.font.TextAttribute
 import javax.swing.BorderFactory
-import javax.swing.BoxLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingConstants
@@ -49,7 +51,7 @@ private val LARGE_MAIN_CELL_BORDER
         RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(2), JBUI.scale(1))
     )
 
-private val BOTTOM_PANEL_BORDER get() = JBUI.Borders.empty(4)
+private val BOTTOM_PANEL_BORDER get() = JBUI.Borders.empty(0)
 
 private val PRIMARY_FONT
     get() = StartupUiUtil.labelFont.deriveFont(
@@ -216,26 +218,21 @@ class RowAssetView(
         border = getBorder(selected, focused)
     }
 
-    private val firstPanel = JPanel().apply {
-        layout = BorderLayout(2, 2)
-        background = secondaryPanelBackground
-        add(componentNameLabel, BorderLayout.CENTER)
-        add(applicableFileTypeLabel, BorderLayout.EAST)
-    }
-
-    private val bottomPanel = JPanel().apply {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        background = secondaryPanelBackground
-        isOpaque = true
-        border = BOTTOM_PANEL_BORDER
-
-        add(
-            JBUI.Panels.simplePanel(2, 2).apply {
-                add(firstPanel, BorderLayout.NORTH)
-                add(aliasNameLabel, BorderLayout.SOUTH)
+    private val firstPanel = panel {
+        customizeSpacingConfiguration(EmptySpacingConfiguration()) {
+            row {
+                cell(componentNameLabel)
+                cell(applicableFileTypeLabel).align(AlignX.RIGHT)
             }
-        )
-    }
+        }
+    }.withBorder(JBUI.Borders.empty(2, 4))
+
+    private val bottomPanel = panel {
+        customizeSpacingConfiguration(EmptySpacingConfiguration()) {
+            row { cell(firstPanel).align(Align.FILL) }
+            row { cell(aliasNameLabel) }
+        }
+    }.withBorder(JBUI.Borders.empty(2, 4))
 
     private val emptyLabel = JBLabel("Nothing to show", SwingConstants.CENTER).apply {
         foreground = AdtUiUtils.DEFAULT_FONT_COLOR
