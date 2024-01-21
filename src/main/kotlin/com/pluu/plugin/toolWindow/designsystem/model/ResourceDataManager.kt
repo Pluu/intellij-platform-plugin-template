@@ -3,6 +3,7 @@ package com.pluu.plugin.toolWindow.designsystem.model
 import com.intellij.ide.CopyProvider
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.facet.AndroidFacet
@@ -21,6 +22,15 @@ private val SUPPORTED_DATA_FLAVORS = arrayOf(DESIGN_SYSTEM_URL_FLAVOR, DataFlavo
 class ResourceDataManager(var facet: AndroidFacet) : CopyProvider {
 
     private var selectedItems: List<DesignSystemItem>? = null
+
+    fun getData(dataId: String?, selectedAssets: List<DesignSystemItem>): Any? {
+        this.selectedItems = selectedAssets
+        return when (dataId) {
+            PlatformDataKeys.COPY_PROVIDER.name -> this
+            RESOURCE_DESIGN_ASSETS_KEY.name -> selectedAssets
+            else -> null
+        }
+    }
 
     override fun performCopy(dataContext: DataContext) {
         selectedItems?.let {

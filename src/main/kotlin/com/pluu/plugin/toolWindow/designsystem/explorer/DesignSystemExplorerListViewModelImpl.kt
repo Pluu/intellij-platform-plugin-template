@@ -91,6 +91,10 @@ class DesignSystemExplorerListViewModelImpl(
         return resources
     }
 
+    override fun getData(dataId: String?, selectedAssets: List<DesignSystemItem>): Any? {
+        return dataManager.getData(dataId, selectedAssets)
+    }
+
     override val doSelectAssetAction: (asset: DesignSystemItem) -> Unit = selectAssetAction ?: { asset ->
         val psiElement = dataManager.findPsiElement(asset)
         psiElement?.let {

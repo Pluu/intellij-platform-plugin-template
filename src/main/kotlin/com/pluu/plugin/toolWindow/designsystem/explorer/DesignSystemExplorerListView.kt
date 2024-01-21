@@ -10,7 +10,10 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.ui.PopupHandler
@@ -25,6 +28,8 @@ import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialog
 import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialogViewModel
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.RESOURCE_DESIGN_ASSETS_KEY
 import com.pluu.plugin.toolWindow.designsystem.widget.Section
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionList
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionListModel
@@ -34,6 +39,7 @@ import java.awt.Component
 import java.awt.Container
 import java.awt.Dimension
 import java.awt.Point
+import java.awt.datatransfer.StringSelection
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.font.TextAttribute
@@ -147,7 +153,10 @@ class DesignSystemExplorerListView(
         val actionManager = ActionManager.getInstance()
 
         val actionGroup = DefaultActionGroup().apply {
-            add(
+            addAll(
+                CopyComponentAction { item ->
+                    CopyPasteManager.getInstance().setContents(StringSelection(item.sampleCode))
+                },
                 EditComponentAction
                 {
                     val assetListView = sectionList.getLists()
@@ -249,6 +258,13 @@ class DesignSystemExplorerListView(
         add(contentPanel)
         revalidate()
         repaint()
+    }
+
+    private fun getSelectedAssets(): List<DesignSystemItem> {
+        return sectionList.getLists()
+            .flatMap { it.selectedValuesList }
+            .filterIsInstance<DesignAssetSet>()
+            .map { it.asset }
     }
 
     /**
@@ -465,7 +481,7 @@ class DesignSystemExplorerListView(
     }
 
     override fun getData(dataId: String): Any? {
-        return null
+        return viewModel.getData(dataId, getSelectedAssets())
     }
 
     override fun dispose() {
@@ -483,6 +499,21 @@ class DesignSystemExplorerListView(
     ) {
         override fun actionPerformed(e: AnActionEvent) {
             action()
+        }
+
+        override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+    }
+
+    private class CopyComponentAction(
+        val action: (DesignSystemItem) -> Unit
+    ) : AnAction() {
+        init {
+            ActionUtil.copyFrom(this, IdeActions.ACTION_COPY)
+        }
+
+        override fun actionPerformed(e: AnActionEvent) {
+            val assets = e.getData(RESOURCE_DESIGN_ASSETS_KEY)?.firstOrNull() ?: return
+            action(assets)
         }
 
         override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
