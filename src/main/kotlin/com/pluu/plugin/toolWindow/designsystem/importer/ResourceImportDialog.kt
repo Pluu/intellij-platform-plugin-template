@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.android.tools.idea.help.AndroidWebHelpProvider
@@ -13,11 +15,14 @@ import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.JBColor
-import com.intellij.ui.components.JBLabel
+import com.intellij.ui.IdeBorderFactory
+import com.intellij.ui.SideBorder
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.components.panels.VerticalLayout
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
@@ -25,7 +30,6 @@ import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.awt.BorderLayout
-import java.awt.FlowLayout
 import java.awt.KeyboardFocusManager
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
@@ -34,6 +38,7 @@ import java.util.*
 import javax.swing.BorderFactory
 import javax.swing.ImageIcon
 import javax.swing.JComponent
+import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
@@ -41,17 +46,7 @@ private const val DIALOG_TITLE = "Import component"
 
 private val DIALOG_SIZE = JBUI.size(1000, 700)
 
-private val ASSET_GROUP_BORDER = BorderFactory.createCompoundBorder(
-    JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0),
-    JBUI.Borders.empty(12, 0, 8, 0)
-)
-
-private val NORTH_PANEL_BORDER = BorderFactory.createCompoundBorder(
-    JBUI.Borders.customLine(JBColor.border(), 0, 0, 1, 0),
-    JBUI.Borders.empty(16)
-)
-
-private val CONTENT_PANEL_BORDER = JBUI.Borders.empty(0, 20)
+private val CONTENT_PANEL_BORDER = JBUI.Borders.empty(0, 8)
 
 class ResourceImportDialog(
     private val dialogViewModel: ResourceImportDialogViewModel
@@ -68,13 +63,20 @@ class ResourceImportDialog(
         border = null
     }
 
-    private val fileCountLabel = JBLabel()
+    private lateinit var fileCountLabel: JLabel
 
-    private val northPanel = JPanel(BorderLayout()).apply {
-        border = NORTH_PANEL_BORDER
-        add(fileCountLabel, BorderLayout.WEST)
-        add(createImportButtonAction(), BorderLayout.EAST)
-    }
+    private val northPanel = panel {
+        row {
+            fileCountLabel = label("").component
+            cell(createImportButtonAction())
+                .align(AlignX.RIGHT)
+        }
+    }.withBorder(
+        BorderFactory.createCompoundBorder(
+            IdeBorderFactory.createBorder(SideBorder.BOTTOM),
+            CONTENT_PANEL_BORDER
+        )
+    )
 
     private val focusPropertyChangeListener = PropertyChangeListener { evt ->
         if (evt.newValue !is JComponent) {
@@ -204,9 +206,9 @@ class ResourceImportDialog(
      */
     private inner class DesignAssetSetView(
         private var assetSet: DesignAssetSet
-    ) : JPanel(BorderLayout(0, 0)) {
+    ) : JPanel(BorderLayout()) {
 
-        val assetNameLabel = JBTextField(assetSet.name, 30).apply {
+        val assetNameField = JBTextField(assetSet.name).apply {
             this.font = StartupUiUtil.labelFont.deriveFont(JBUI.scaleFontSize(14f))
             document.addDocumentListener(object : DocumentAdapter() {
                 override fun textChanged(e: DocumentEvent) {
@@ -227,18 +229,15 @@ class ResourceImportDialog(
             add(singleAssetView(assetSet.asset))
         }
 
-        private val header = JPanel(BorderLayout()).apply {
-            border = ASSET_GROUP_BORDER
-            add(JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)).apply {
-                (layout as FlowLayout).alignOnBaseline = true
-                add(JBLabel("Class name:"))
-                add(assetNameLabel)
-            }, BorderLayout.NORTH)
-            add(
-                FileConfigurationPanel(
-                    dialogViewModel.fileConfigurationViewModel
-                ), BorderLayout.SOUTH
-            )
+        private val header = panel {
+            row {
+                cell(assetNameField)
+                    .label("Class name:")
+                    .columns(30)
+            }
+            row {
+                cell(FileConfigurationPanel(dialogViewModel.fileConfigurationViewModel))
+            }
         }
 
         init {

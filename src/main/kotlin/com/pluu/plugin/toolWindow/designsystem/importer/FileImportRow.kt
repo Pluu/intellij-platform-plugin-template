@@ -2,20 +2,20 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.ui.ColoredListCellRenderer
+import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.bindItem
-import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.builder.rows
 import com.intellij.ui.dsl.builder.whenItemSelectedFromUi
-import com.intellij.ui.dsl.builder.whenTextChangedFromUi
 import com.intellij.ui.util.preferredWidth
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -23,9 +23,12 @@ import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import org.jdesktop.swingx.prompt.PromptSupport
 import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.BorderFactory
 import javax.swing.JList
 import javax.swing.JPanel
+import javax.swing.JTextArea
+import javax.swing.event.DocumentEvent
 
 private val PREVIEW_SIZE = JBUI.size(150)
 private val COMPONENT_GAP = JBUI.scale(4)
@@ -44,6 +47,24 @@ class FileImportRow(
         add(preview)
     }
 
+    private val sampleCodeTextArea = JTextArea(viewModel.sampleCode).apply {
+        setLineWrap(true)
+        setWrapStyleWord(true)
+        PromptSupport.setPrompt("Input sample code", this)
+
+        document.addDocumentListener(object : DocumentAdapter() {
+            override fun textChanged(event: DocumentEvent) {
+                viewModel.updateSampleCode(this@apply.text)
+                ComponentValidator.getInstance(this@apply).ifPresent(ComponentValidator::revalidate)
+            }
+        })
+
+        ComponentValidator(this@FileImportRow).withValidator { ->
+            viewModel.validateText(this.text, this)
+        }.installOn(this)
+            .revalidate()
+    }
+
     private val configurationPanel = panel {
         row("Design system Type:") {
             comboBox(
@@ -59,7 +80,7 @@ class FileImportRow(
                 .applyToComponent { preferredWidth = 150 }
             comboBox(
                 viewModel.selectableApplicableFile.toList(),
-                getRenderer("Select applicable File", ApplicableFileType::name)
+                getRenderer("Select a type", ApplicableFileType::name)
             ).label("Applicable file:")
                 .bindItem(viewModel::applicableFileType)
                 .whenItemSelectedFromUi {
@@ -67,28 +88,17 @@ class FileImportRow(
                 }
         }
         row {
-            textArea()
-                .align(Align.FILL)
-                .rows(4)
-                .bindText(viewModel::sampleCode)
-                .validationOnApply {
-                    if (it.text.isNullOrEmpty()) {
-                        error("Cannot be empty")
-                    } else {
-                        null
-                    }
-                }
-                .applyToComponent {
+            cell(
+                JBScrollPane(sampleCodeTextArea).apply {
                     border = BorderFactory.createCompoundBorder(
                         RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), COMPONENT_GAP, JBUI.scale(2)),
                         JBUI.Borders.empty(COMPONENT_GAP)
                     )
-                    setLineWrap(true)
-                    setWrapStyleWord(true)
-                    PromptSupport.setPrompt("Input sample code", this)
-                }.whenTextChangedFromUi {
-                    viewModel.updateSampleCode(it)
+                    preferredSize = Dimension(sampleCodeTextArea.preferredSize.width, 80)
+                    minimumSize = preferredSize
+                    setViewportView(sampleCodeTextArea)
                 }
+            ).align(Align.FILL)
         }
     }
 
