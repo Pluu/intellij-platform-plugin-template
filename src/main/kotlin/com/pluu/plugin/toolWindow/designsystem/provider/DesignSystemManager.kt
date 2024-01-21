@@ -16,18 +16,12 @@ import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import org.jetbrains.android.facet.AndroidFacet
 import java.nio.file.Files
-import javax.imageio.ImageIO
 
 object DesignSystemManager {
 
-    private val sampleDirName = "pluu"
+    private const val sampleDirName = "pluu"
 
-    private val sampleJsonFileName = "sample.json"
-
-    // https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/plugin/RasterAssetRenderer.kt
-    private val supportImageExtension by lazy {
-        ImageIO.getReaderFormatNames()
-    }
+    private const val sampleJsonFileName = "sample.json"
 
     private fun rootPath(facet: AndroidFacet): VirtualFile? {
         return facet.module.project.guessProjectDir()
@@ -47,20 +41,39 @@ object DesignSystemManager {
     }
 
     fun saveSample(facet: AndroidFacet, type: DesignSystemType, items: List<DesignAssetSet>): Boolean {
+        return edit(facet) { jsonObject ->
+            val j = jsonObject.getAsJsonArray(type.jsonKey) ?: JsonArray().also {
+                jsonObject.add(type.jsonKey, it)
+            }
+            items.forEach { assetSet ->
+                j.add(assetSet.asJson())
+            }
+            true
+        }
+    }
+
+    fun removeSample(facet: AndroidFacet, type: DesignSystemType, item: DesignSystemItem): Boolean {
+        return edit(facet) { jsonObject ->
+            val j = jsonObject.getAsJsonArray(type.jsonKey) ?: return@edit false
+            val index = j.indexOfFirst {
+                it.asJsonObject.get("id").asString == item.name
+            }.takeIf { it >= 0 } ?: return@edit false
+
+            j.remove(index)
+            true
+        }
+    }
+
+    private fun edit(facet: AndroidFacet, action: (JsonObject) -> Boolean): Boolean {
         val project = facet.module.project
         val jsonObject = loadJsonFromSampleFile(facet, true)
 
-        val j = jsonObject.getAsJsonArray(type.jsonKey) ?: JsonArray().also {
-            jsonObject.add(type.jsonKey, it)
-        }
-        items.forEach { assetSet ->
-            j.add(assetSet.asJson())
-        }
+        action(jsonObject)
 
         val gson = GsonBuilder().setLenient().setPrettyPrinting()
             .create()
 
-        WriteCommandAction.runWriteCommandAction(project, "Write json", null, {
+        WriteCommandAction.runWriteCommandAction(project, "Write Json", null, {
             rootPath(facet)
                 ?.findChild(sampleJsonFileName)
                 ?.let {
@@ -69,7 +82,6 @@ object DesignSystemManager {
                     }
                 }
         })
-
         return true
     }
 

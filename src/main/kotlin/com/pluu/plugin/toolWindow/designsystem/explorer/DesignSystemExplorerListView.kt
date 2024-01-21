@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.ui.PopupHandler
@@ -24,6 +25,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.explorer.drag.resourceDragHandler
+import com.pluu.plugin.toolWindow.designsystem.importer.DesignAssetImporter
 import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialog
 import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialogViewModel
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
@@ -165,7 +167,19 @@ class DesignSystemExplorerListView(
                             populateResourcesLists(keepScrollPosition = true)
                         }
                     ).show()
-                }
+                },
+                ActionCopyFrom(IdeActions.ACTION_DELETE) { item ->
+                    val result = Messages.showYesNoDialog(
+                        facet.module.project,
+                        "Delete \"${item.name}\"'s data?",
+                        item.name,
+                        Messages.getQuestionIcon()
+                    )
+                    if (result == Messages.OK) {
+                        DesignAssetImporter().removeDesignAsset(item, facet)
+                        populateResourcesLists(keepScrollPosition = true)
+                    }
+                },
             )
         }
 
@@ -501,7 +515,7 @@ class DesignSystemExplorerListView(
     }
 
     private class ActionCopyFrom(
-        actionId : String,
+        actionId: String,
         private val action: (DesignSystemItem) -> Unit
     ) : AnAction() {
         init {

@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.provider.DesignSystemManager
 import com.pluu.plugin.toolWindow.designsystem.provider.sampleDirName
 import org.jetbrains.android.facet.AndroidFacet
@@ -18,21 +19,43 @@ class DesignAssetImporter {
         isNeedImportImageAssert: Boolean
     ) {
         if (assetSets.isEmpty()) return
-        
-        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
 
+        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
         LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
 
         val groupedAssets = assetSets.groupBy {
             it.asset.type
         }
-        WriteCommandAction.runWriteCommandAction(facet.module.project, "Write samples", null, {
+        WriteCommandAction.runWriteCommandAction(facet.module.project, "Write Samples", null, {
             groupedAssets.forEach { (designSystemType, items) ->
                 if (isNeedImportImageAssert) {
                     copyAssetsInFolder(designSystemType, items, sampleRoot)
                 }
                 DesignSystemManager.saveSample(facet, designSystemType, items)
             }
+        })
+    }
+
+    fun removeDesignAsset(
+        item: DesignSystemItem,
+        facet: AndroidFacet
+    ) {
+        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
+        LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
+        DesignSystemManager.removeSample(facet, item.type, item)
+        removeThumbnail(item, facet)
+    }
+
+    fun removeThumbnail(
+        item: DesignSystemItem,
+        facet: AndroidFacet
+    ) {
+        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
+        LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
+        WriteCommandAction.runWriteCommandAction(facet.module.project, "Remove Thumbnail", null, {
+            // Delete thumbnail
+            val file = item.file?.toIoFile() ?: return@runWriteCommandAction
+            file.delete()
         })
     }
 
