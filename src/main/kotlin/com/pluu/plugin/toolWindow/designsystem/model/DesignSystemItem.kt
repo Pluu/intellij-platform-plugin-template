@@ -20,9 +20,10 @@ data class DesignSystemItem(
 
     fun isValidate(): Boolean {
         return type.isSelectable() &&
-                applicableFileType.isSelectable() &&
                 name.isNotEmpty() &&
-                file != null && !sampleCode.isNullOrEmpty()
+                file != null &&
+                applicableFileType.isSelectable() &&
+                !sampleCode.isNullOrEmpty()
     }
 }
 

@@ -223,7 +223,7 @@ class ResourceImportDialogViewModel(
         callback: (newAssetSet: DesignAssetSet) -> Unit
     ) {
         update(assetSet, callback) {
-            DesignAssetSet(newName, assetSet.asset)
+            DesignAssetSet(newName, assetSet.asset.copy(name = newName))
         }
     }
 
