@@ -14,7 +14,8 @@ import org.jetbrains.android.facet.AndroidFacet
 class DesignAssetImporter {
     fun importDesignAssets(
         assetSets: Set<DesignAssetSet>,
-        facet: AndroidFacet
+        facet: AndroidFacet,
+        isNeedImportImageAssert: Boolean
     ) {
         if (assetSets.isEmpty()) return
         
@@ -27,7 +28,9 @@ class DesignAssetImporter {
         }
         WriteCommandAction.runWriteCommandAction(facet.module.project, "Write samples", null, {
             groupedAssets.forEach { (designSystemType, items) ->
-                copyAssetsInFolder(designSystemType, items, sampleRoot)
+                if (isNeedImportImageAssert) {
+                    copyAssetsInFolder(designSystemType, items, sampleRoot)
+                }
                 DesignSystemManager.saveSample(facet, designSystemType, items)
             }
         })

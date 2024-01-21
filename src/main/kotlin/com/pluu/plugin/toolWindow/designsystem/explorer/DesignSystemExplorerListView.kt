@@ -164,10 +164,11 @@ class DesignSystemExplorerListView(
                         .firstOrNull() ?: return@EditComponentAction
                     val assetSet = assetListView.model.getElementAt(assetListView.selectedIndex)
 
+                    // TODO: 데이터 중복 대응 필요
                     ResourceImportDialog(
                         facet.module.project,
-                        ResourceImportDialogViewModel(facet, sequenceOf(assetSet.asset)) {
-                            // TODO:
+                        ResourceImportDialogViewModel(facet, sequenceOf(assetSet.asset), isNewImport = false) {
+                            populateResourcesLists(keepScrollPosition = true)
                         }
                     ).show()
                 }
