@@ -20,7 +20,7 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.util.ui.JBUI.Borders.empty
+import com.intellij.util.ui.JBUI
 import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.module.feature.NewFeatureModuleModel
 import com.pluu.plugin.utils.contextLabel
@@ -70,7 +70,7 @@ class ConfigureFeatureSampleModuleStep(
         row {
             cell(conventionPluginCheckbox).align(AlignX.FILL)
         }
-    }.withBorder(empty(6))
+    }.withBorder(JBUI.Borders.empty(6))
 
     init {
         AndroidProjectInfo.getInstance(model.project)
