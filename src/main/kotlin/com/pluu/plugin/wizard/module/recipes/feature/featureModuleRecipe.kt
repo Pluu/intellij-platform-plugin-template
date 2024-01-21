@@ -7,7 +7,6 @@ import com.android.tools.idea.npw.module.recipes.addKotlinIfNeeded
 import com.android.tools.idea.npw.module.recipes.addLocalTests
 import com.android.tools.idea.npw.module.recipes.addTestDependencies
 import com.android.tools.idea.npw.module.recipes.androidModule.buildGradle
-import com.android.tools.idea.npw.module.recipes.createDefaultDirectories
 import com.android.tools.idea.npw.module.recipes.generateManifest
 import com.android.tools.idea.npw.module.recipes.gitignore
 import com.android.tools.idea.npw.module.recipes.proguardRecipe
@@ -38,7 +37,7 @@ fun RecipeExecutor.generateFeatureModule(
     val apis = data.apis
     val minApi = apis.minApi
 
-    createDefaultDirectories(moduleOut, srcOut)
+    createDirectory(srcOut)
     addIncludeToSettings(data.name)
 
     val gradleFile: String = if (useConventionPlugins) {

@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem
 
-import com.android.tools.idea.project.getLastSyncTimestamp
 import com.android.tools.idea.projectsystem.PROJECT_SYSTEM_SYNC_TOPIC
 import com.android.tools.idea.projectsystem.ProjectSystemSyncManager
 import com.android.tools.idea.startup.ClearResourceCacheAfterFirstBuild
@@ -34,10 +33,6 @@ const val DESIGN_SYSTEM_EXPLORER_TOOL_WINDOW_ID = "Design System Explorer"
 
 class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware {
 
-    override fun isApplicable(project: Project): Boolean {
-        return true
-    }
-
     override fun init(toolWindow: ToolWindow) {
         toolWindow.stripeTitle = "Design System"
     }
@@ -69,7 +64,10 @@ private fun connectListeners(
         FileEditorManagerListener.FILE_EDITOR_MANAGER,
         MyFileEditorListener(project, toolWindow, designSystemExplorer)
     )
-    connection.subscribe(PROJECT_SYSTEM_SYNC_TOPIC, SyncResultListener(project, designSystemExplorer, toolWindow))
+    connection.subscribe(
+        PROJECT_SYSTEM_SYNC_TOPIC,
+        SyncResultListener(project, designSystemExplorer, toolWindow)
+    )
 }
 
 private fun createContent(toolWindow: ToolWindow, project: Project) {
@@ -80,11 +78,7 @@ private fun createContent(toolWindow: ToolWindow, project: Project) {
         return
     }
 
-    if (project.getLastSyncTimestamp() < 0L) {
-        toolWindow.displayWaitingForBuild()
-    } else {
-        toolWindow.displayWaitingForGoodSync()
-    }
+    toolWindow.displayWaitingForGoodSync()
 
     // No existing successful sync, since there's a fair chance of having rendering issues, wait for next successful sync.
     project.runWhenSmartAndSyncedOnEdt(callback = { result ->

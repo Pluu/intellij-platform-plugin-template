@@ -27,7 +27,7 @@ abstract class PopupAction(
             y = inputEvent.component.height
         }
 
-        showAddPopup(inputEvent.component, x, y)
+        showAddPopup(inputEvent!!.component, x, y)
     }
 
     private fun showAddPopup(component: Component, x: Int, y: Int) {
