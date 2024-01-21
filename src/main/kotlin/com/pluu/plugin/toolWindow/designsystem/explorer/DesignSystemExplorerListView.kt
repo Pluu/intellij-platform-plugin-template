@@ -154,20 +154,14 @@ class DesignSystemExplorerListView(
 
         val actionGroup = DefaultActionGroup().apply {
             addAll(
-                CopyComponentAction { item ->
+                ActionCopyFrom(IdeActions.ACTION_COPY) { item ->
                     CopyPasteManager.getInstance().setContents(StringSelection(item.sampleCode))
                 },
-                EditComponentAction
-                {
-                    val assetListView = sectionList.getLists()
-                        .filterIsInstance<AssetListView>()
-                        .firstOrNull() ?: return@EditComponentAction
-                    val assetSet = assetListView.model.getElementAt(assetListView.selectedIndex)
-
+                EditComponentAction { item ->
                     // TODO: 데이터 중복 대응 필요
                     ResourceImportDialog(
                         facet.module.project,
-                        ResourceImportDialogViewModel(facet, sequenceOf(assetSet.asset), isNewImport = false) {
+                        ResourceImportDialogViewModel(facet, sequenceOf(item), isNewImport = false) {
                             populateResourcesLists(keepScrollPosition = true)
                         }
                     ).show()
@@ -492,24 +486,26 @@ class DesignSystemExplorerListView(
     }
 
     private class EditComponentAction(
-        val action: () -> Unit
+        private val action: (DesignSystemItem) -> Unit
     ) : AnAction(
         "Edit...",
         "Edit component",
         AllIcons.Actions.Edit
     ) {
         override fun actionPerformed(e: AnActionEvent) {
-            action()
+            val assets = e.getData(RESOURCE_DESIGN_ASSETS_KEY)?.firstOrNull() ?: return
+            action(assets)
         }
 
         override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
     }
 
-    private class CopyComponentAction(
-        val action: (DesignSystemItem) -> Unit
+    private class ActionCopyFrom(
+        actionId : String,
+        private val action: (DesignSystemItem) -> Unit
     ) : AnAction() {
         init {
-            ActionUtil.copyFrom(this, IdeActions.ACTION_COPY)
+            ActionUtil.copyFrom(this, actionId)
         }
 
         override fun actionPerformed(e: AnActionEvent) {
