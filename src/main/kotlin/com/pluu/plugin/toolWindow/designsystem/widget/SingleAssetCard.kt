@@ -9,6 +9,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.EmptySpacingConfiguration
+import com.intellij.ui.dsl.builder.IntelliJSpacingConfiguration
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.NamedColorUtil
@@ -219,9 +220,13 @@ class RowAssetView(
     }
 
     private val firstPanel = panel {
-        customizeSpacingConfiguration(EmptySpacingConfiguration()) {
+        customizeSpacingConfiguration(object : IntelliJSpacingConfiguration() {
+            override val verticalComponentGap: Int = 0
+            override val verticalMediumGap: Int = 0
+            override val verticalSmallGap: Int = 0
+        }) {
             row {
-                cell(componentNameLabel)
+                cell(componentNameLabel).resizableColumn()
                 cell(applicableFileTypeLabel).align(AlignX.RIGHT)
             }
         }
