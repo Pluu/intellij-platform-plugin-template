@@ -118,6 +118,7 @@ class DesignSystemExplorerToolbarViewModel(
     ), DumbAware {
         override fun actionPerformed(e: AnActionEvent) {
             ResourceImportDialog(
+                facet.module.project,
                 ResourceImportDialogViewModel(facet, emptySequence()) {
                     populateResourcesCallback()
                 }

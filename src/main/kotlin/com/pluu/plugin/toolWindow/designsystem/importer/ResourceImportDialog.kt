@@ -2,16 +2,15 @@
 
 package com.pluu.plugin.toolWindow.designsystem.importer
 
-import com.android.tools.idea.help.AndroidWebHelpProvider
 import com.intellij.icons.AllIcons
-import com.intellij.ide.wizard.AbstractWizard
-import com.intellij.ide.wizard.Step
-import com.intellij.ide.wizard.StepAdapter
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComponentValidator
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.DocumentAdapter
@@ -42,26 +41,16 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
-private const val DIALOG_TITLE = "Import component"
-
 private val DIALOG_SIZE = JBUI.size(1000, 700)
 
 private val CONTENT_PANEL_BORDER = JBUI.Borders.empty(0, 8)
 
 class ResourceImportDialog(
+    project: Project,
     private val dialogViewModel: ResourceImportDialogViewModel
-) : AbstractWizard<Step>(DIALOG_TITLE, dialogViewModel.facet.module.project) {
+) : DialogWrapper(project) {
 
     private val assetSetToView = IdentityHashMap<DesignAssetSet, DesignAssetSetView>()
-
-    private val content = JPanel(VerticalLayout(0)).apply {
-        border = CONTENT_PANEL_BORDER
-    }
-
-    val root = JBScrollPane(content).apply {
-        preferredSize = DIALOG_SIZE
-        border = null
-    }
 
     private lateinit var fileCountLabel: JLabel
 
@@ -78,6 +67,15 @@ class ResourceImportDialog(
         )
     )
 
+    private val content = JPanel(VerticalLayout(0)).apply {
+        border = CONTENT_PANEL_BORDER
+    }
+
+    private val centerPanel = JBScrollPane(content).apply {
+        preferredSize = DIALOG_SIZE
+        border = null
+    }
+
     private val focusPropertyChangeListener = PropertyChangeListener { evt ->
         if (evt.newValue !is JComponent) {
             return@PropertyChangeListener
@@ -87,7 +85,7 @@ class ResourceImportDialog(
     }
 
     init {
-        addWizardSteps()
+        title = "Import Component"
         setSize(DIALOG_SIZE.width(), DIALOG_SIZE.height())
         isResizable = false
         dialogViewModel.updateCallback = ::updateValues
@@ -135,19 +133,9 @@ class ResourceImportDialog(
         })
     }
 
-    private fun addWizardSteps() {
-        addStep(object : StepAdapter() {
-            override fun _commit(finishChosen: Boolean) {
-                if (doValidateAll().isEmpty()) {
-                    dialogViewModel.commit()
-                }
-            }
+    override fun createNorthPanel(): DialogPanel = northPanel
 
-            override fun getComponent() = root
-        })
-    }
-
-    override fun createNorthPanel() = northPanel
+    override fun createCenterPanel(): JComponent = centerPanel
 
     private fun updateValues() {
         val importedAssetCount = dialogViewModel.fileCount
@@ -175,7 +163,7 @@ class ResourceImportDialog(
         } else {
             addDesignAssetSet(designAssetSet)
         }
-        updateStep()
+        updateOkButton()
     }
 
     private fun createImportButtonAction(): JComponent {
@@ -201,6 +189,17 @@ class ResourceImportDialog(
         ).apply { isFocusable = true }
     }
 
+    private fun updateOkButton() {
+        isOKActionEnabled = assetSetToView.isNotEmpty() && assetSetToView.all {
+            it.key.isValidate()
+        }
+    }
+
+    override fun doOKAction() {
+        super.doOKAction()
+        dialogViewModel.commit()
+    }
+
     /**
      * View showing a [DesignAssetSet] and its contained [DesignSystemItem].
      */
@@ -219,7 +218,7 @@ class ResourceImportDialog(
 
             ComponentValidator(disposable).withValidator { ->
                 dialogViewModel.validateName(assetSet.asset.type, this.text, this).also {
-                    updateButtons()
+                    updateOkButton()
                 }
             }.installOn(this)
                 .revalidate()
@@ -293,7 +292,7 @@ class ResourceImportDialog(
             val assetSetView = assetSetToView.remove(assetSet) ?: return
             assetSet = newDesignAssetSet
             assetSetToView[newDesignAssetSet] = assetSetView
-            updateButtons()
+            updateOkButton()
         }
 
         private fun removeAsset() {
@@ -301,20 +300,10 @@ class ResourceImportDialog(
             if (fileViewContainer.componentCount == 0) {
                 assetSetToView.remove(this.assetSet, this)
                 parent.remove(this)
-                root.revalidate()
-                root.repaint()
-                updateStep()
+                centerPanel.revalidate()
+                centerPanel.repaint()
+                updateOkButton()
             }
         }
-    }
-
-    override fun canFinish(): Boolean {
-        return assetSetToView.isNotEmpty() && assetSetToView.all {
-            it.key.isValidate()
-        }
-    }
-
-    override fun getHelpID(): String {
-        return AndroidWebHelpProvider.HELP_PREFIX + "studio/write/design-system-manager"
     }
 }

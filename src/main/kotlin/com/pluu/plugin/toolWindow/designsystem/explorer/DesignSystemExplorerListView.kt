@@ -157,6 +157,7 @@ class DesignSystemExplorerListView(
                     val assetSet = assetListView.model.getElementAt(assetListView.selectedIndex)
 
                     ResourceImportDialog(
+                        facet.module.project,
                         ResourceImportDialogViewModel(facet, sequenceOf(assetSet.asset)) {
                             // TODO:
                         }
