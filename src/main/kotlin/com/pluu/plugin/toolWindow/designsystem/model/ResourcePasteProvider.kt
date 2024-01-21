@@ -9,34 +9,32 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.actions.PasteAction
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.KotlinFileType
 
 class ResourcePasteProvider : PasteProvider {
     override fun performPaste(dataContext: DataContext) {
         val caret = CommonDataKeys.CARET.getData(dataContext) ?: return
         val psiFile = CommonDataKeys.PSI_FILE.getData(dataContext) ?: return
-        if (psiFile.fileType != XmlFileType.INSTANCE) {
-            return
+        when (psiFile.fileType) {
+            XmlFileType.INSTANCE,
+            KotlinFileType.INSTANCE -> {
+                performForCode(dataContext, psiFile.fileType, caret)
+            }
         }
-        val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return
-        performForXml(dataContext, caret, project)
     }
 
-    /**
-     * Perform the paste in an XML file context.
-     * The paste operation will be different depending on the psiElement under the caret.
-     *
-     * For example, if the caret is within an ImageView tag, the `src` attribute will be populated with the
-     * pasted [DesignSystemItem].
-     */
-    private fun performForXml(
+    private fun performForCode(
         dataContext: DataContext,
-        caret: Caret,
-        project: Project
+        fileType: FileType,
+        caret: Caret
     ) {
-        val resourceUrl = getResourceUrl(dataContext) ?: return
-        val sampleCode = resourceUrl.sampleCode?.takeIf { it.isNotEmpty() } ?: return
+        val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return
+        val item = getDesignSystemItem(dataContext) ?: return
+        if (!isPastSupport(fileType, item.applicableFileType)) return
+        val sampleCode = item.sampleCode?.takeIf { it.isNotEmpty() } ?: return
         pasteAtCaret(caret, sampleCode, project)
     }
 
@@ -64,12 +62,20 @@ class ResourcePasteProvider : PasteProvider {
         return isPastePossible(dataContext)
     }
 
-    private fun getResourceUrl(dataContext: DataContext): DesignSystemItem? =
+    private fun getDesignSystemItem(dataContext: DataContext): DesignSystemItem? =
         PasteAction.TRANSFERABLE_PROVIDER.getData(dataContext)
             ?.produce()
             ?.getTransferData(DESIGN_SYSTEM_URL_FLAVOR) as? DesignSystemItem
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+    private fun isPastSupport(sourceFileType: FileType, sampleCodeType: ApplicableFileType): Boolean {
+        return when (sampleCodeType) {
+            ApplicableFileType.XML -> sourceFileType == XmlFileType.INSTANCE
+            ApplicableFileType.KOTLIN -> sourceFileType == KotlinFileType.INSTANCE
+            else -> false
+        }
+    }
 }
 
 private fun Caret.selectStringFromOffset(resourceReference: String, offset: Int) {
