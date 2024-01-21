@@ -20,7 +20,7 @@ import javax.swing.JComponent
 private const val PREFERENCE_LAST_SELECTED_DIRECTORY = "designSystemExplorer.lastChosenDirectory"
 
 /**
- * Recursively find all files that can be converted to [DesignAsset] in hierarchies
+ * Recursively find all files that can be converted to [DesignSystemItem] in hierarchies
  * of this [Sequence]'s files.
  *
  * The conversion is done by the first [com.android.tools.idea.ui.resourcemanager.plugin.ResourceImporter]
@@ -32,8 +32,8 @@ fun Sequence<File>.findAllDesignAssets(importersProvider: ImportersProvider): Se
     }.toDesignAsset(importersProvider)
 
 /**
- * Transforms this [File] [Sequence] into a [DesignAsset] [Sequence] using the available.
- * [File]s that couldn't be converted into a [DesignAsset] are silently ignored.
+ * Transforms this [File] [Sequence] into a [DesignSystemItem] [Sequence] using the available.
+ * [File]s that couldn't be converted into a [DesignSystemItem] are silently ignored.
  *
  * @see ImportersProvider
  * @see ImportersProvider.getImportersForExtension

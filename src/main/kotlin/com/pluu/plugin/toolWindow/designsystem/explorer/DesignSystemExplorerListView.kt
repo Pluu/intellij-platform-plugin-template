@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
 import com.android.tools.idea.ui.resourcemanager.widget.LinkLabelSearchView
 import com.intellij.concurrency.JobScheduler
 import com.intellij.icons.AllIcons
@@ -361,7 +360,7 @@ class DesignSystemExplorerListView(
     }
 
     /**
-     * Selects a [ResourceAssetSet] by a given [VirtualFile]. Depending of the file, the currently displayed resource type may change to
+     * Selects a [DesignAssetSet] by a given [VirtualFile]. Depending of the file, the currently displayed resource type may change to
      * select the right resource.
      */
     fun selectAsset(virtualFile: VirtualFile) {
@@ -377,7 +376,7 @@ class DesignSystemExplorerListView(
     }
 
     /**
-     * Selects a listed [ResourceAssetSet] by its name.
+     * Selects a listed [DesignAssetSet] by its name.
      *
      * @param resourceName Name to look for in existing lists of resources.
      * @param recentlyAdded The resource might not be listed yet if it was recently added (awaiting resource notification).

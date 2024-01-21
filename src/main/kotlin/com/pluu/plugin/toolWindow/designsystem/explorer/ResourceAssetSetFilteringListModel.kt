@@ -1,14 +1,13 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.resources.ResourceType
-import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
 import com.intellij.openapi.util.Condition
 import com.intellij.ui.CollectionListModel
 import com.intellij.ui.speedSearch.FilteringListModel
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 
 /**
- * [FilteringListModel] for [ResourceAssetSet] matching name and [ResourceType.STRING] values.
+ * [FilteringListModel] for [DesignAssetSet] matching name and [ResourceType.STRING] values.
  */
 class ResourceAssetSetFilteringListModel(
     collectionListModel: CollectionListModel<DesignAssetSet>,

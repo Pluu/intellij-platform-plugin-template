@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
 import com.intellij.ui.CollectionListModel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.FilteringListModel
@@ -22,7 +21,7 @@ private fun FilterImageSize.thumbnailWidth(): Int = when (this) {
 }
 
 /**
- * [JList] to display [ResourceAssetSet] and handle switching
+ * [JList] to display [DesignAssetSet] and handle switching
  * between grid and list mode.
  */
 class AssetListView(

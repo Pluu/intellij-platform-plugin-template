@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.tools.idea.ui.resourcemanager.model.ResourceAssetSet
 import com.android.tools.idea.ui.resourcemanager.rendering.AssetIconProvider
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetIconProvider
@@ -11,7 +10,7 @@ import javax.swing.JList
 import javax.swing.ListCellRenderer
 
 /**
- * [ListCellRenderer] to render [ResourceAssetSet] using an [AssetIconProvider]
+ * [ListCellRenderer] to render [DesignAssetSet] using an [AssetIconProvider]
  * returned by the [assetPreviewManager].
  */
 class DesignAssetCellRenderer(
