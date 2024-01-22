@@ -2,6 +2,7 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.android.tools.idea.util.toIoFile
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -38,12 +39,15 @@ class DesignAssetImporter {
 
     fun removeDesignAsset(
         item: DesignSystemItem,
-        facet: AndroidFacet
+        facet: AndroidFacet,
+        isRemoveThumbnail: Boolean
     ) {
         val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
         LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
         DesignSystemManager.removeSample(facet, item.type, item)
-        removeThumbnail(item, facet)
+        if (isRemoveThumbnail) {
+            removeThumbnail(item, facet)
+        }
     }
 
     fun removeThumbnail(
@@ -59,6 +63,18 @@ class DesignAssetImporter {
         })
     }
 
+    fun renameThumbnail(
+        item: DesignSystemItem,
+        rename: String,
+        facet: AndroidFacet
+    ) {
+        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
+        LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
+
+        val file = item.file?.toIoFile() ?: return
+        FileUtil.rename(file, rename)
+    }
+
     private fun copyAssetsInFolder(
         type: DesignSystemType,
         importingAsset: List<DesignAssetSet>,
@@ -67,7 +83,7 @@ class DesignAssetImporter {
         val folder = VfsUtil.createDirectoryIfMissing(rootSample, type.sampleDirName)
         importingAsset.forEach {
             val file = it.asset.file ?: return@forEach
-            file.copy(this, folder, "${it.name}.${file.extension}")
+            file.copy(this, folder, it.asset.fileNameWithExtension)
         }
     }
 }

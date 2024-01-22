@@ -163,8 +163,10 @@ class DesignSystemExplorerListView(
                     // TODO: 데이터 중복 대응 필요
                     ResourceImportDialog(
                         facet.module.project,
-                        ResourceImportDialogViewModel(facet, sequenceOf(item), isNewImport = false) {
+                        ResourceImportDialogViewModel(facet, sequenceOf(item)) {
                             populateResourcesLists(keepScrollPosition = true)
+                        }.apply {
+                            modifyAssetItem = item
                         }
                     ).show()
                 },
@@ -176,7 +178,7 @@ class DesignSystemExplorerListView(
                         Messages.getQuestionIcon()
                     )
                     if (result == Messages.OK) {
-                        DesignAssetImporter().removeDesignAsset(item, facet)
+                        DesignAssetImporter().removeDesignAsset(item, facet, true)
                         populateResourcesLists(keepScrollPosition = true)
                     }
                 },

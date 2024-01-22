@@ -18,7 +18,6 @@ const val MAX_IMPORT_FILES = 400
 class ResourceImportDialogViewModel(
     val facet: AndroidFacet,
     assets: Sequence<DesignSystemItem>,
-    private val isNewImport: Boolean,
     val fileConfigurationViewModel: FileConfigurationViewModel = FileConfigurationViewModel(assets),
     private val designAssetImporter: DesignAssetImporter = DesignAssetImporter(),
     private val importersProvider: ImportersProvider = ImportersProvider(),
@@ -44,10 +43,26 @@ class ResourceImportDialogViewModel(
 
     var updateCallback: () -> Unit = {}
 
+    var modifyAssetItem: DesignSystemItem? = null
+
     private val fileViewModels = mutableMapOf<DesignSystemItem, FileImportRowViewModel>()
 
     fun commit() {
-        designAssetImporter.importDesignAssets(assetSetsToImport, facet, isNeedImportImageAssert = isNewImport)
+        val modifyAssetId = modifyAssetItem
+        if (modifyAssetId != null) {
+            designAssetImporter.removeDesignAsset(modifyAssetId, facet, false)
+            designAssetImporter.renameThumbnail(
+                modifyAssetId,
+                assetSets.first().asset.fileNameWithExtension,
+                facet)
+        }
+        designAssetImporter.importDesignAssets(
+            assetSetsToImport,
+            facet,
+            isNeedImportImageAssert = modifyAssetId == null
+        )
+        this.modifyAssetItem = null
+        // TODO: 섬네일 갱실 불가능 수정 필요
         importDoneCallback()
     }
 

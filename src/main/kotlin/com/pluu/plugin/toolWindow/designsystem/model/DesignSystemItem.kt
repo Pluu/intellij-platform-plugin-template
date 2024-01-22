@@ -29,6 +29,14 @@ data class DesignSystemItem(
                 applicableFileType.isSelectable() &&
                 !sampleCode.isNullOrEmpty()
     }
+
+    val fileNameWithExtension: String
+        get() = buildString {
+            append(name)
+            file?.extension?.let {
+                append(".${it}")
+            }
+        }
 }
 
 /**

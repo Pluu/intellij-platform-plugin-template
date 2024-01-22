@@ -119,7 +119,7 @@ class DesignSystemExplorerToolbarViewModel(
         override fun actionPerformed(e: AnActionEvent) {
             ResourceImportDialog(
                 facet.module.project,
-                ResourceImportDialogViewModel(facet, emptySequence(), isNewImport = true) {
+                ResourceImportDialogViewModel(facet, emptySequence()) {
                     populateResourcesCallback()
                 }
             ).show()
