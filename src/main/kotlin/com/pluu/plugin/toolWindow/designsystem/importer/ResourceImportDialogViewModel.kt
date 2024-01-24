@@ -50,11 +50,9 @@ class ResourceImportDialogViewModel(
     fun commit() {
         val modifyAssetId = modifyAssetItem
         if (modifyAssetId != null) {
+            val newFileName = assetSets.first().asset.fileNameWithExtension
             designAssetImporter.removeDesignAsset(modifyAssetId, facet, false)
-            designAssetImporter.renameThumbnail(
-                modifyAssetId,
-                assetSets.first().asset.fileNameWithExtension,
-                facet)
+            designAssetImporter.renameThumbnail(assetSetsToImport.firstOrNull()?.asset?.file, newFileName, facet)
         }
         designAssetImporter.importDesignAssets(
             assetSetsToImport,

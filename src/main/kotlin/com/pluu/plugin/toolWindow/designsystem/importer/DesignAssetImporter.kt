@@ -2,7 +2,6 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.android.tools.idea.util.toIoFile
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -64,15 +63,14 @@ class DesignAssetImporter {
     }
 
     fun renameThumbnail(
-        item: DesignSystemItem,
+        file: VirtualFile?,
         rename: String,
         facet: AndroidFacet
     ) {
-        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
-        LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
-
-        val file = item.file?.toIoFile() ?: return
-        FileUtil.rename(file, rename)
+        val safeFile = file ?: return
+        WriteCommandAction.runWriteCommandAction(facet.module.project, "Rename Thumbnail", null, {
+            safeFile.rename(this, rename)
+        })
     }
 
     private fun copyAssetsInFolder(
