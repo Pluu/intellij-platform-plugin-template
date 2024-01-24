@@ -154,7 +154,8 @@ class SlowDesignResourcePreviewManager(
                         try {
                             val previewImage = resourcePreviewProvider.getSlowPreview(
                                 (JBUI.pixScale(component) * targetSize.width).toInt(),
-                                (JBUI.pixScale(component) * targetSize.height).toInt(), asset
+                                (JBUI.pixScale(component) * targetSize.height).toInt(),
+                                asset
                             ) ?: throw Exception("Failed to resolve resource")
                             return@Supplier scaleToFitIfNeeded(previewImage, targetSize, component)
                         } catch (throwable: Exception) {
