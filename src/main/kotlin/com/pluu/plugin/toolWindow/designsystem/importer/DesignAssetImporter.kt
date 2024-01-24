@@ -45,20 +45,20 @@ class DesignAssetImporter {
         LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
         DesignSystemManager.removeSample(facet, item.type, item)
         if (isRemoveThumbnail) {
-            removeThumbnail(item, facet)
+            removeThumbnail(item.file, facet)
         }
     }
 
     fun removeThumbnail(
-        item: DesignSystemItem,
+        file: VirtualFile?,
         facet: AndroidFacet
     ) {
         val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
         LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
         WriteCommandAction.runWriteCommandAction(facet.module.project, "Remove Thumbnail", null, {
             // Delete thumbnail
-            val file = item.file?.toIoFile() ?: return@runWriteCommandAction
-            file.delete()
+            val safeFile = file?.toIoFile() ?: return@runWriteCommandAction
+            safeFile.delete()
         })
     }
 
