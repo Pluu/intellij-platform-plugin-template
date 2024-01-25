@@ -26,7 +26,8 @@
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.pluu.plugin.toolWindow.designsystem.rendering.FetchImageExecutor"/>
+        <applicationService
+                serviceImplementation="com.pluu.plugin.toolWindow.designsystem.rendering.FetchImageExecutor"/>
         <customPasteProvider implementation="com.pluu.plugin.toolWindow.designsystem.model.ResourcePasteProvider"/>
     </extensions>
 
@@ -45,6 +46,13 @@
                 doNotActivateOnStart="true"
                 librarySearchClass="com.android.tools.idea.sdk.AndroidFacetChecker"
                 factoryClass="com.pluu.plugin.toolWindow.designsystem.DesignSystemToolWindowFactory"/>
+
+        <applicationConfigurable
+                parentId=""
+                instance="com.pluu.plugin.settings.ConfigConfigurable"
+                id="com.pluu.plugin.settings.ConfigConfigurable"/>
+        <applicationService
+                serviceImplementation="com.pluu.plugin.settings.ConfigService"/>
     </extensions>
 
     <actions>
