@@ -48,11 +48,9 @@
                 factoryClass="com.pluu.plugin.toolWindow.designsystem.DesignSystemToolWindowFactory"/>
 
         <applicationConfigurable
-                parentId=""
-                instance="com.pluu.plugin.settings.ConfigConfigurable"
-                id="com.pluu.plugin.settings.ConfigConfigurable"/>
+                instance="com.pluu.plugin.settings.ConfigConfigurable" />
         <applicationService
-                serviceImplementation="com.pluu.plugin.settings.ConfigService"/>
+                serviceImplementation="com.pluu.plugin.settings.ConfigSettings"/>
     </extensions>
 
     <actions>

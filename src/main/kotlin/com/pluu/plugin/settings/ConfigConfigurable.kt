@@ -1,9 +1,9 @@
 package com.pluu.plugin.settings
 
-import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.options.SearchableConfigurable
 import javax.swing.JComponent
 
-class ConfigConfigurable : Configurable {
+class ConfigConfigurable : SearchableConfigurable {
     private var configComponent: ConfigComponent? = null
 
     override fun createComponent(): JComponent? {
@@ -17,18 +17,20 @@ class ConfigConfigurable : Configurable {
 
     override fun isModified(): Boolean {
         val form = requireNotNull(configComponent)
-        return Config.isDesignSystemEnable != form.isEnableDesignSystem
+        return ConfigSettings.getInstance().isDesignSystemEnable != form.isEnableDesignSystem
     }
 
     override fun apply() {
         val form = requireNotNull(configComponent)
-        Config.isDesignSystemEnable = form.isEnableDesignSystem
+        ConfigSettings.getInstance().isDesignSystemEnable = form.isEnableDesignSystem
     }
 
     override fun reset() {
         val form = requireNotNull(configComponent)
-        form.isEnableDesignSystem = Config.isDesignSystemEnable
+        form.isEnableDesignSystem = ConfigSettings.getInstance().isDesignSystemEnable
     }
 
     override fun getDisplayName(): String = "Pluu Plugin"
+
+    override fun getId(): String = "com.pluu.plugin.settings.ConfigConfigurable"
 }

@@ -23,6 +23,8 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.UIUtil
+import com.pluu.plugin.settings.ConfigSettings
+import com.pluu.plugin.settings.ConfigSettingsListener
 import org.jetbrains.android.facet.AndroidFacet
 import javax.swing.Box
 import javax.swing.BoxLayout
@@ -33,9 +35,22 @@ const val DESIGN_SYSTEM_EXPLORER_TOOL_WINDOW_ID = "Design System Explorer"
 
 // TODO: ToolWindowFactory 적용 여부 옵션 대응
 class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware, ToolWindowManagerListener {
-
     override fun init(toolWindow: ToolWindow) {
         toolWindow.stripeTitle = "Design System"
+
+        val project = toolWindow.project
+        project.messageBus.connect(toolWindow.disposable)
+            .subscribe(ConfigSettingsListener.TOPIC, ConfigSettingsListener { settings ->
+                updateAvailable(toolWindow, settings.isDesignSystemEnable)
+            })
+    }
+
+    override fun isApplicable(project: Project): Boolean {
+        return true
+    }
+
+    override fun shouldBeAvailable(project: Project): Boolean {
+        return ConfigSettings.getInstance().isDesignSystemEnable
     }
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
@@ -53,6 +68,10 @@ class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware, ToolWindowMa
         project.messageBus.connect(project)
             .subscribe(ToolWindowManagerListener.TOPIC, MyToolWindowManagerListener(project))
     }
+}
+
+private fun updateAvailable(toolWindow: ToolWindow, designSystemEnable: Boolean) {
+    toolWindow.isAvailable = designSystemEnable
 }
 
 private fun connectListeners(
@@ -176,7 +195,9 @@ private class MyFileEditorListener(
     }
 }
 
-private class MyToolWindowManagerListener(private val project: Project) : ToolWindowManagerListener {
+private class MyToolWindowManagerListener(
+    private val project: Project
+) : ToolWindowManagerListener {
 
     override fun stateChanged(toolWindowManager: ToolWindowManager) {
         val window: ToolWindow = toolWindowManager.getToolWindow(DESIGN_SYSTEM_EXPLORER_TOOL_WINDOW_ID) ?: return
