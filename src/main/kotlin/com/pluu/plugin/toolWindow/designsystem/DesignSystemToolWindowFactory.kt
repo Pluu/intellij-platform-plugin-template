@@ -33,8 +33,8 @@ import javax.swing.JPanel
 
 const val DESIGN_SYSTEM_EXPLORER_TOOL_WINDOW_ID = "Design System Explorer"
 
-// TODO: ToolWindowFactory 적용 여부 옵션 대응
 class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware, ToolWindowManagerListener {
+
     override fun init(toolWindow: ToolWindow) {
         toolWindow.stripeTitle = "Design System"
 
