@@ -16,14 +16,16 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
     class State : BaseState() {
         var isDesignSystemEnable by property(true)
 
-        var types by list<DesignSystemType>()
+        var types by list<String>()
     }
 
     var isDesignSystemEnable: Boolean
         get() = state.isDesignSystemEnable
         set(value) {
             state.isDesignSystemEnable = value
-            notifyListeners()
+            notifyListeners {
+                onEnableChanged(value)
+            }
         }
 
     private var initialized = false
@@ -37,22 +39,27 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
 
     fun setTypes(types: List<DesignSystemType>) {
         state.types.clear()
-        state.types.addAll(types)
-        notifyListeners()
+        state.types.addAll(types.map { it.name })
+        notifyListeners {
+            onDesignSystemTypeChanged(types)
+        }
     }
 
-    private fun notifyListeners() {
+    fun getTypes(): List<DesignSystemType> = state.types
+        .map { DesignSystemType(it) }
+
+    private fun notifyListeners(action: ConfigSettingsListener.() -> Unit) {
         // Notify listeners if this is the main ConfigSettings instance, and it has been already initialized.
         if (initialized && this == getInstance()) {
             ApplicationManager.getApplication().messageBus
                 .syncPublisher(ConfigSettingsListener.TOPIC)
-                .settingsChanged(this)
+                .action()
         }
     }
 
     companion object {
-        private val defaultDesignSystemType: List<DesignSystemType> by lazy {
-            DesignSystemType.selectableTypes().toList()
+        private val defaultDesignSystemType: List<String> by lazy {
+            listOf("Input", "Button", "Type1", "Type2", "Type3")
         }
 
         fun getInstance(): ConfigSettings =

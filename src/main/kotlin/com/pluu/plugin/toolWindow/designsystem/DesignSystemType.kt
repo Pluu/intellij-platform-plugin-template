@@ -1,21 +1,21 @@
 package com.pluu.plugin.toolWindow.designsystem
 
-enum class DesignSystemType(val displayName: String) {
-    NONE(""),
-    INPUT("Input"),
-    BUTTON("Button"),
-    TYPE1("Type1"),
-    TYPE2("Type2"),
-    TYPE3("Type3");
+import com.pluu.plugin.settings.ConfigSettings
 
-    fun isSelectable(): Boolean = this != NONE
+data class DesignSystemType(
+    val name: String,
+    val isSelectable: Boolean = true
+) {
+    val displayName: String = name.uppercase()
 
     companion object {
-        fun selectableTypes(): Array<DesignSystemType> = values()
-            .filter { it.isSelectable() }
-            .toTypedArray()
 
-        val defaultType: DesignSystemType = BUTTON
+        val NONE = DesignSystemType("", false)
+
+        fun instanceFromConfigure(typeName: String): DesignSystemType {
+            return ConfigSettings.getInstance().getTypes()
+                .first { it.name.equals(typeName, ignoreCase = true) }
+        }
     }
 }
 

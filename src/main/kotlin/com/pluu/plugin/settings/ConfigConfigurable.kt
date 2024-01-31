@@ -7,7 +7,9 @@ class ConfigConfigurable : SearchableConfigurable {
     private var configComponent: ConfigComponent? = null
 
     override fun createComponent(): JComponent? {
-        configComponent = ConfigComponent(ConfigSettings.getInstance().state.types)
+        configComponent = ConfigComponent().also {
+            it.setDesignSystemTypes(ConfigSettings.getInstance().getTypes())
+        }
         return configComponent?.root
     }
 
@@ -17,12 +19,16 @@ class ConfigConfigurable : SearchableConfigurable {
 
     override fun isModified(): Boolean {
         val form = requireNotNull(configComponent)
-        return ConfigSettings.getInstance().isDesignSystemEnable != form.isEnableDesignSystem
+        val configSettings = ConfigSettings.getInstance()
+        return configSettings.isDesignSystemEnable != form.isEnableDesignSystem ||
+                configSettings.getTypes().joinToString() != form.designSystemTypes().joinToString()
     }
 
     override fun apply() {
         val form = requireNotNull(configComponent)
-        ConfigSettings.getInstance().isDesignSystemEnable = form.isEnableDesignSystem
+        val configSettings = ConfigSettings.getInstance()
+        configSettings.isDesignSystemEnable = form.isEnableDesignSystem
+        configSettings.setTypes(form.designSystemTypes())
     }
 
     override fun reset() {

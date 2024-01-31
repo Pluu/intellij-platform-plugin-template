@@ -40,8 +40,14 @@ class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware, ToolWindowMa
 
         val project = toolWindow.project
         project.messageBus.connect(toolWindow.disposable)
-            .subscribe(ConfigSettingsListener.TOPIC, ConfigSettingsListener { settings ->
-                updateAvailable(toolWindow, settings.isDesignSystemEnable)
+            .subscribe(ConfigSettingsListener.TOPIC, object : ConfigSettingsListener {
+                override fun onEnableChanged(isEnable: Boolean) {
+                    updateAvailable(toolWindow, isEnable)
+                }
+
+                override fun onDesignSystemTypeChanged(list: List<DesignSystemType>) {
+                    createContent(project, toolWindow)
+                }
             })
     }
 
@@ -54,6 +60,10 @@ class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware, ToolWindowMa
     }
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        createContent(project, toolWindow)
+    }
+
+    private fun createContent(project: Project, toolWindow: ToolWindow) {
         toolWindow.displayLoading()
         ClearResourceCacheAfterFirstBuild.getInstance(project).runWhenResourceCacheClean(
             onCacheClean = {

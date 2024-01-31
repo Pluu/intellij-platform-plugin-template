@@ -20,11 +20,11 @@ class FileImportRowViewModel(
     var fileName: String = asset.file?.name.orEmpty()
     var fileSize: String = StringUtil.formatFileSize(asset.file?.length ?: 0)
     var sampleCode: String = asset.sampleCode.orEmpty()
-    var designSystemType: DesignSystemType? = asset.type.takeIf { it.isSelectable() }
+    var designSystemType: DesignSystemType? = asset.type.takeIf { it.isSelectable }
     var applicableFileType: ApplicableFileType? = asset.applicableFileType.takeIf { it.isSelectable() }
 
     val selectableDesignSystemTypes: List<DesignSystemType>
-        get() = ConfigSettings.getInstance().state.types
+        get() = ConfigSettings.getInstance().getTypes()
 
     fun selectDesignSystemType(designSystemType: DesignSystemType) {
         if (this.designSystemType == designSystemType) return

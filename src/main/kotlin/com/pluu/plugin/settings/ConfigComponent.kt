@@ -4,6 +4,7 @@ import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.CollectionListModel
+import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.CommonActionsPanel
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.ToolbarDecorator
@@ -18,6 +19,7 @@ import com.intellij.ui.layout.selected
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.utils.DesignSystemTypeNameValidator
 import javax.swing.JComponent
+import javax.swing.JList
 import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.event.DocumentEvent
@@ -25,12 +27,14 @@ import javax.swing.text.AbstractDocument
 import javax.swing.text.AttributeSet
 import javax.swing.text.DocumentFilter
 
-class ConfigComponent(
-    values: List<DesignSystemType>
-) {
+class ConfigComponent {
     val root: JPanel
 
     private val designSystemStatus = JBCheckBox("Enable design system")
+    private val myTopPanel: JPanel
+    private val myActionsModel = CollectionListModel<DesignSystemType>()
+    private val toolbar: ToolbarDecorator
+    private val myList: JBList<DesignSystemType>
 
     var isEnableDesignSystem: Boolean
         get() = designSystemStatus.isSelected
@@ -38,36 +42,26 @@ class ConfigComponent(
             designSystemStatus.isSelected = value
         }
 
-    private val myTopPanel: JPanel
-
-    private val myActionsModel: CollectionListModel<String> = CollectionListModel()
-
     init {
-        myActionsModel.add(values.map { it.displayName })
-        val list = JBList(myActionsModel)
-        list.visibleRowCount = 5
+        myList = JBList(myActionsModel)
+        myList.visibleRowCount = 5
+        myList.cellRenderer = DesignSystemTypeCellRender()
+
+        toolbar = ToolbarDecorator.createDecorator(myList)
+            .setAddAction {
+                showNewType()
+            }
+            .setButtonComparator(
+                CommonActionsPanel.Buttons.ADD.text,
+                CommonActionsPanel.Buttons.REMOVE.text,
+                CommonActionsPanel.Buttons.UP.text,
+                CommonActionsPanel.Buttons.DOWN.text
+            )
 
         myTopPanel = panel {
             row {
-                cell(
-                    ToolbarDecorator.createDecorator(list)
-                        .setAddAction {
-                            val dialog = InputComponentDialog(values)
-                            if (dialog.showAndGet()) {
-                                val text = dialog.newComponentName()
-                                myActionsModel.add(text)
-                                val selectedIndex = list.lastVisibleIndex
-                                list.selectedIndex = selectedIndex
-                                list.ensureIndexIsVisible(selectedIndex)
-                            }
-                        }
-                        .setButtonComparator(
-                            CommonActionsPanel.Buttons.ADD.text,
-                            CommonActionsPanel.Buttons.REMOVE.text,
-                            CommonActionsPanel.Buttons.UP.text,
-                            CommonActionsPanel.Buttons.DOWN.text
-                        ).createPanel()
-                ).align(AlignX.FILL)
+                cell(toolbar.createPanel())
+                    .align(AlignX.FILL)
                     .enabledIf(designSystemStatus.selected)
             }.topGap(TopGap.SMALL)
         }
@@ -75,12 +69,31 @@ class ConfigComponent(
         root = panel {
             group("Design System") {
                 row { cell(designSystemStatus) }
-                row { cell(myTopPanel).align(AlignX.FILL) }
+                row {
+                    cell(myTopPanel)
+                        .label("Configure design system type:", LabelPosition.TOP)
+                        .align(AlignX.FILL)
+                }
             }
         }
     }
 
-    fun designSystemTypes(): List<String> = myActionsModel.toList()
+    fun setDesignSystemTypes(list: List<DesignSystemType>) {
+        myActionsModel.add(list)
+    }
+
+    fun designSystemTypes(): List<DesignSystemType> = myActionsModel.toList()
+
+    private fun showNewType() {
+        val dialog = InputComponentDialog(myActionsModel.toList())
+        if (dialog.showAndGet()) {
+            val text = dialog.newComponentName()
+            myActionsModel.add(DesignSystemType(text))
+            val selectedIndex = myList.lastVisibleIndex
+            myList.selectedIndex = selectedIndex
+            myList.ensureIndexIsVisible(selectedIndex)
+        }
+    }
 
     private class InputComponentDialog(
         values: List<DesignSystemType>
@@ -145,6 +158,30 @@ class ConfigComponent(
                 }
             }
             super.replace(fb, offset, length, text, attrs)
+        }
+    }
+
+    private class DesignSystemTypeCellRender : ColoredListCellRenderer<DesignSystemType>() {
+        override fun customizeCellRenderer(
+            list: JList<out DesignSystemType>,
+            value: DesignSystemType,
+            index: Int,
+            isSelected: Boolean,
+            cellHasFocus: Boolean
+        ) {
+            clear()
+            font = list.font
+            isEnabled = list.isEnabled
+
+            if (isSelected) {
+                background = list.selectionBackground
+                foreground = list.selectionForeground
+            } else {
+                background = list.background
+                foreground = list.foreground
+            }
+
+            append(value.displayName)
         }
     }
 }

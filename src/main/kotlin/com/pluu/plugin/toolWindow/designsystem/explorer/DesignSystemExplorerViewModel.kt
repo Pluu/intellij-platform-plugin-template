@@ -169,15 +169,16 @@ internal class DesignSystemExplorerViewModel(
 
     companion object {
         fun createViewModel(facet: AndroidFacet): DesignSystemExplorerViewModel {
+            val selectableTypes = ConfigSettings.getInstance().getTypes()
             return DesignSystemExplorerViewModel(
                 facet,
                 null,
-                ConfigSettings.getInstance().state.types,
+                selectableTypes,
                 ViewModelState(
                     FilterOptionsParams(
                         sampleImageSizeInitialValue = FilterImageSize.M,
                     ),
-                    DesignSystemType.defaultType,
+                    selectableTypes.first(),
                     ViewModelStateSaveParams(facet.module.project, DESIGN_RES_MANAGER_PREF_KEY)
                 )
             )
@@ -219,7 +220,7 @@ internal class ViewModelState(
         return@run if (saveParams != null) {
             PropertiesComponent.getInstance(saveParams.project)
                 .getValue("${saveParams.preferencesKey}.$DESIGN_SYSTEM_TYPE_KEY")?.let {
-                    DesignSystemType.valueOf(it)
+                    DesignSystemType.instanceFromConfigure(it)
                 } ?: selectedResourceType
         } else {
             selectedResourceType

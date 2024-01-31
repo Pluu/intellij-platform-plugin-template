@@ -2,9 +2,10 @@ package com.pluu.plugin.settings
 
 import com.android.annotations.concurrency.UiThread
 import com.intellij.util.messages.Topic
+import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import java.util.*
 
-fun interface ConfigSettingsListener : EventListener {
+interface ConfigSettingsListener : EventListener {
 
     companion object {
         val TOPIC: Topic<ConfigSettingsListener> =
@@ -12,5 +13,10 @@ fun interface ConfigSettingsListener : EventListener {
     }
 
     @UiThread
-    fun settingsChanged(settings: ConfigSettings)
+    fun onEnableChanged(isEnable: Boolean)
+
+    @UiThread
+    fun onDesignSystemTypeChanged(list: List<DesignSystemType>)
+
+
 }
