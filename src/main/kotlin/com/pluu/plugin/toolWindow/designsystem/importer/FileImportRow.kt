@@ -68,7 +68,7 @@ class FileImportRow(
     private val configurationPanel = panel {
         row("Design system Type:") {
             comboBox(
-                viewModel.selectableDesignSystemTypes.toList(),
+                viewModel.selectableDesignSystemTypes,
                 getRenderer("Select a type", DesignSystemType::displayName)
             ).bindItem(viewModel::designSystemType)
                 .whenItemSelectedFromUi {

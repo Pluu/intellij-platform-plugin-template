@@ -7,6 +7,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.update.MergingUpdateQueue
+import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.toolWindow.designsystem.DESIGN_RES_MANAGER_PREF_KEY
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
@@ -22,7 +23,7 @@ import kotlin.properties.Delegates
 internal class DesignSystemExplorerViewModel(
     defaultFacet: AndroidFacet,
     private var contextFileForConfiguration: VirtualFile?,
-    var supportedTypes: Array<DesignSystemType>,
+    var supportedTypes: List<DesignSystemType>,
     private val modelState: ViewModelState,
     private val selectAssetAction: ((asset: DesignSystemItem) -> Unit)? = null,
 ) : Disposable {
@@ -171,7 +172,7 @@ internal class DesignSystemExplorerViewModel(
             return DesignSystemExplorerViewModel(
                 facet,
                 null,
-                DesignSystemType.selectableTypes(),
+                ConfigSettings.getInstance().state.types,
                 ViewModelState(
                     FilterOptionsParams(
                         sampleImageSizeInitialValue = FilterImageSize.M,

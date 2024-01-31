@@ -2,6 +2,7 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.text.StringUtil
+import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -22,8 +23,8 @@ class FileImportRowViewModel(
     var designSystemType: DesignSystemType? = asset.type.takeIf { it.isSelectable() }
     var applicableFileType: ApplicableFileType? = asset.applicableFileType.takeIf { it.isSelectable() }
 
-    val selectableDesignSystemTypes: Array<DesignSystemType>
-        get() = DesignSystemType.selectableTypes()
+    val selectableDesignSystemTypes: List<DesignSystemType>
+        get() = ConfigSettings.getInstance().state.types
 
     fun selectDesignSystemType(designSystemType: DesignSystemType) {
         if (this.designSystemType == designSystemType) return
