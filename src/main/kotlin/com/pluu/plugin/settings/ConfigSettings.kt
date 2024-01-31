@@ -1,30 +1,44 @@
 package com.pluu.plugin.settings
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.SimplePersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
-import com.intellij.util.xmlb.XmlSerializerUtil
-import kotlin.reflect.KProperty
+import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 
 @Service
 @State(name = "PluuPlugin", storages = [Storage("PluuPlugin.xml")])
-class ConfigSettings : PersistentStateComponent<ConfigSettings> {
+class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(State()) {
 
-    var isDesignSystemEnable: Boolean by ChangeNotifyingProperty(true)
+    class State : BaseState() {
+        var isDesignSystemEnable by property(true)
+
+        var types by list<DesignSystemType>()
+    }
+
+    var isDesignSystemEnable: Boolean
+        get() = state.isDesignSystemEnable
+        set(value) {
+            state.isDesignSystemEnable = value
+            notifyListeners()
+        }
 
     private var initialized = false
 
-    override fun getState(): ConfigSettings = this
-
-    override fun loadState(state: ConfigSettings) {
-        XmlSerializerUtil.copyBean(state, this)
-    }
-
     override fun initializeComponent() {
         initialized = true
+        if (state.types.isEmpty()) {
+            state.types.addAll(defaultDesignSystemType)
+        }
+    }
+
+    fun setTypes(types: List<DesignSystemType>) {
+        state.types.clear()
+        state.types.addAll(types)
+        notifyListeners()
     }
 
     private fun notifyListeners() {
@@ -37,17 +51,11 @@ class ConfigSettings : PersistentStateComponent<ConfigSettings> {
     }
 
     companion object {
+        private val defaultDesignSystemType: List<DesignSystemType> by lazy {
+            DesignSystemType.selectableTypes().toList()
+        }
+
         fun getInstance(): ConfigSettings =
             ApplicationManager.getApplication().service<ConfigSettings>()
-    }
-
-    private inner class ChangeNotifyingProperty<T>(var value: T) {
-        operator fun getValue(thisRef: ConfigSettings, property: KProperty<*>) = value
-        operator fun setValue(thisRef: ConfigSettings, property: KProperty<*>, newValue: T) {
-            if (value != newValue) {
-                value = newValue
-                notifyListeners()
-            }
-        }
     }
 }

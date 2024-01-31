@@ -7,7 +7,7 @@ class ConfigConfigurable : SearchableConfigurable {
     private var configComponent: ConfigComponent? = null
 
     override fun createComponent(): JComponent? {
-        configComponent = ConfigComponent()
+        configComponent = ConfigComponent(ConfigSettings.getInstance().state.types)
         return configComponent?.root
     }
 
