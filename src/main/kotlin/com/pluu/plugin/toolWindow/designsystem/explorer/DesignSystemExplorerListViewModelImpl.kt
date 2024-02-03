@@ -12,7 +12,7 @@ import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemTab
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.model.ResourceDataManager
-import com.pluu.plugin.toolWindow.designsystem.model.getModuleResources
+import com.pluu.plugin.toolWindow.designsystem.provider.DesignSystemManager
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManagerImpl
 import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCache
@@ -81,7 +81,7 @@ class DesignSystemExplorerListViewModelImpl(
         designSections.add(
             DesignSection(
                 currentTab.name,
-                getModuleResources(forFacet, designSystemType)
+                DesignSystemManager.getModuleResources(forFacet, designSystemType)
                     .sortedBy { it.name }
                     .map {
                         DesignAssetSet(it.name, it)

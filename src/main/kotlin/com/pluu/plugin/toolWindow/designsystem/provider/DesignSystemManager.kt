@@ -1,5 +1,6 @@
 package com.pluu.plugin.toolWindow.designsystem.provider
 
+import com.android.annotations.concurrency.Slow
 import com.android.annotations.concurrency.WorkerThread
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
@@ -10,6 +11,7 @@ import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
@@ -22,6 +24,22 @@ object DesignSystemManager {
     private const val sampleDirName = "pluu"
 
     private const val sampleJsonFileName = "sample.json"
+
+    /**
+     * Returns a list of local design systems.
+     */
+    @Slow
+    fun getModuleResources(
+        facet: AndroidFacet,
+        type: DesignSystemType?
+    ): List<DesignSystemItem> {
+        val types = if (type != null) {
+            listOf(type)
+        } else {
+            ConfigSettings.getInstance().getTypes()
+        }
+        return findDesignKit(facet, types)
+    }
 
     private fun rootPath(facet: AndroidFacet): VirtualFile? {
         return facet.module.project.guessProjectDir()
