@@ -8,7 +8,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.util.io.FileUtil
+import java.io.File
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
@@ -30,10 +30,16 @@ class ConfigProjectSettings(
     val defaultSampleRootDirectory: String?
         get() {
             val directory = project.guessProjectDir()?.canonicalPath
-            return if (directory != null) FileUtil.toSystemDependentName(directory) else null
+            return if (directory != null) {
+                File(directory).resolve(Project.DIRECTORY_STORE_FOLDER + "/${sampleDirName}").canonicalPath
+            } else {
+                null
+            }
         }
 
     companion object {
+        private const val sampleDirName = "pluu"
+
         @JvmStatic
         fun getInstance(project: Project): ConfigProjectSettings {
             return project.getService(ConfigProjectSettings::class.java)
@@ -43,7 +49,7 @@ class ConfigProjectSettings(
 
 class ValueWithDefault<T : String?>(val prop: KMutableProperty0<T?>, val default: () -> T) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        val value : T? = prop.get()
+        val value: T? = prop.get()
         return if (value !== null) value else default()
     }
 

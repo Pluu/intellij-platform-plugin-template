@@ -7,21 +7,21 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.pluu.plugin.settings.ConfigProjectSettings
 import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import org.jetbrains.android.facet.AndroidFacet
+import org.jetbrains.kotlin.idea.core.util.toVirtualFile
+import java.io.File
 import java.nio.file.Files
 
 object DesignSystemManager {
-
-    private const val sampleDirName = "pluu"
 
     private const val sampleJsonFileName = "sample.json"
 
@@ -41,21 +41,28 @@ object DesignSystemManager {
         return findDesignKit(facet, types)
     }
 
-    private fun rootPath(facet: AndroidFacet): VirtualFile? {
-        return facet.module.project.guessProjectDir()
-            ?.findChild(sampleDirName)
+    private fun sampleRootDirectoryPath(facet: AndroidFacet): String? {
+        val configSetting = ConfigProjectSettings.getInstance(facet.module.project)
+        return configSetting.sampleRootDirectory
+    }
+
+    private fun sampleRootDirectory(facet: AndroidFacet): VirtualFile? {
+        return sampleRootDirectoryPath(facet)?.let { path ->
+            File(path).toVirtualFile()
+        }
     }
 
     fun getOrCreateDefaultRootDirectory(facet: AndroidFacet): VirtualFile {
-        val rootFile = rootPath(facet)
+        val rootFile = sampleRootDirectory(facet)
         if (rootFile != null) return rootFile
 
         val project = facet.module.project
         WriteCommandAction.runWriteCommandAction(project, "Write Sample Root", null, {
-            VfsUtil.createDirectoryIfMissing(project.guessProjectDir(), sampleDirName)
+            val sampleRootPath = requireNotNull(sampleRootDirectoryPath(facet))
+            VfsUtil.createDirectoryIfMissing(sampleRootPath)
         })
 
-        return requireNotNull(rootPath(facet))
+        return requireNotNull(sampleRootDirectory(facet))
     }
 
     fun saveSample(facet: AndroidFacet, type: DesignSystemType, items: List<DesignAssetSet>): Boolean {
@@ -92,7 +99,7 @@ object DesignSystemManager {
             .create()
 
         WriteCommandAction.runWriteCommandAction(project, "Write Json", null, {
-            rootPath(facet)
+            sampleRootDirectory(facet)
                 ?.findChild(sampleJsonFileName)
                 ?.let {
                     Files.newBufferedWriter(it.toNioPath(), Charsets.UTF_8).use { writer ->
@@ -120,7 +127,7 @@ object DesignSystemManager {
 
     @WorkerThread
     fun findDesignKit(facet: AndroidFacet, types: List<DesignSystemType>): List<DesignSystemItem> {
-        val rootPath = rootPath(facet) ?: return emptyList()
+        val rootPath = sampleRootDirectory(facet) ?: return emptyList()
         LocalFileSystem.getInstance().refreshFiles(listOf(rootPath))
 
         val jsonObject = loadJsonFromSampleFile(facet, false)
