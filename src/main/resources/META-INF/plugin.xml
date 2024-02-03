@@ -47,8 +47,9 @@
                 librarySearchClass="com.android.tools.idea.sdk.AndroidFacetChecker"
                 factoryClass="com.pluu.plugin.toolWindow.designsystem.DesignSystemToolWindowFactory"/>
 
-        <applicationConfigurable
-                instance="com.pluu.plugin.settings.ConfigConfigurable" />
+        <projectConfigurable
+                instance="com.pluu.plugin.settings.ConfigConfigurable"/>
+
         <applicationService
                 serviceImplementation="com.pluu.plugin.settings.ConfigSettings"/>
     </extensions>

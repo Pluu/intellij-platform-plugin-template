@@ -1,8 +1,12 @@
 package com.pluu.plugin.settings
 
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.ui.emptyText
 import com.intellij.ui.CollectionListModel
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.CommonActionsPanel
@@ -10,14 +14,17 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBList
+import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.LabelPosition
 import com.intellij.ui.dsl.builder.RightGap
 import com.intellij.ui.dsl.builder.TopGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.selected
+import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.utils.DesignSystemTypeNameValidator
+import java.awt.Color
 import javax.swing.JComponent
 import javax.swing.JList
 import javax.swing.JPanel
@@ -28,7 +35,9 @@ import javax.swing.text.AttributeSet
 import javax.swing.text.DocumentFilter
 
 class ConfigComponent(
-    private val configSettings: ConfigSettings
+    private val project: Project,
+    private val configSettings: ConfigSettings,
+    private val configProjectSettings: ConfigProjectSettings
 ) {
     val root: JPanel
 
@@ -37,12 +46,7 @@ class ConfigComponent(
     private val typeListModel = CollectionListModel(configSettings.getTypes())
     private val toolbar: ToolbarDecorator
     private val typeList: JBList<DesignSystemType>
-
-    var isEnableDesignSystem: Boolean
-        get() = designSystemStatus.isSelected
-        set(value) {
-            designSystemStatus.isSelected = value
-        }
+    private lateinit var sampleRootDirectoryField: TextFieldWithBrowseButton
 
     init {
         typeList = JBList(typeListModel)
@@ -71,12 +75,46 @@ class ConfigComponent(
         root = panel {
             group("Design System") {
                 row { cell(designSystemStatus) }
+                row("Sample resource path:") {
+                    sampleRootDirectoryField = cell(TextFieldWithBrowseButton())
+                        .align(AlignX.FILL)
+                        .enabledIf(designSystemStatus.selected)
+                        .applyToComponent {
+                            emptyText.text = "Sample resource location"
+                            setupTextFieldDefaultValue(textField) {
+                                configProjectSettings.defaultSampleRootDirectory
+                            }
+                            addBrowseFolderListener(
+                                null,
+                                null,
+                                null,
+                                FileChooserDescriptor(false, true, false, false, false, false)
+                            )
+                        }.component
+                }.visible(!project.isDefault)
                 row {
                     cell(topPanel)
                         .label("Configure design system type:", LabelPosition.TOP)
                         .align(AlignX.FILL)
                 }
             }
+        }
+    }
+
+    private fun setupTextFieldDefaultValue(
+        textField: JTextField,
+        defaultValueSupplier: () -> String?
+    ) {
+        val defaultText = defaultValueSupplier()
+        if (defaultText.isNullOrBlank()) return
+
+        textField.document.addDocumentListener(object : DocumentAdapter() {
+            override fun textChanged(e: DocumentEvent) {
+                textField.setForeground(if (defaultText == textField.text) getDefaultValueColor() else getChangedValueColor())
+            }
+        })
+        if (textField is JBTextField) {
+            textField.emptyText.setText(defaultText)
         }
     }
 
@@ -93,18 +131,32 @@ class ConfigComponent(
         }
     }
 
+    private fun getDefaultValueColor(): Color {
+        return UIUtil.getInactiveTextColor()
+    }
+
+    private fun getChangedValueColor(): Color {
+        return UIUtil.getTextFieldForeground()
+    }
+
     fun isModified(): Boolean {
-        return configSettings.isDesignSystemEnable != isEnableDesignSystem
+        return configSettings.isDesignSystemEnable != designSystemStatus.isSelected
+                || configProjectSettings.sampleRootDirectory != sampleRootDirectoryField.text
                 || configSettings.getTypes().joinToString() != designSystemTypes().joinToString()
     }
 
     fun apply() {
-        configSettings.isDesignSystemEnable = isEnableDesignSystem
+        configSettings.isDesignSystemEnable = designSystemStatus.isSelected
+        configProjectSettings.sampleRootDirectory = sampleRootDirectoryField.text
         configSettings.setTypes(designSystemTypes())
     }
 
     fun reset() {
-        isEnableDesignSystem = configSettings.isDesignSystemEnable
+        designSystemStatus.isSelected = configSettings.isDesignSystemEnable
+        sampleRootDirectoryField.text = configProjectSettings.sampleRootDirectory.orEmpty()
+
+        typeListModel.removeAll()
+        typeListModel.add(configSettings.getTypes())
     }
 
     private class InputComponentDialog(

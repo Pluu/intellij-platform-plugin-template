@@ -1,16 +1,20 @@
 package com.pluu.plugin.settings
 
 import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.project.Project
 import javax.swing.JComponent
 
-class ConfigConfigurable : SearchableConfigurable {
+class ConfigConfigurable(
+    private val project: Project
+) : SearchableConfigurable {
 
     private val configSettings = ConfigSettings.getInstance()
+    private val configProjectSettings = ConfigProjectSettings.getInstance(project)
 
     private var configComponent: ConfigComponent? = null
 
     override fun createComponent(): JComponent? {
-        configComponent = ConfigComponent(configSettings)
+        configComponent = ConfigComponent(project, configSettings, configProjectSettings)
         return configComponent?.root
     }
 
