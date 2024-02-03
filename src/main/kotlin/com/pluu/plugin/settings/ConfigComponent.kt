@@ -31,10 +31,10 @@ class ConfigComponent {
     val root: JPanel
 
     private val designSystemStatus = JBCheckBox("Enable design system")
-    private val myTopPanel: JPanel
-    private val myActionsModel = CollectionListModel<DesignSystemType>()
+    private val topPanel: JPanel
+    private val typeListModel = CollectionListModel<DesignSystemType>()
     private val toolbar: ToolbarDecorator
-    private val myList: JBList<DesignSystemType>
+    private val typeList: JBList<DesignSystemType>
 
     var isEnableDesignSystem: Boolean
         get() = designSystemStatus.isSelected
@@ -43,11 +43,11 @@ class ConfigComponent {
         }
 
     init {
-        myList = JBList(myActionsModel)
-        myList.visibleRowCount = 5
-        myList.cellRenderer = DesignSystemTypeCellRender()
+        typeList = JBList(typeListModel)
+        typeList.visibleRowCount = 5
+        typeList.cellRenderer = DesignSystemTypeCellRender()
 
-        toolbar = ToolbarDecorator.createDecorator(myList)
+        toolbar = ToolbarDecorator.createDecorator(typeList)
             .setAddAction {
                 showNewType()
             }
@@ -58,7 +58,7 @@ class ConfigComponent {
                 CommonActionsPanel.Buttons.DOWN.text
             )
 
-        myTopPanel = panel {
+        topPanel = panel {
             row {
                 cell(toolbar.createPanel())
                     .align(AlignX.FILL)
@@ -70,7 +70,7 @@ class ConfigComponent {
             group("Design System") {
                 row { cell(designSystemStatus) }
                 row {
-                    cell(myTopPanel)
+                    cell(topPanel)
                         .label("Configure design system type:", LabelPosition.TOP)
                         .align(AlignX.FILL)
                 }
@@ -79,19 +79,19 @@ class ConfigComponent {
     }
 
     fun setDesignSystemTypes(list: List<DesignSystemType>) {
-        myActionsModel.add(list)
+        typeListModel.add(list)
     }
 
-    fun designSystemTypes(): List<DesignSystemType> = myActionsModel.toList()
+    fun designSystemTypes(): List<DesignSystemType> = typeListModel.toList()
 
     private fun showNewType() {
-        val dialog = InputComponentDialog(myActionsModel.toList())
+        val dialog = InputComponentDialog(typeListModel.toList())
         if (dialog.showAndGet()) {
             val text = dialog.newComponentName()
-            myActionsModel.add(DesignSystemType(text))
-            val selectedIndex = myList.lastVisibleIndex
-            myList.selectedIndex = selectedIndex
-            myList.ensureIndexIsVisible(selectedIndex)
+            typeListModel.add(DesignSystemType(text))
+            val selectedIndex = typeList.lastVisibleIndex
+            typeList.selectedIndex = selectedIndex
+            typeList.ensureIndexIsVisible(selectedIndex)
         }
     }
 
@@ -101,7 +101,7 @@ class ConfigComponent {
 
         private val names = values.map { it.displayName.lowercase() }
 
-        private lateinit var myField: JTextField
+        private lateinit var nameTextField: JTextField
 
         init {
             title = "New Design Component Type"
@@ -110,7 +110,7 @@ class ConfigComponent {
         }
 
         override fun getPreferredFocusedComponent(): JComponent {
-            return myField
+            return nameTextField
         }
 
         override fun createCenterPanel(): JComponent? = null
@@ -118,7 +118,7 @@ class ConfigComponent {
         override fun createNorthPanel(): JComponent {
             return panel {
                 row {
-                    myField = textField()
+                    nameTextField = textField()
                         .label("Design System name:", LabelPosition.TOP)
                         .comment("Available \"a-zA-z0-9_\"")
                         .gap(RightGap.SMALL)
@@ -147,7 +147,7 @@ class ConfigComponent {
             }
         }
 
-        fun newComponentName(): String = myField.text
+        fun newComponentName(): String = nameTextField.text
     }
 
     private class DesignSystemNameFilter : DocumentFilter() {
