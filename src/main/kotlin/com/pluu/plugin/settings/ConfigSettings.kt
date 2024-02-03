@@ -2,19 +2,20 @@ package com.pluu.plugin.settings
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.BaseState
-import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.SimplePersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 
-@Service
-@State(name = "PluuPlugin", storages = [Storage("PluuPlugin.xml")])
+@State(
+    name = "ConfigSettings",
+    storages = [Storage("PluuPlugin.xml")]
+)
 class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(State()) {
 
     class State : BaseState() {
-        var isDesignSystemEnable by property(true)
+        var isDesignSystemEnable: Boolean by property(true)
 
         var types by list<String>()
     }

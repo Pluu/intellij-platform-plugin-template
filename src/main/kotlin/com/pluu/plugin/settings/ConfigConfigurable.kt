@@ -4,12 +4,13 @@ import com.intellij.openapi.options.SearchableConfigurable
 import javax.swing.JComponent
 
 class ConfigConfigurable : SearchableConfigurable {
+
+    private val configSettings = ConfigSettings.getInstance()
+
     private var configComponent: ConfigComponent? = null
 
     override fun createComponent(): JComponent? {
-        configComponent = ConfigComponent().also {
-            it.setDesignSystemTypes(ConfigSettings.getInstance().getTypes())
-        }
+        configComponent = ConfigComponent(configSettings)
         return configComponent?.root
     }
 
@@ -19,21 +20,17 @@ class ConfigConfigurable : SearchableConfigurable {
 
     override fun isModified(): Boolean {
         val form = requireNotNull(configComponent)
-        val configSettings = ConfigSettings.getInstance()
-        return configSettings.isDesignSystemEnable != form.isEnableDesignSystem ||
-                configSettings.getTypes().joinToString() != form.designSystemTypes().joinToString()
+        return form.isModified()
     }
 
     override fun apply() {
         val form = requireNotNull(configComponent)
-        val configSettings = ConfigSettings.getInstance()
-        configSettings.isDesignSystemEnable = form.isEnableDesignSystem
-        configSettings.setTypes(form.designSystemTypes())
+        form.apply()
     }
 
     override fun reset() {
         val form = requireNotNull(configComponent)
-        form.isEnableDesignSystem = ConfigSettings.getInstance().isDesignSystemEnable
+        form.reset()
     }
 
     override fun getDisplayName(): String = "Pluu Plugin"

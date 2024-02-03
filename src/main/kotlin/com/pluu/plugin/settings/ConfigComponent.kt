@@ -27,12 +27,14 @@ import javax.swing.text.AbstractDocument
 import javax.swing.text.AttributeSet
 import javax.swing.text.DocumentFilter
 
-class ConfigComponent {
+class ConfigComponent(
+    private val configSettings: ConfigSettings
+) {
     val root: JPanel
 
     private val designSystemStatus = JBCheckBox("Enable design system")
     private val topPanel: JPanel
-    private val typeListModel = CollectionListModel<DesignSystemType>()
+    private val typeListModel = CollectionListModel(configSettings.getTypes())
     private val toolbar: ToolbarDecorator
     private val typeList: JBList<DesignSystemType>
 
@@ -78,11 +80,7 @@ class ConfigComponent {
         }
     }
 
-    fun setDesignSystemTypes(list: List<DesignSystemType>) {
-        typeListModel.add(list)
-    }
-
-    fun designSystemTypes(): List<DesignSystemType> = typeListModel.toList()
+    private fun designSystemTypes(): List<DesignSystemType> = typeListModel.toList()
 
     private fun showNewType() {
         val dialog = InputComponentDialog(typeListModel.toList())
@@ -93,6 +91,20 @@ class ConfigComponent {
             typeList.selectedIndex = selectedIndex
             typeList.ensureIndexIsVisible(selectedIndex)
         }
+    }
+
+    fun isModified(): Boolean {
+        return configSettings.isDesignSystemEnable != isEnableDesignSystem
+                || configSettings.getTypes().joinToString() != designSystemTypes().joinToString()
+    }
+
+    fun apply() {
+        configSettings.isDesignSystemEnable = isEnableDesignSystem
+        configSettings.setTypes(designSystemTypes())
+    }
+
+    fun reset() {
+        isEnableDesignSystem = configSettings.isDesignSystemEnable
     }
 
     private class InputComponentDialog(
