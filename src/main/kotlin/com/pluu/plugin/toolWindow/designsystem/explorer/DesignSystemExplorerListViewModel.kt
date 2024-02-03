@@ -1,9 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.intellij.ui.speedSearch.SpeedSearch
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemTab
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import org.jetbrains.android.facet.AndroidFacet
@@ -35,9 +35,9 @@ interface DesignSystemExplorerListViewModel {
     var facetUpdaterCallback: ((facet: AndroidFacet) -> Unit)?
 
     /**
-     * The current [DesignSystemType] of resources being fetched.
+     * The current [DesignSystemTab] of resources being fetched.
      */
-    var currentDesignSystemType: DesignSystemType
+    var currentTab: DesignSystemTab
 
     val selectedTabName: String get() = ""
 
@@ -50,7 +50,7 @@ interface DesignSystemExplorerListViewModel {
     val filterOptions: FilterOptions
 
     /**
-     * Clears the cached image for all resources being currently displayed for the [currentDesignSystemType].
+     * Clears the cached image for all resources being currently displayed for the [currentTab].
      *
      * This considers the fields in [FilterOptions], except for [FilterOptions.searchString].
      */

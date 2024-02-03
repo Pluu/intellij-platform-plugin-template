@@ -18,8 +18,8 @@ internal class DesignSystemExplorerView(
 ) : JPanel(BorderLayout()), Disposable {
 
     private val resourcesTabsPanel = OverflowingTabbedPaneWrapper().apply {
-        viewModel.supportedTypes.forEach {
-            tabbedPane.add(it.displayName, null)
+        viewModel.tabs.forEach {
+            tabbedPane.add(it.name, null)
         }
         tabbedPane.selectedIndex = 0
         tabbedPane.addChangeListener { event ->

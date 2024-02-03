@@ -25,7 +25,7 @@ import kotlin.properties.Delegates
 
 class DesignSystemExplorerToolbarViewModel(
     facet: AndroidFacet,
-    initialDesignSystemType: DesignSystemType,
+    initialDesignSystemType: DesignSystemType?,
     private val filterOptions: FilterOptions
 ) : DataProvider, IdeView {
 
@@ -44,7 +44,7 @@ class DesignSystemExplorerToolbarViewModel(
     /** Callback for when a request to refresh resources previews is made. */
     var refreshResourcesPreviewsCallback: () -> Unit = {}
 
-    var resourceType: DesignSystemType by Delegates.observable(initialDesignSystemType) { _, oldValue, newValue ->
+    var resourceType: DesignSystemType? by Delegates.observable(initialDesignSystemType) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             updateUICallback()
         }

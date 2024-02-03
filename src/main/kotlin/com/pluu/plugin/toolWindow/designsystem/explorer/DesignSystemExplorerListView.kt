@@ -459,7 +459,7 @@ class DesignSystemExplorerListView(
 //            }
 
         }
-        return AssetSection(section.type.name, assetList.getFilteredSize(), assetList)
+        return AssetSection(section.name, assetList.getFilteredSize(), assetList)
     }
 
     private class AssetSection<T>(

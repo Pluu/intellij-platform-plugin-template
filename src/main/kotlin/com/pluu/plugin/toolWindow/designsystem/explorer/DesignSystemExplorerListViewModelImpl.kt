@@ -5,11 +5,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.EdtExecutorService
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemTab
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.model.ResourceDataManager
 import com.pluu.plugin.toolWindow.designsystem.model.getModuleResources
@@ -26,7 +26,7 @@ class DesignSystemExplorerListViewModelImpl(
     private val contextFile: VirtualFile?,
     private val listViewImageCache: ImageCache,
     override val filterOptions: FilterOptions,
-    designSystemType: DesignSystemType,
+    initialDesignSystemTab: DesignSystemTab,
     selectAssetAction: ((asset: DesignSystemItem) -> Unit)? = null,
 ) : DesignSystemExplorerListViewModel {
 
@@ -37,7 +37,7 @@ class DesignSystemExplorerListViewModelImpl(
 
     override var facetUpdaterCallback: ((facet: AndroidFacet) -> Unit)? = null
 
-    override var currentDesignSystemType: DesignSystemType by Delegates.observable(designSystemType) { _, oldValue, newValue ->
+    override var currentTab: DesignSystemTab by Delegates.observable(initialDesignSystemTab) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             updateUiCallback?.invoke(UpdateUiReason.DESIGN_SYSTEM_TYPE_CHANGED)
         }
@@ -45,7 +45,7 @@ class DesignSystemExplorerListViewModelImpl(
 
     private val dataManager = ResourceDataManager(facet)
 
-    override val selectedTabName: String get() = currentDesignSystemType.displayName
+    override val selectedTabName: String get() = currentTab.name
 
     override val speedSearch = SpeedSearch(true).apply {
         if (filterOptions.searchString.isNotEmpty()) {
@@ -76,19 +76,19 @@ class DesignSystemExplorerListViewModelImpl(
     }
 
     private fun getResourceSections(forFacet: AndroidFacet): List<DesignSection> {
-        val resourceType = currentDesignSystemType
-        val resources = mutableListOf<DesignSection>()
-        resources.add(
+        val designSystemType = currentTab.filterType
+        val designSections = mutableListOf<DesignSection>()
+        designSections.add(
             DesignSection(
-                resourceType,
-                getModuleResources(forFacet, resourceType)
+                currentTab.name,
+                getModuleResources(forFacet, designSystemType)
                     .sortedBy { it.name }
                     .map {
                         DesignAssetSet(it.name, it)
                     }
             )
         )
-        return resources
+        return designSections
     }
 
     override fun getData(dataId: String?, selectedAssets: List<DesignSystemItem>): Any? {

@@ -12,6 +12,7 @@ import com.pluu.plugin.toolWindow.designsystem.DESIGN_RES_MANAGER_PREF_KEY
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemTab
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptionsParams
@@ -23,17 +24,25 @@ import kotlin.properties.Delegates
 internal class DesignSystemExplorerViewModel(
     defaultFacet: AndroidFacet,
     private var contextFileForConfiguration: VirtualFile?,
-    var supportedTypes: List<DesignSystemType>,
+    supportedTypes: List<DesignSystemType>,
     private val modelState: ViewModelState,
     private val selectAssetAction: ((asset: DesignSystemItem) -> Unit)? = null,
 ) : Disposable {
+
+    val tabs: List<DesignSystemTab> = buildList {
+        add(DesignSystemTab("ALL", null))
+
+        supportedTypes.forEach { item ->
+            add(DesignSystemTab(item.displayName, item))
+        }
+    }
 
     private var listViewModel: DesignSystemExplorerListViewModel? = null
 
     //region ListModel update params
     private var refreshListModel: Boolean? = null
     private var listModelPattern: String? = null
-    private var listModelResourceType: DesignSystemType? = null
+    private var listModelTab: DesignSystemTab? = null
     //endregion
 
     val filterOptions = FilterOptions.create(
@@ -68,7 +77,7 @@ internal class DesignSystemExplorerViewModel(
     var facetUpdaterCallback: ((facet: AndroidFacet) -> Unit) = {}
 
     /** Callback called when the current [DesignSystemType] has changed. */
-    var designSystemTypeUpdaterCallback: ((resourceType: DesignSystemType) -> Unit) = {}
+    var designSystemTypeUpdaterCallback: ((resourceType: DesignSystemType?) -> Unit) = {}
 
     var facet: AndroidFacet by Delegates.observable(defaultFacet) { _, oldFacet, newFacet ->
         if (newFacet != oldFacet) {
@@ -80,11 +89,10 @@ internal class DesignSystemExplorerViewModel(
 
     var supportTypeIndex: Int = 0
         set(value) {
-            if (value != field && supportedTypes.indices.contains(value)) {
+            if (value != field && tabs.indices.contains(value)) {
                 field = value
-                modelState.selectedResourceType = supportedTypes[value]
-                updateListModelDesignSystemType(supportedTypes[value])
-                designSystemTypeUpdaterCallback(supportedTypes[value])
+                updateListModelDesignSystemTab(tabs[value])
+                designSystemTypeUpdaterCallback(tabs[value].filterType)
                 updateSupportTypeTabCallback()
             }
         }
@@ -102,7 +110,7 @@ internal class DesignSystemExplorerViewModel(
                 contextFileForConfiguration,
                 listViewImageCache,
                 filterOptions,
-                supportedTypes[supportTypeIndex],
+                tabs[supportTypeIndex],
                 selectAssetAction
             ).also {
                 listViewModel = it
@@ -141,12 +149,12 @@ internal class DesignSystemExplorerViewModel(
         }
     }
 
-    private fun updateListModelDesignSystemType(designSystemType: DesignSystemType) {
+    private fun updateListModelDesignSystemTab(designSystemTab: DesignSystemTab) {
         val listModel = listViewModel
         if (listModel == null) {
-            listModelResourceType = designSystemType
+            listModelTab = designSystemTab
         } else {
-            listModel.currentDesignSystemType = designSystemType
+            listModel.currentTab = designSystemTab
         }
     }
 
@@ -160,10 +168,10 @@ internal class DesignSystemExplorerViewModel(
             listModelPattern = null
             updateListModelSpeedSearch(pattern)
         }
-        val resourceType = listModelResourceType
-        if (resourceType != null) {
-            listModelResourceType = null
-            updateListModelDesignSystemType(resourceType)
+        val designSystemTab = listModelTab
+        if (designSystemTab != null) {
+            listModelTab = null
+            updateListModelDesignSystemTab(designSystemTab)
         }
     }
 
@@ -175,10 +183,7 @@ internal class DesignSystemExplorerViewModel(
                 null,
                 selectableTypes,
                 ViewModelState(
-                    FilterOptionsParams(
-                        sampleImageSizeInitialValue = FilterImageSize.M,
-                    ),
-                    selectableTypes.first(),
+                    FilterOptionsParams(sampleImageSizeInitialValue = FilterImageSize.M),
                     ViewModelStateSaveParams(facet.module.project, DESIGN_RES_MANAGER_PREF_KEY)
                 )
             )
@@ -188,7 +193,6 @@ internal class DesignSystemExplorerViewModel(
 
 private const val FILTER_PARAMS_KEY = "FilterParams"
 private const val SAMPLE_IMAGE_SIZE = "SampleImageSize"
-private const val DESIGN_SYSTEM_TYPE_KEY = "DesignSystemType"
 
 /**
  * Class that holds the initial state of [DesignSystemExplorerViewModel].
@@ -197,7 +201,6 @@ private const val DESIGN_SYSTEM_TYPE_KEY = "DesignSystemType"
  */
 internal class ViewModelState(
     filterParams: FilterOptionsParams,
-    selectedResourceType: DesignSystemType,
     private val saveParams: ViewModelStateSaveParams? = null
 ) {
 
@@ -216,29 +219,11 @@ internal class ViewModelState(
         }
     }
 
-    private val defaultSelectedResourceType: DesignSystemType = kotlin.run {
-        return@run if (saveParams != null) {
-            PropertiesComponent.getInstance(saveParams.project)
-                .getValue("${saveParams.preferencesKey}.$DESIGN_SYSTEM_TYPE_KEY")?.let {
-                    DesignSystemType.instanceFromConfigure(it)
-                } ?: selectedResourceType
-        } else {
-            selectedResourceType
-        }
-    }
-
     var filterParams: FilterOptionsParams by Delegates.observable(defaultFilterParams) { _, _, newValue ->
         saveParams?.let {
             val filterKey = "${saveParams.preferencesKey}.$FILTER_PARAMS_KEY"
             val propertiesComponent = PropertiesComponent.getInstance(saveParams.project)
             propertiesComponent.setValue("$filterKey.$SAMPLE_IMAGE_SIZE", newValue.sampleImageSizeInitialValue.name)
-        }
-    }
-
-    var selectedResourceType: DesignSystemType by Delegates.observable(defaultSelectedResourceType) { _, _, newValue ->
-        saveParams?.let {
-            PropertiesComponent.getInstance(saveParams.project)
-                .setValue("${saveParams.preferencesKey}.$DESIGN_SYSTEM_TYPE_KEY", newValue.name)
         }
     }
 }

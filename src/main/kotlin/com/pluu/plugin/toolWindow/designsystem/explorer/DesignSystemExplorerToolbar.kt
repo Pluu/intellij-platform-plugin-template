@@ -111,6 +111,8 @@ private class ImageSizeFilterAction(
     override fun setSelected(e: AnActionEvent, state: Boolean) {
         viewModel.sampleImageSize = typeFilter
     }
+
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }
 
 /**
@@ -120,7 +122,7 @@ private class RefreshAction(
     val viewModel: DesignSystemExplorerToolbarViewModel
 ) : AnAction(
     "Refresh Previews",
-    "Refresh previews for ${viewModel.resourceType.displayName}s",
+    "Refresh previews for ${viewModel.resourceType?.displayName ?: "ALL item"}s",
     AllIcons.Actions.Refresh
 ) {
     override fun actionPerformed(e: AnActionEvent) {

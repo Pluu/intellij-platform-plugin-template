@@ -45,7 +45,7 @@ class DesignSystemExplorer private constructor(
         toolbarViewModel.facet = facet
     }
 
-    private fun updateResourceType(resourceType: DesignSystemType) {
+    private fun updateResourceType(resourceType: DesignSystemType?) {
         toolbarViewModel.resourceType = resourceType
     }
 
@@ -61,17 +61,17 @@ class DesignSystemExplorer private constructor(
          */
         @JvmStatic
         fun createForToolWindow(facet: AndroidFacet): DesignSystemExplorer {
-            val designSystemExplorerViewModel = DesignSystemExplorerViewModel.createViewModel(facet)
+            val explorerViewModel = DesignSystemExplorerViewModel.createViewModel(facet)
             val toolbarViewModel = DesignSystemExplorerToolbarViewModel(
                 facet,
-                designSystemExplorerViewModel.supportedTypes[designSystemExplorerViewModel.supportTypeIndex],
-                designSystemExplorerViewModel.filterOptions
+                explorerViewModel.tabs[explorerViewModel.supportTypeIndex].filterType,
+                explorerViewModel.filterOptions
             )
             val toolbar = DesignSystemExplorerToolbar.create(toolbarViewModel)
-            val designSystemExplorerView = DesignSystemExplorerView(designSystemExplorerViewModel, facet)
+            val designSystemExplorerView = DesignSystemExplorerView(explorerViewModel, facet)
             return DesignSystemExplorer(
                 facet,
-                designSystemExplorerViewModel,
+                explorerViewModel,
                 designSystemExplorerView,
                 toolbarViewModel,
                 toolbar

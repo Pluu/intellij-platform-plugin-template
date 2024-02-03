@@ -101,17 +101,20 @@ object DesignSystemManager {
     }
 
     @WorkerThread
-    fun findDesignKit(facet: AndroidFacet, type: DesignSystemType): List<DesignSystemItem> {
+    fun findDesignKit(facet: AndroidFacet, types: List<DesignSystemType>): List<DesignSystemItem> {
         val rootPath = rootPath(facet) ?: return emptyList()
         LocalFileSystem.getInstance().refreshFiles(listOf(rootPath))
 
         val jsonObject = loadJsonFromSampleFile(facet, false)
-        return jsonObject.getAsJsonArray(type.jsonKey)
-            ?.map { it.asJsonObject }
-            .orEmpty()
-            .map {
-                it.asDesignSystemItem(rootPath, type)
-            }
+
+        return types.flatMap { type ->
+            jsonObject.getAsJsonArray(type.jsonKey)
+                ?.map { it.asJsonObject }
+                .orEmpty()
+                .map {
+                    it.asDesignSystemItem(rootPath, type)
+                }
+        }
     }
 
     private fun JsonObject.asDesignSystemItem(rootPath: VirtualFile, type: DesignSystemType): DesignSystemItem {
