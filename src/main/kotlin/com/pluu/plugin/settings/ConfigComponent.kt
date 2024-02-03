@@ -48,6 +48,8 @@ class ConfigComponent(
     private val typeList: JBList<DesignSystemType>
     private lateinit var sampleRootDirectoryField: TextFieldWithBrowseButton
 
+    private val isInProject: Boolean = !project.isDefault
+
     init {
         typeList = JBList(typeListModel)
         typeList.visibleRowCount = 5
@@ -77,6 +79,11 @@ class ConfigComponent(
                 row { cell(designSystemStatus) }
                 row("Sample resource path:") {
                     sampleRootDirectoryField = cell(TextFieldWithBrowseButton())
+                        .apply {
+                            if (!isInProject) {
+                                comment("Only available in projects")
+                            }
+                        }
                         .align(AlignX.FILL)
                         .enabledIf(designSystemStatus.selected)
                         .applyToComponent {
@@ -91,7 +98,7 @@ class ConfigComponent(
                                 FileChooserDescriptor(false, true, false, false, false, false)
                             )
                         }.component
-                }.visible(!project.isDefault)
+                }.enabled(isInProject)
                 row {
                     cell(topPanel)
                         .label("Configure design system type:", LabelPosition.TOP)
@@ -141,20 +148,23 @@ class ConfigComponent(
 
     fun isModified(): Boolean {
         return configSettings.isDesignSystemEnable != designSystemStatus.isSelected
-                || configProjectSettings.sampleRootDirectory != sampleRootDirectoryField.text
+                || (isInProject && configProjectSettings.sampleRootDirectory != sampleRootDirectoryField.text)
                 || configSettings.getTypes().joinToString() != designSystemTypes().joinToString()
     }
 
     fun apply() {
         configSettings.isDesignSystemEnable = designSystemStatus.isSelected
-        configProjectSettings.sampleRootDirectory = sampleRootDirectoryField.text
+        if (isInProject) {
+            configProjectSettings.sampleRootDirectory = sampleRootDirectoryField.text
+        }
         configSettings.setTypes(designSystemTypes())
     }
 
     fun reset() {
         designSystemStatus.isSelected = configSettings.isDesignSystemEnable
-        sampleRootDirectoryField.text = configProjectSettings.sampleRootDirectory.orEmpty()
-
+        if (isInProject) {
+            sampleRootDirectoryField.text = configProjectSettings.sampleRootDirectory.orEmpty()
+        }
         typeListModel.removeAll()
         typeListModel.add(configSettings.getTypes())
     }
