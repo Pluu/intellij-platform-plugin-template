@@ -1,6 +1,8 @@
 package com.pluu.plugin.toolWindow.designsystem
 
+import com.android.tools.adtui.stdui.registerActionShortCutSet
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.util.Disposer
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerToolbar
@@ -37,6 +39,11 @@ class DesignSystemExplorer private constructor(
         add(centerContainer, BorderLayout.CENTER)
         Disposer.register(this, designSystemExplorerViewModel)
         Disposer.register(this, designSystemExplorerView)
+
+        registerActionShortCutSet(
+            action = { toolbarViewModel.requestSearch() },
+            CommonShortcuts.getFind()
+        )
     }
 
     private fun updateFacet(facet: AndroidFacet) {

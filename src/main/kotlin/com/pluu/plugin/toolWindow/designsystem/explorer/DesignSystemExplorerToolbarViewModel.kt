@@ -44,6 +44,8 @@ class DesignSystemExplorerToolbarViewModel(
     /** Callback for when a request to refresh resources previews is made. */
     var refreshResourcesPreviewsCallback: () -> Unit = {}
 
+    var requestSearch = {}
+
     var resourceType: DesignSystemType? by Delegates.observable(initialDesignSystemType) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             updateUICallback()

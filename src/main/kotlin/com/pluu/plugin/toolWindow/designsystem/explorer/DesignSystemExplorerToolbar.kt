@@ -66,11 +66,16 @@ class DesignSystemExplorerToolbar(
             true
         )
         toolbarViewModel.updateUICallback = this::update
+        toolbarViewModel.requestSearch = this::requestSearch
         update() // Update current module right away.
     }
 
     private fun update() {
         refreshAction.update()
+    }
+
+    private fun requestSearch() {
+        searchAction.requestFocusInWindow()
     }
 
     private fun createSearchField() = SearchTextField(true).apply {
