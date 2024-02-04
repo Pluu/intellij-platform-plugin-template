@@ -444,7 +444,7 @@ class DesignSystemExplorerListView(
             viewModel.speedSearch,
             viewModel.filterOptions.sampleImageSize
         ).apply {
-            cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager)
+            cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager, section.isVisibleTypeName)
             dragHandler.registerSource(this)
             addMouseListener(popupHandler)
             addMouseListener(mouseClickListener)

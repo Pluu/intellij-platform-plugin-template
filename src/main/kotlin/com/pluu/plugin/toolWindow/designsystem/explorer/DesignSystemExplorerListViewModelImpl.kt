@@ -80,12 +80,13 @@ class DesignSystemExplorerListViewModelImpl(
         val designSections = mutableListOf<DesignSection>()
         designSections.add(
             DesignSection(
-                currentTab.name,
-                DesignSystemManager.getModuleResources(forFacet, designSystemType)
+                name = currentTab.name,
+                assetSets = DesignSystemManager.getModuleResources(forFacet, designSystemType)
                     .sortedBy { it.name }
                     .map {
                         DesignAssetSet(it.name, it)
-                    }
+                    },
+                isVisibleTypeName = currentTab.filterType == null
             )
         )
         return designSections

@@ -14,7 +14,8 @@ import javax.swing.ListCellRenderer
  * returned by the [assetPreviewManager].
  */
 class DesignAssetCellRenderer(
-    private val assetPreviewManager: DesignAssetPreviewManager
+    private val assetPreviewManager: DesignAssetPreviewManager,
+    private val isVisibleComponentName: Boolean
 ) : ListCellRenderer<DesignAssetSet> {
 
     private val label = JLabel().apply { horizontalAlignment = JLabel.CENTER }
@@ -47,7 +48,7 @@ class DesignAssetCellRenderer(
         assetView.componentName = designSystemItem.name
         assetView.applicableFileType = designSystemItem.applicableFileType.takeIf { it.isSelectable() }
         assetView.aliasName = designSystemItem.aliasNames?.joinToString(", ") ?: "-"
-        assetView.typeName = designSystemItem.type.displayName
+        assetView.typeName = designSystemItem.type.displayName.takeIf { isVisibleComponentName }.orEmpty()
         return assetView
     }
 }

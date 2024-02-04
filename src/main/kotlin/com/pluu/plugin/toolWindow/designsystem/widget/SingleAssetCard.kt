@@ -126,6 +126,7 @@ abstract class AssetView(
     }
     var typeName: String by Delegates.observable("") { _, _, newValue ->
         typeLabel.text = newValue
+        typeLabel.isVisible = newValue.isNotEmpty()
     }
 
     protected val componentNameLabel = JBLabel().apply {
@@ -140,7 +141,7 @@ abstract class AssetView(
     }
     protected val typeLabel = JBLabel().apply {
         font = font.deriveFont(SECONDARY_FONT_SIZE)
-        foreground = SECONDARY_FONT_COLOR
+        isVisible = false
     }
 
     abstract var selected: Boolean
