@@ -45,8 +45,9 @@ class DesignAssetCellRenderer(
         assetView.focused = cellHasFocus
 
         assetView.componentName = designSystemItem.name
-        assetView.aliasName = designSystemItem.aliasNames?.joinToString(", ") ?: "-"
         assetView.applicableFileType = designSystemItem.applicableFileType.takeIf { it.isSelectable() }
+        assetView.aliasName = designSystemItem.aliasNames?.joinToString(", ") ?: "-"
+        assetView.typeName = designSystemItem.type.displayName
         return assetView
     }
 }

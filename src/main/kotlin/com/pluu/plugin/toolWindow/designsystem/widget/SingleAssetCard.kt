@@ -52,8 +52,6 @@ private val LARGE_MAIN_CELL_BORDER
         RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(2), JBUI.scale(1))
     )
 
-private val BOTTOM_PANEL_BORDER get() = JBUI.Borders.empty(0)
-
 private val PRIMARY_FONT
     get() = StartupUiUtil.labelFont.deriveFont(
         mapOf(
@@ -117,34 +115,32 @@ abstract class AssetView(
         onViewWidthChanged(newValue)
     }
 
-    /**
-     * Set the title label of this card
-     */
     var componentName: String by Delegates.observable("") { _, _, newValue ->
         componentNameLabel.text = newValue
     }
-
-    /**
-     * Set the subtitle label of this card
-     */
+    var applicableFileType: ApplicableFileType? by Delegates.observable(null) { _, _, newValue ->
+        applicableFileTypeLabel.text = newValue?.name.orEmpty()
+    }
     var aliasName: String by Delegates.observable("") { _, _, newValue ->
         aliasNameLabel.text = newValue
     }
-
-    var applicableFileType: ApplicableFileType? by Delegates.observable(null) { _, _, newValue ->
-        applicableFileTypeLabel.text = newValue?.name.orEmpty()
+    var typeName: String by Delegates.observable("") { _, _, newValue ->
+        typeLabel.text = newValue
     }
 
     protected val componentNameLabel = JBLabel().apply {
         font = PRIMARY_FONT
     }
-
+    protected val applicableFileTypeLabel = JBLabel().apply {
+        font = font.deriveFont(SECONDARY_FONT_SIZE)
+    }
     protected val aliasNameLabel = JBLabel().apply {
         font = font.deriveFont(SECONDARY_FONT_SIZE)
         foreground = SECONDARY_FONT_COLOR
     }
-    protected val applicableFileTypeLabel = JBLabel().apply {
+    protected val typeLabel = JBLabel().apply {
         font = font.deriveFont(SECONDARY_FONT_SIZE)
+        foreground = SECONDARY_FONT_COLOR
     }
 
     abstract var selected: Boolean
@@ -235,7 +231,10 @@ class RowAssetView(
     private val bottomPanel = panel {
         customizeSpacingConfiguration(EmptySpacingConfiguration()) {
             row { cell(firstPanel).align(Align.FILL) }
-            row { cell(aliasNameLabel) }
+            row {
+                cell(aliasNameLabel).resizableColumn()
+                cell(typeLabel).align(AlignX.RIGHT)
+            }
         }
     }.withBorder(JBUI.Borders.empty(2, 4))
 
