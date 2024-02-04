@@ -2,14 +2,13 @@ package com.pluu.plugin.toolWindow.designsystem.widget
 
 import com.android.tools.adtui.common.AdtUiUtils
 import com.android.tools.adtui.common.border
+import com.android.tools.adtui.common.secondaryPanelBackground
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
 import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.EmptySpacingConfiguration
-import com.intellij.ui.dsl.builder.IntelliJSpacingConfiguration
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.NamedColorUtil
@@ -216,28 +215,19 @@ class RowAssetView(
         border = getBorder(selected, focused)
     }
 
-    private val firstPanel = panel {
-        customizeSpacingConfiguration(object : IntelliJSpacingConfiguration() {
-            override val verticalComponentGap: Int = 0
-            override val verticalMediumGap: Int = 0
-            override val verticalSmallGap: Int = 0
-        }) {
+    private val bottomPanel = panel {
+        customizeSpacingConfiguration(EmptySpacingConfiguration()) {
             row {
                 cell(componentNameLabel).resizableColumn()
                 cell(applicableFileTypeLabel).align(AlignX.RIGHT)
             }
-        }
-    }.withBorder(JBUI.Borders.empty(2, 4))
-
-    private val bottomPanel = panel {
-        customizeSpacingConfiguration(EmptySpacingConfiguration()) {
-            row { cell(firstPanel).align(Align.FILL) }
             row {
                 cell(aliasNameLabel).resizableColumn()
                 cell(typeLabel).align(AlignX.RIGHT)
             }
         }
-    }.withBorder(JBUI.Borders.empty(2, 4))
+    }.withBackground(secondaryPanelBackground)
+        .withBorder(JBUI.Borders.empty(2, 4))
 
     private val emptyLabel = JBLabel("Nothing to show", SwingConstants.CENTER).apply {
         foreground = AdtUiUtils.DEFAULT_FONT_COLOR
