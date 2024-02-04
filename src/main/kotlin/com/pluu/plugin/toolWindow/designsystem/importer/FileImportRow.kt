@@ -69,7 +69,7 @@ class FileImportRow(
         row("Design system Type:") {
             comboBox(
                 viewModel.selectableDesignSystemTypes,
-                getRenderer("Select a type", DesignSystemType::displayName)
+                getRenderer("Select a type", DesignSystemType::name)
             ).bindItem(viewModel::designSystemType)
                 .whenItemSelectedFromUi {
                     viewModel.selectDesignSystemType(it)

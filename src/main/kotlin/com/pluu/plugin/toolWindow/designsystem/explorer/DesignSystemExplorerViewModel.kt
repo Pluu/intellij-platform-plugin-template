@@ -33,7 +33,7 @@ internal class DesignSystemExplorerViewModel(
         add(DesignSystemTab("ALL", null))
 
         supportedTypes.forEach { item ->
-            add(DesignSystemTab(item.displayName, item))
+            add(DesignSystemTab(item.name, item))
         }
     }
 

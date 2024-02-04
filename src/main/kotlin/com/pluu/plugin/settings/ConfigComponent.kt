@@ -173,7 +173,7 @@ class ConfigComponent(
         values: List<DesignSystemType>
     ) : DialogWrapper(true) {
 
-        private val names = values.map { it.displayName.lowercase() }
+        private val names = values.map { it.name }
 
         private lateinit var nameTextField: JTextField
 
@@ -255,7 +255,7 @@ class ConfigComponent(
                 foreground = list.foreground
             }
 
-            append(value.displayName)
+            append(value.name)
         }
     }
 }
