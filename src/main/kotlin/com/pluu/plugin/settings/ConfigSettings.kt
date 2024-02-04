@@ -60,7 +60,7 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
 
     companion object {
         private val defaultDesignSystemType: List<String> by lazy {
-            listOf("Input", "Button", "Type1", "Type2", "Type3")
+            listOf("Input", "Button", "Toast", "Chips")
         }
 
         fun getInstance(): ConfigSettings =
