@@ -21,15 +21,13 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.ui.ColorUtil
-import com.intellij.ui.components.JBLabel
+import com.intellij.ui.dsl.builder.Align
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.settings.ConfigSettingsListener
 import org.jetbrains.android.facet.AndroidFacet
-import javax.swing.Box
-import javax.swing.BoxLayout
 import javax.swing.JComponent
-import javax.swing.JPanel
 
 const val DESIGN_SYSTEM_EXPLORER_TOOL_WINDOW_ID = "Design System Explorer"
 
@@ -133,20 +131,19 @@ private fun displayNoFacetView(project: Project, toolWindow: ToolWindow) {
 
 private fun ToolWindow.displayWaitingView(message: String, showWarning: Boolean) {
     contentManager.removeAllContents(true)
-    val waitingForSyncPanel = JPanel().apply {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        val waitingLabel = JBLabel().apply {
-            text = message
-            if (showWarning) {
-                icon = AllIcons.General.Warning
-            }
-            foreground = ColorUtil.toAlpha(UIUtil.getLabelForeground(), 150)
-            alignmentX = JComponent.CENTER_ALIGNMENT
-            alignmentY = JComponent.CENTER_ALIGNMENT
-        }
-        add(Box.createVerticalGlue())
-        add(waitingLabel)
-        add(Box.createVerticalGlue())
+    val waitingForSyncPanel = panel {
+        row {
+            label(message)
+                .applyToComponent {
+                    if (showWarning) {
+                        icon = AllIcons.General.Warning
+                    }
+                    foreground = ColorUtil.toAlpha(UIUtil.getLabelForeground(), 150)
+                }.align(Align.CENTER)
+        }.resizableRow()
+    }.apply {
+        alignmentX = JComponent.CENTER_ALIGNMENT
+        alignmentY = JComponent.CENTER_ALIGNMENT
     }
     val content = contentManager.factory.createContent(waitingForSyncPanel, null, false)
     contentManager.addContent(content)
