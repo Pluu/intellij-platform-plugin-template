@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
@@ -35,7 +36,6 @@ import com.pluu.plugin.toolWindow.designsystem.model.RESOURCE_DESIGN_ASSETS_KEY
 import com.pluu.plugin.toolWindow.designsystem.widget.Section
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionList
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionListModel
-import org.jetbrains.android.facet.AndroidFacet
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Container
@@ -89,7 +89,7 @@ private val UNIT_DELAY_BEFORE_LOADING_STATE = TimeUnit.MILLISECONDS
 
 class DesignSystemExplorerListView(
     private val viewModel: DesignSystemExplorerListViewModel,
-    val facet: AndroidFacet,
+    val project: Project,
     withMultiModuleSearch: Boolean = true,
 ) : JPanel(BorderLayout()), Disposable, DataProvider {
 
@@ -152,8 +152,8 @@ class DesignSystemExplorerListView(
                 EditComponentAction { item ->
                     // TODO: 데이터 중복 대응 필요
                     ResourceImportDialog(
-                        facet.module.project,
-                        ResourceImportDialogViewModel(facet, sequenceOf(item)) {
+                        project,
+                        ResourceImportDialogViewModel(project, sequenceOf(item)) {
                             populateResourcesLists(keepScrollPosition = true)
                         }.apply {
                             modifyAssetItem = item
@@ -162,13 +162,13 @@ class DesignSystemExplorerListView(
                 },
                 ActionCopyFrom(IdeActions.ACTION_DELETE) { item ->
                     val result = Messages.showYesNoDialog(
-                        facet.module.project,
+                        project,
                         "Delete \"${item.name}\"'s data?",
                         item.name,
                         Messages.getQuestionIcon()
                     )
                     if (result == Messages.OK) {
-                        DesignAssetImporter().removeDesignAsset(item, facet, true)
+                        DesignAssetImporter().removeDesignAsset(item, project, true)
                         populateResourcesLists(keepScrollPosition = true)
                     }
                 },

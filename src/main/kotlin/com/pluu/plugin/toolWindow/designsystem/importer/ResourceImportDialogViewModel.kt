@@ -1,13 +1,13 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.android.tools.idea.ui.resourcemanager.plugin.DesignAssetRendererManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
-import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import java.awt.Image
 import java.util.concurrent.CompletableFuture
@@ -16,7 +16,7 @@ import javax.swing.JTextField
 const val MAX_IMPORT_FILES = 400
 
 class ResourceImportDialogViewModel(
-    val facet: AndroidFacet,
+    val project: Project,
     assets: Sequence<DesignSystemItem>,
     val fileConfigurationViewModel: FileConfigurationViewModel = FileConfigurationViewModel(assets),
     private val designAssetImporter: DesignAssetImporter = DesignAssetImporter(),
@@ -51,12 +51,12 @@ class ResourceImportDialogViewModel(
         val modifyAssetId = modifyAssetItem
         if (modifyAssetId != null) {
             val newFileName = assetSets.first().asset.fileNameWithExtension
-            designAssetImporter.removeDesignAsset(modifyAssetId, facet, false)
-            designAssetImporter.renameThumbnail(assetSetsToImport.firstOrNull()?.asset?.file, newFileName, facet)
+            designAssetImporter.removeDesignAsset(modifyAssetId, project, false)
+            designAssetImporter.renameThumbnail(assetSetsToImport.firstOrNull()?.asset?.file, newFileName, project)
         }
         designAssetImporter.importDesignAssets(
             assetSetsToImport,
-            facet,
+            project,
             isNeedImportImageAssert = modifyAssetId == null
         )
         this.modifyAssetItem = null
@@ -130,7 +130,7 @@ class ResourceImportDialogViewModel(
         return asset.file?.let { file ->
             rendererManager
                 .getViewer(file)
-                .getImage(file, facet.module, JBUI.size(150))
+                .getImage(file, null, JBUI.size(150))
         } ?: CompletableFuture.completedFuture(null)
     }
 

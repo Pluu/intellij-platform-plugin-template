@@ -1,6 +1,7 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.intellij.codeInsight.navigation.NavigationUtil.openFileWithPsiElement
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -22,7 +23,7 @@ import java.util.concurrent.CompletableFuture.supplyAsync
 import kotlin.properties.Delegates
 
 class DesignSystemExplorerListViewModelImpl(
-    override val facet: AndroidFacet,
+    override val project: Project,
     contextFile: VirtualFile?,
     private val listViewImageCache: ImageCache,
     override val filterOptions: FilterOptions,
@@ -43,7 +44,7 @@ class DesignSystemExplorerListViewModelImpl(
         }
     }
 
-    private val dataManager = ResourceDataManager(facet)
+    private val dataManager = ResourceDataManager(project)
 
     override val selectedTabName: String get() = currentTab.name
 
@@ -54,7 +55,7 @@ class DesignSystemExplorerListViewModelImpl(
     }
 
     override val assetPreviewManager: DesignAssetPreviewManager =
-        DesignAssetPreviewManagerImpl(facet, listViewImageCache, contextFile)
+        DesignAssetPreviewManagerImpl(listViewImageCache, contextFile)
 
     override fun clearCacheForCurrentResources() {
         getDesignSections().whenCompleteAsync({ lists, throwable ->
@@ -72,16 +73,16 @@ class DesignSystemExplorerListViewModelImpl(
     }
 
     override fun getDesignSections() = resourceExplorerSupplyAsync {
-        getResourceSections(facet)
+        getResourceSections(project)
     }
 
-    private fun getResourceSections(forFacet: AndroidFacet): List<DesignSection> {
+    private fun getResourceSections(project: Project): List<DesignSection> {
         val designSystemType = currentTab.filterType
         val designSections = mutableListOf<DesignSection>()
         designSections.add(
             DesignSection(
                 name = currentTab.name,
-                assetSets = DesignSystemManager.getModuleResources(forFacet, designSystemType)
+                assetSets = DesignSystemManager.getModuleResources(project, designSystemType)
                     .sortedBy { it.name }
                     .map {
                         DesignAssetSet(it.name, it)

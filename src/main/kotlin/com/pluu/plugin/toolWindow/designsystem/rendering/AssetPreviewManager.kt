@@ -3,7 +3,6 @@ package com.pluu.plugin.toolWindow.designsystem.rendering
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
-import org.jetbrains.android.facet.AndroidFacet
 import java.awt.Component
 import javax.swing.Icon
 import javax.swing.ImageIcon
@@ -13,12 +12,11 @@ interface DesignAssetPreviewManager {
 }
 
 class DesignAssetPreviewManagerImpl(
-    private val facet: AndroidFacet,
     imageCache: ImageCache,
     private val contextFile: VirtualFile? = null
 ) : DesignAssetPreviewManager {
     private val drawablePreviewProvider by lazy {
-        SlowDesignResourcePreviewManager(imageCache, DrawableSlowPreviewProvider(facet, contextFile))
+        SlowDesignResourcePreviewManager(imageCache, DrawableSlowPreviewProvider(contextFile))
     }
 
     override fun getPreviewProvider(resourceType: DesignSystemType): DesignAssetIconProvider {

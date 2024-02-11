@@ -2,6 +2,7 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.android.tools.idea.util.toIoFile
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -10,52 +11,51 @@ import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.provider.DesignSystemManager
 import com.pluu.plugin.toolWindow.designsystem.provider.sampleDirName
-import org.jetbrains.android.facet.AndroidFacet
 
 class DesignAssetImporter {
     fun importDesignAssets(
         assetSets: Set<DesignAssetSet>,
-        facet: AndroidFacet,
+        project: Project,
         isNeedImportImageAssert: Boolean
     ) {
         if (assetSets.isEmpty()) return
 
-        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
+        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(project)
         LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
 
         val groupedAssets = assetSets.groupBy {
             it.asset.type
         }
-        WriteCommandAction.runWriteCommandAction(facet.module.project, "Write Samples", null, {
+        WriteCommandAction.runWriteCommandAction(project, "Write Samples", null, {
             groupedAssets.forEach { (designSystemType, items) ->
                 if (isNeedImportImageAssert) {
                     copyAssetsInFolder(designSystemType, items, sampleRoot)
                 }
-                DesignSystemManager.saveSample(facet, designSystemType, items)
+                DesignSystemManager.saveSample(project, designSystemType, items)
             }
         })
     }
 
     fun removeDesignAsset(
         item: DesignSystemItem,
-        facet: AndroidFacet,
+        project: Project,
         isRemoveThumbnail: Boolean
     ) {
-        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
+        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(project)
         LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
-        DesignSystemManager.removeSample(facet, item.type, item)
+        DesignSystemManager.removeSample(project, item.type, item)
         if (isRemoveThumbnail) {
-            removeThumbnail(item.file, facet)
+            removeThumbnail(item.file, project)
         }
     }
 
     fun removeThumbnail(
         file: VirtualFile?,
-        facet: AndroidFacet
+        project: Project
     ) {
-        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(facet)
+        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(project)
         LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
-        WriteCommandAction.runWriteCommandAction(facet.module.project, "Remove Thumbnail", null, {
+        WriteCommandAction.runWriteCommandAction(project, "Remove Thumbnail", null, {
             // Delete thumbnail
             val safeFile = file?.toIoFile() ?: return@runWriteCommandAction
             safeFile.delete()
@@ -65,10 +65,10 @@ class DesignAssetImporter {
     fun renameThumbnail(
         file: VirtualFile?,
         rename: String,
-        facet: AndroidFacet
+        project: Project
     ) {
         val safeFile = file ?: return
-        WriteCommandAction.runWriteCommandAction(facet.module.project, "Rename Thumbnail", null, {
+        WriteCommandAction.runWriteCommandAction(project, "Rename Thumbnail", null, {
             safeFile.rename(this, rename)
         })
     }

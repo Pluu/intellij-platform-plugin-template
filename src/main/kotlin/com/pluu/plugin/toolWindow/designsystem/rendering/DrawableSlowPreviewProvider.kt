@@ -4,7 +4,6 @@ import com.android.tools.idea.ui.resourcemanager.plugin.DesignAssetRendererManag
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.scale.JBUIScale
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
-import org.jetbrains.android.facet.AndroidFacet
 import java.awt.Dimension
 import java.awt.image.BufferedImage
 
@@ -12,7 +11,6 @@ import java.awt.image.BufferedImage
  * [SlowResourcePreviewProvider] for Drawable and Mipmap resources.
  */
 class DrawableSlowPreviewProvider(
-    private val facet: AndroidFacet,
     private val contextFile: VirtualFile?
 ) : SlowResourcePreviewProvider {
 
@@ -24,6 +22,6 @@ class DrawableSlowPreviewProvider(
         val dimension = Dimension(width, height)
         val file = asset.file ?: return null
         return DesignAssetRendererManager.getInstance().getViewer(file)
-            .getImage(file, facet.module, dimension, configContext).get()
+            .getImage(file, null, dimension, configContext).get()
     }
 }

@@ -1,5 +1,6 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+import com.intellij.openapi.project.Project
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -43,7 +44,7 @@ interface DesignSystemExplorerListViewModel {
 
     val assetPreviewManager: DesignAssetPreviewManager
 
-    val facet: AndroidFacet
+    val project: Project
 
     val speedSearch: SpeedSearch
 

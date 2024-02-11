@@ -119,9 +119,10 @@ class DesignSystemExplorerToolbarViewModel(
         AllIcons.General.Add
     ), DumbAware {
         override fun actionPerformed(e: AnActionEvent) {
+            val project = facet.module.project
             ResourceImportDialog(
-                facet.module.project,
-                ResourceImportDialogViewModel(facet, emptySequence()) {
+                project,
+                ResourceImportDialogViewModel(project, emptySequence()) {
                     populateResourcesCallback()
                 }
             ).show()

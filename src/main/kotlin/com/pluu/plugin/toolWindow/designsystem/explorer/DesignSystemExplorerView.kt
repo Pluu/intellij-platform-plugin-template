@@ -2,12 +2,12 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.tools.idea.ui.resourcemanager.widget.OverflowingTabbedPaneWrapper
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.JBUI
-import org.jetbrains.android.facet.AndroidFacet
 import java.awt.BorderLayout
 import java.util.concurrent.CompletableFuture
 import javax.swing.BoxLayout
@@ -16,7 +16,7 @@ import javax.swing.JTabbedPane
 
 internal class DesignSystemExplorerView(
     private val viewModel: DesignSystemExplorerViewModel,
-    private val facet: AndroidFacet
+    private val project: Project
 ) : JPanel(BorderLayout()), Disposable {
 
     private val resourcesTabsPanel = OverflowingTabbedPaneWrapper().apply {
@@ -63,7 +63,7 @@ internal class DesignSystemExplorerView(
         listViewJob?.cancel(true)
         listViewJob = viewModel.createResourceListViewModel().whenCompleteAsync({ listViewModel, _ ->
             // TODO: Add a loading screen if this process takes too long.
-            listView = createResourcesListView(listViewModel, facet).also {
+            listView = createResourcesListView(listViewModel, project).also {
                 if (!Disposer.isDisposed(this)) {
                     centerPanel.removeAll()
                     centerPanel.add(it)
@@ -90,8 +90,8 @@ internal class DesignSystemExplorerView(
 
     private fun createResourcesListView(
         viewModel: DesignSystemExplorerListViewModel,
-        facet: AndroidFacet
+        project: Project
     ): DesignSystemExplorerListView {
-        return DesignSystemExplorerListView(viewModel, facet)
+        return DesignSystemExplorerListView(viewModel, project)
     }
 }

@@ -5,8 +5,8 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.android.facet.AndroidFacet
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import java.awt.datatransfer.UnsupportedFlavorException
@@ -19,7 +19,7 @@ val DESIGN_SYSTEM_URL_FLAVOR = DataFlavor(DesignSystemItem::class.java, "DesignS
 
 private val SUPPORTED_DATA_FLAVORS = arrayOf(DESIGN_SYSTEM_URL_FLAVOR, DataFlavor.stringFlavor)
 
-class ResourceDataManager(var facet: AndroidFacet) : CopyProvider {
+class ResourceDataManager(val project: Project) : CopyProvider {
 
     private var selectedItems: List<DesignSystemItem>? = null
 
@@ -51,7 +51,7 @@ class ResourceDataManager(var facet: AndroidFacet) : CopyProvider {
      * Try to find the psi element that this [DesignSystemItem] represents.
      */
     fun findPsiElement(resourceItem: DesignSystemItem): PsiElement? {
-        return getItemPsiFile(facet.module.project, resourceItem)
+        return getItemPsiFile(project, resourceItem)
     }
 }
 
