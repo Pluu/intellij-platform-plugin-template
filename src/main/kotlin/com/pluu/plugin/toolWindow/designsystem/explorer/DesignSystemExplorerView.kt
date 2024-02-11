@@ -72,7 +72,6 @@ internal class DesignSystemExplorerView(
                     Disposer.dispose(it)
                 }
             }
-            // selectIfNeeded()
         }, EdtExecutorService.getInstance())
     }
 

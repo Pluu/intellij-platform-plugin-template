@@ -3,7 +3,6 @@ package com.pluu.plugin.toolWindow.designsystem
 import com.android.tools.adtui.stdui.registerActionShortCutSet
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.CommonShortcuts
-import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.util.Disposer
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerToolbar
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerToolbarViewModel
@@ -22,7 +21,7 @@ class DesignSystemExplorer private constructor(
     private val designSystemExplorerView: DesignSystemExplorerView,
     private val toolbarViewModel: DesignSystemExplorerToolbarViewModel,
     private val toolbar: DesignSystemExplorerToolbar,
-) : JPanel(BorderLayout()), Disposable, DataProvider {
+) : JPanel(BorderLayout()), Disposable {
 
     var facet by Delegates.observable(facet) { _, _, newValue -> updateFacet(newValue) }
 
@@ -57,10 +56,6 @@ class DesignSystemExplorer private constructor(
     }
 
     override fun dispose() {}
-
-    override fun getData(dataId: String): Any? {
-        return null
-    }
 
     companion object {
         /**
