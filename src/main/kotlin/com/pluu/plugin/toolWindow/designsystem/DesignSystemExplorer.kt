@@ -18,9 +18,9 @@ internal const val DESIGN_RES_MANAGER_PREF_KEY = "DesignResourceManagerPrefKey"
 class DesignSystemExplorer private constructor(
     facet: AndroidFacet,
     private val designSystemExplorerViewModel: DesignSystemExplorerViewModel,
-    private val designSystemExplorerView: DesignSystemExplorerView,
+    designSystemExplorerView: DesignSystemExplorerView,
     private val toolbarViewModel: DesignSystemExplorerToolbarViewModel,
-    private val toolbar: DesignSystemExplorerToolbar,
+    toolbar: DesignSystemExplorerToolbar,
 ) : JPanel(BorderLayout()), Disposable {
 
     var facet by Delegates.observable(facet) { _, _, newValue -> updateFacet(newValue) }

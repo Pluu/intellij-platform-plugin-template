@@ -23,7 +23,7 @@ import kotlin.properties.Delegates
 
 class DesignSystemExplorerListViewModelImpl(
     override val facet: AndroidFacet,
-    private val contextFile: VirtualFile?,
+    contextFile: VirtualFile?,
     private val listViewImageCache: ImageCache,
     override val filterOptions: FilterOptions,
     initialDesignSystemTab: DesignSystemTab,
@@ -59,8 +59,8 @@ class DesignSystemExplorerListViewModelImpl(
     override fun clearCacheForCurrentResources() {
         getDesignSections().whenCompleteAsync({ lists, throwable ->
             if (throwable == null) {
-                lists.flatMap {
-                    it.assetSets.map { it.asset }
+                lists.flatMap { section ->
+                    section.assetSets.map { it.asset }
                 }.forEach(::clearImageCache)
                 updateUiCallback?.invoke(UpdateUiReason.IMAGE_CACHE_CHANGED)
             }

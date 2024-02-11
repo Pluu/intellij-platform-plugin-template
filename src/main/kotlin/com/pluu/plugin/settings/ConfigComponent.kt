@@ -35,7 +35,7 @@ import javax.swing.text.AttributeSet
 import javax.swing.text.DocumentFilter
 
 class ConfigComponent(
-    private val project: Project,
+    project: Project,
     private val configSettings: ConfigSettings,
     private val configProjectSettings: ConfigProjectSettings
 ) {
@@ -45,13 +45,12 @@ class ConfigComponent(
     private val topPanel: JPanel
     private val typeListModel = CollectionListModel(configSettings.getTypes())
     private val toolbar: ToolbarDecorator
-    private val typeList: JBList<DesignSystemType>
+    private val typeList: JBList<DesignSystemType> = JBList(typeListModel)
     private lateinit var sampleRootDirectoryField: TextFieldWithBrowseButton
 
     private val isInProject: Boolean = !project.isDefault
 
     init {
-        typeList = JBList(typeListModel)
         typeList.visibleRowCount = 5
         typeList.cellRenderer = DesignSystemTypeCellRender()
 

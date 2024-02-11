@@ -51,8 +51,7 @@ private class ResourceFilesTransferHandler(
     }
 
     override fun importData(comp: JComponent?, t: Transferable?): Boolean {
-        if (t == null) return false
-        return true
+        return t != null
     }
 
     override fun getSourceActions(c: JComponent?) = COPY_OR_MOVE
