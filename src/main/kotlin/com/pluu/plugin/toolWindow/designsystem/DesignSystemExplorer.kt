@@ -66,7 +66,7 @@ class DesignSystemExplorer private constructor(
             val explorerViewModel = DesignSystemExplorerViewModel.createViewModel(facet)
             val toolbarViewModel = DesignSystemExplorerToolbarViewModel(
                 facet,
-                explorerViewModel.tabs[explorerViewModel.supportTypeIndex].filterType,
+                explorerViewModel.tabs.getOrNull(explorerViewModel.supportTypeIndex)?.filterType,
                 explorerViewModel.filterOptions
             )
             val toolbar = DesignSystemExplorerToolbar.create(toolbarViewModel)

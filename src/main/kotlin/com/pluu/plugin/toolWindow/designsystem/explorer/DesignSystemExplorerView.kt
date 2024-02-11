@@ -23,7 +23,9 @@ internal class DesignSystemExplorerView(
         viewModel.tabs.forEach {
             tabbedPane.add(it.name, null)
         }
-        tabbedPane.selectedIndex = 0
+        if (tabbedPane.tabCount > 0) {
+            tabbedPane.selectedIndex = 0
+        }
         tabbedPane.addChangeListener { event ->
             val index = (event.source as JTabbedPane).selectedIndex
             viewModel.supportTypeIndex = index
