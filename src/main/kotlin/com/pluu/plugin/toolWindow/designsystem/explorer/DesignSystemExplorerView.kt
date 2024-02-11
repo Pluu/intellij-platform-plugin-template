@@ -3,6 +3,8 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 import com.android.tools.idea.ui.resourcemanager.widget.OverflowingTabbedPaneWrapper
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.JBUI
 import org.jetbrains.android.facet.AndroidFacet
@@ -29,15 +31,8 @@ internal class DesignSystemExplorerView(
         }
     }
 
-    private val topActionsPanel = JPanel().apply {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        isOpaque = false
-    }
-
-    private val headerPanel = JPanel().apply {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        add(resourcesTabsPanel)
-        add(topActionsPanel)
+    private val headerPanel: JPanel = panel {
+        row { cell(resourcesTabsPanel).align(AlignX.FILL) }
     }
 
     private val centerPanel = JPanel().apply {

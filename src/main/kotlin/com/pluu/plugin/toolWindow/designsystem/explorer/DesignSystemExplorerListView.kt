@@ -107,11 +107,6 @@ class DesignSystemExplorerListView(
     private val sectionListModel: SectionListModel = SectionListModel()
     private val dragHandler = resourceDragHandler()
 
-    private val topActionsPanel = JPanel().apply {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        isOpaque = false
-    }
-
     private val sectionList: SectionList = SectionList(sectionListModel).apply {
         border = SECTION_LIST_BORDER
         background = LIST_MODE_BACKGROUND
@@ -130,7 +125,7 @@ class DesignSystemExplorerListView(
         backgroundColor = LIST_MODE_BACKGROUND
     } else null
 
-    private val centerPanel = JPanel().apply {
+    private val contentPanel = JPanel().apply {
         layout = BoxLayout(this@apply, BoxLayout.Y_AXIS)
         background = LIST_MODE_BACKGROUND
         add(sectionList)
@@ -138,11 +133,6 @@ class DesignSystemExplorerListView(
             add(contentSeparator)
             add(moduleSearchView)
         }
-    }
-
-    private val contentPanel: JPanel = JPanel(BorderLayout()).apply {
-        add(topActionsPanel, BorderLayout.NORTH)
-        add(centerPanel)
     }
 
     /**
@@ -248,8 +238,8 @@ class DesignSystemExplorerListView(
             sectionList.getSections().filterIsInstance<AssetSection<AssetListView>>().forEach { section ->
                 section.updateHeaderName((section.list as? AssetListView)?.getFilteredSize())
             }
-            centerPanel.validate()
-            centerPanel.repaint()
+            contentPanel.validate()
+            contentPanel.repaint()
         }
 
         setContentPanel()
