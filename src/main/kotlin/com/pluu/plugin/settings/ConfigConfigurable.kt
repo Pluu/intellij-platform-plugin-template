@@ -23,18 +23,15 @@ class ConfigConfigurable(
     }
 
     override fun isModified(): Boolean {
-        val form = requireNotNull(configComponent)
-        return form.isModified()
+        return requireNotNull(configComponent).isModified()
     }
 
     override fun apply() {
-        val form = requireNotNull(configComponent)
-        form.apply()
+        requireNotNull(configComponent).apply()
     }
 
     override fun reset() {
-        val form = requireNotNull(configComponent)
-        form.reset()
+        requireNotNull(configComponent).reset()
     }
 
     override fun getDisplayName(): String = "Pluu Plugin"
