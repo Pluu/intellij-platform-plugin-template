@@ -83,7 +83,7 @@ class DesignSystemExplorerToolbar(
         toolTipText = SEARCH_FIELD_LABEL
         accessibleContext.accessibleName = SEARCH_FIELD_LABEL
         textEditor.columns = GAP_SIZE
-        textEditor.document.addDocumentListener(object : DocumentAdapter() {
+        addDocumentListener(object : DocumentAdapter() {
             override fun textChanged(e: DocumentEvent) {
                 toolbarViewModel.searchString = this@apply.text
             }
