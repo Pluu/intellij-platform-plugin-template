@@ -19,17 +19,14 @@ import com.pluu.plugin.toolWindow.designsystem.explorer.action.PopupAction
 import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialog
 import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialogViewModel
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
-import javax.swing.GroupLayout
-import javax.swing.JComponent
+import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
 private const val SEARCH_FIELD_LABEL = "Search sample by name"
 private const val FILTERS_BUTTON_LABEL = "Filter displayed sample"
 
-private val MIN_FIELD_SIZE = JBUI.scale(40)
-private val PREF_FIELD_SIZE = JBUI.scale(125)
-private val BUTTON_SIZE = JBUI.size(20)
+private val BUTTON_SIZE = JBUI.size(30, 20)
 private val GAP_SIZE = JBUI.scale(10)
 
 class DesignSystemExplorerToolbar(
@@ -40,28 +37,14 @@ class DesignSystemExplorerToolbar(
     private val refreshAction = action(RefreshAction(toolbarViewModel))
 
     init {
-        layout = GroupLayout(this)
-        val groupLayout = layout as GroupLayout
+        layout = BoxLayout(this, BoxLayout.X_AXIS)
         val addAction = action(NewSampleAction(toolbarViewModel))
-        val separator = com.android.tools.idea.ui.resourcemanager.widget.Separator()
         val filterAction = action(FilterAction(toolbarViewModel))
 
-        val sequentialGroup = groupLayout.createSequentialGroup()
-            .addFixedSizeComponent(addAction, true)
-            .addFixedSizeComponent(refreshAction, true)
-            .addFixedSizeComponent(separator)
-            .addComponent(searchAction, MIN_FIELD_SIZE, PREF_FIELD_SIZE, Int.MAX_VALUE)
-            .addFixedSizeComponent(filterAction)
-
-        val verticalGroup = groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(addAction)
-            .addComponent(refreshAction)
-            .addComponent(separator)
-            .addComponent(searchAction)
-            .addComponent(filterAction)
-
-        groupLayout.setHorizontalGroup(sequentialGroup)
-        groupLayout.setVerticalGroup(verticalGroup)
+       add(addAction)
+       add(refreshAction)
+       add(searchAction)
+       add(filterAction)
 
         border = JBUI.Borders.merge(
             JBUI.Borders.empty(4, 2),
@@ -170,15 +153,6 @@ private fun DefaultActionGroup.addRelatedTypeFilterActions(viewModel: DesignSyst
             add(ImageSizeFilterAction(viewModel, filters))
         }
     }
-}
-
-private fun GroupLayout.SequentialGroup.addFixedSizeComponent(
-    jComponent: JComponent,
-    baseline: Boolean = false
-): GroupLayout.SequentialGroup {
-    val width = jComponent.preferredSize.width
-    this.addComponent(baseline, jComponent, width, width, width)
-    return this
 }
 
 private class NewSampleAction(
