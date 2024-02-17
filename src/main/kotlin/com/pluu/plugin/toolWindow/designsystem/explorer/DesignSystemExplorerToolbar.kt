@@ -9,12 +9,15 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.PresentationFactory
+import com.intellij.openapi.project.DumbAware
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.SearchTextField
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.explorer.action.HeaderAction
 import com.pluu.plugin.toolWindow.designsystem.explorer.action.PopupAction
+import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialog
+import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialogViewModel
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import javax.swing.GroupLayout
 import javax.swing.JComponent
@@ -39,7 +42,7 @@ class DesignSystemExplorerToolbar(
     init {
         layout = GroupLayout(this)
         val groupLayout = layout as GroupLayout
-        val addAction = action(toolbarViewModel.addAction)
+        val addAction = action(NewSampleAction(toolbarViewModel))
         val separator = com.android.tools.idea.ui.resourcemanager.widget.Separator()
         val filterAction = action(FilterAction(toolbarViewModel))
 
@@ -176,4 +179,22 @@ private fun GroupLayout.SequentialGroup.addFixedSizeComponent(
     val width = jComponent.preferredSize.width
     this.addComponent(baseline, jComponent, width, width, width)
     return this
+}
+
+private class NewSampleAction(
+    val viewModel: DesignSystemExplorerToolbarViewModel
+) : AnAction(
+    "New Sample Design System",
+    "New sample from disk",
+    AllIcons.General.Add
+), DumbAware {
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = viewModel.facet.module.project
+        ResourceImportDialog(
+            project,
+            ResourceImportDialogViewModel(project, emptySequence()) {
+                viewModel.populateResourcesCallback()
+            }
+        ).show()
+    }
 }
