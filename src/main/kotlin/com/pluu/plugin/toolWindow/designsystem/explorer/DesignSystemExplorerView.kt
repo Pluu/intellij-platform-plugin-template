@@ -4,6 +4,7 @@ import com.android.tools.idea.ui.resourcemanager.widget.OverflowingTabbedPaneWra
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.concurrency.EdtExecutorService
@@ -33,14 +34,15 @@ internal class DesignSystemExplorerView(
         }
     }
 
-    private val headerPanel: JPanel = panel {
-        row { cell(resourcesTabsPanel).align(AlignX.FILL) }
-    }
-
     private val centerPanel = JPanel().apply {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
         isOpaque = false
         border = JBUI.Borders.empty()
+    }
+
+    private val root: JPanel = panel {
+        row { cell(resourcesTabsPanel).align(AlignX.FILL) }
+        row { cell(centerPanel).align(Align.FILL) }
     }
 
     private var listView: DesignSystemExplorerListView? = null
@@ -48,7 +50,7 @@ internal class DesignSystemExplorerView(
     private var listViewJob: CompletableFuture<DesignSystemExplorerListViewModel>? = null
 
     init {
-        add(getContentPanel())
+        add(root)
 
         viewModel.updateSupportTypeTabCallback = {
             resourcesTabsPanel.tabbedPane.selectedIndex = viewModel.supportTypeIndex
@@ -79,15 +81,6 @@ internal class DesignSystemExplorerView(
 
     override fun dispose() {
 //        TODO("Not yet implemented")
-    }
-
-    private fun getContentPanel(): JPanel {
-        val explorerListPanel = JPanel(BorderLayout()).apply {
-            add(headerPanel, BorderLayout.NORTH)
-            add(centerPanel, BorderLayout.CENTER)
-        }
-
-        return explorerListPanel
     }
 
     private fun createResourcesListView(
