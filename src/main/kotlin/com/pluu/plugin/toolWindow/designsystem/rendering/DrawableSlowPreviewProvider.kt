@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.rendering
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/rendering/DrawableSlowPreviewProvider.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.android.tools.idea.ui.resourcemanager.plugin.DesignAssetRendererManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.scale.JBUIScale

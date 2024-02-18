@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.rendering
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/rendering/SlowResourcePreviewManager.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.android.annotations.concurrency.Slow
 import com.android.tools.adtui.ImageUtils
 import com.intellij.openapi.components.service
