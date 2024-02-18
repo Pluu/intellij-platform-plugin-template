@@ -29,7 +29,7 @@ class DesignAssetCellRenderer(
 
         if (assetView.sampleImageSize.isVisible()) {
             val thumbnailSize = assetView.thumbnailSize
-            val iconProvider: DesignAssetIconProvider = assetPreviewManager.getPreviewProvider(designSystemItem.type)
+            val iconProvider: DesignAssetIconProvider = assetPreviewManager.getPreviewProvider()
             val icon = iconProvider.getIcon(designSystemItem,
                 thumbnailSize.width,
                 thumbnailSize.height,

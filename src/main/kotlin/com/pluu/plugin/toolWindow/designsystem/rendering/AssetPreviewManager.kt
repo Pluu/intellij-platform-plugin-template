@@ -5,14 +5,13 @@ package com.pluu.plugin.toolWindow.designsystem.rendering
 ///////////////////////////////////////////////////////////////////////////
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.awt.Component
 import javax.swing.Icon
 import javax.swing.ImageIcon
 
 interface DesignAssetPreviewManager {
-    fun getPreviewProvider(resourceType: DesignSystemType): DesignAssetIconProvider
+    fun getPreviewProvider(): DesignAssetIconProvider
 }
 
 class DesignAssetPreviewManagerImpl(
@@ -23,7 +22,7 @@ class DesignAssetPreviewManagerImpl(
         SlowDesignResourcePreviewManager(imageCache, DrawableSlowPreviewProvider(contextFile))
     }
 
-    override fun getPreviewProvider(resourceType: DesignSystemType): DesignAssetIconProvider {
+    override fun getPreviewProvider(): DesignAssetIconProvider {
         return drawablePreviewProvider
     }
 }
