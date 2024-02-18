@@ -24,7 +24,9 @@ import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.font.TextAttribute
 import javax.swing.BorderFactory
+import javax.swing.Icon
 import javax.swing.JComponent
+import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 import javax.swing.border.Border
@@ -78,23 +80,20 @@ abstract class AssetView(
 ) : JPanel(BorderLayout()) {
 
     /**
-     * If true, draw a chessboard as in background of [thumbnail]
+     * If true, draw a chessboard as in background of [thumbnailLabel]
      */
     var withChessboard: Boolean by Delegates.observable(false) { _, _, withChessboard ->
         contentWrapper.showChessboard = withChessboard
     }
 
-    /**
-     * Set the [JComponent] acting as the thumbnail of the object represented (e.g an image or a color)
-     */
-    var thumbnail by Delegates.observable(null as JComponent?) { _, old, new ->
+    var thumbnail: Icon? by Delegates.observable(null) { _, old, new ->
         if (old !== new) {
             contentWrapper.removeAll()
             if (new != null) {
-                contentWrapper.add(new)
+                thumbnailLabel.icon = new
+                contentWrapper.add(thumbnailLabel)
             }
         }
-        // When there's nothing to preview, SingleAssetCard and RowAssetView have different behaviors, so we let them deal with it.
         if (new == null) {
             setNonIconLayout()
         } else {
@@ -103,7 +102,12 @@ abstract class AssetView(
     }
 
     /**
-     * The size of the [thumbnail] container that should be used to compute the size of the thumbnail component
+     * Set the [JComponent] acting as the thumbnail of the object represented (e.g an image or a color)
+     */
+    private val thumbnailLabel= JLabel().apply { horizontalAlignment = JLabel.CENTER }
+
+    /**
+     * The size of the [thumbnailLabel] container that should be used to compute the size of the thumbnail component
      */
     val thumbnailSize: Dimension get() = contentWrapper.size
 
@@ -185,7 +189,7 @@ abstract class AssetView(
     }
 
     /**
-     * Subclass implement this method to specify the size of the [thumbnail] giving the
+     * Subclass implement this method to specify the size of the [thumbnailLabel] giving the
      * desired [width]
      */
     protected abstract fun computeThumbnailSize(width: Int): Dimension
