@@ -8,7 +8,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.awt.Component
 import javax.swing.Icon
-import javax.swing.ImageIcon
 
 interface DesignAssetPreviewManager {
     fun getPreviewProvider(): DesignAssetIconProvider
@@ -38,26 +37,4 @@ interface DesignAssetIconProvider {
         refreshCallback: () -> Unit = {},
         shouldBeRendered: () -> Boolean = { true }
     ): Icon
-}
-
-/**
- * An [DesignAssetIconProvider] that always returns an empty icon.
- */
-class DefaultIconProvider private constructor() : DesignAssetIconProvider {
-    companion object {
-        val INSTANCE = DefaultIconProvider()
-    }
-
-    var icon: Icon = ImageIcon(EMPTY_IMAGE)
-
-    override val supportsTransparency: Boolean = false
-
-    override fun getIcon(
-        assetToRender: DesignSystemItem,
-        width: Int,
-        height: Int,
-        component: Component,
-        refreshCallback: () -> Unit,
-        shouldBeRendered: () -> Boolean
-    ) = icon
 }
