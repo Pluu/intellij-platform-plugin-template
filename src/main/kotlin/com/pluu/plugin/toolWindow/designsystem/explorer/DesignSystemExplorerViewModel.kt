@@ -4,7 +4,6 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.pluu.plugin.settings.ConfigSettings
@@ -23,7 +22,6 @@ import kotlin.properties.Delegates
 
 internal class DesignSystemExplorerViewModel(
     defaultFacet: AndroidFacet,
-    private var contextFileForConfiguration: VirtualFile?,
     supportedTypes: List<DesignSystemType>,
     private val modelState: ViewModelState,
     private val selectAssetAction: ((asset: DesignSystemItem) -> Unit)? = null,
@@ -81,7 +79,6 @@ internal class DesignSystemExplorerViewModel(
 
     var facet: AndroidFacet by Delegates.observable(defaultFacet) { _, oldFacet, newFacet ->
         if (newFacet != oldFacet) {
-            contextFileForConfiguration = null // AndroidFacet changed, optional Configuration file is not valid.
             facetUpdaterCallback(newFacet)
             populateResourcesCallback()
         }
@@ -107,7 +104,6 @@ internal class DesignSystemExplorerViewModel(
         return CompletableFuture.supplyAsync({
             DesignSystemExplorerListViewModelImpl(
                 facet.module.project,
-                contextFileForConfiguration,
                 listViewImageCache,
                 filterOptions,
                 tabs[supportTypeIndex],
@@ -180,7 +176,6 @@ internal class DesignSystemExplorerViewModel(
             val selectableTypes = ConfigSettings.getInstance().getTypes()
             return DesignSystemExplorerViewModel(
                 facet,
-                null,
                 selectableTypes,
                 ViewModelState(
                     FilterOptionsParams(sampleImageSizeInitialValue = FilterImageSize.M),

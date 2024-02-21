@@ -2,7 +2,6 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.tools.idea.ui.resourcemanager.rendering.AssetIconProvider
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
-import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetIconProvider
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import java.awt.Component
 import javax.swing.JList
@@ -29,7 +28,7 @@ class DesignAssetCellRenderer(
 
         if (assetView.sampleImageSize.isVisible()) {
             val thumbnailSize = assetView.thumbnailSize
-            val iconProvider: DesignAssetIconProvider = assetPreviewManager.getPreviewProvider()
+            val iconProvider = assetPreviewManager.getPreviewProvider()
             val icon = iconProvider.getIcon(designSystemItem,
                 thumbnailSize.width,
                 thumbnailSize.height,

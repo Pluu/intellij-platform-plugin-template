@@ -4,7 +4,6 @@ package com.pluu.plugin.toolWindow.designsystem.rendering
 // Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/rendering/AssetPreviewManager.kt
 ///////////////////////////////////////////////////////////////////////////
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.awt.Component
 import javax.swing.Icon
@@ -14,11 +13,10 @@ interface DesignAssetPreviewManager {
 }
 
 class DesignAssetPreviewManagerImpl(
-    imageCache: ImageCache,
-    private val contextFile: VirtualFile? = null
+    imageCache: ImageCache
 ) : DesignAssetPreviewManager {
     private val drawablePreviewProvider by lazy {
-        SlowDesignResourcePreviewManager(imageCache, DrawableSlowPreviewProvider(contextFile))
+        SlowDesignResourcePreviewManager(imageCache, DrawableSlowPreviewProvider())
     }
 
     override fun getPreviewProvider(): DesignAssetIconProvider {

@@ -2,7 +2,6 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.intellij.codeInsight.navigation.NavigationUtil.openFileWithPsiElement
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.EdtExecutorService
@@ -24,7 +23,6 @@ import kotlin.properties.Delegates
 
 class DesignSystemExplorerListViewModelImpl(
     override val project: Project,
-    contextFile: VirtualFile?,
     private val listViewImageCache: ImageCache,
     override val filterOptions: FilterOptions,
     initialDesignSystemTab: DesignSystemTab,
@@ -55,7 +53,7 @@ class DesignSystemExplorerListViewModelImpl(
     }
 
     override val assetPreviewManager: DesignAssetPreviewManager =
-        DesignAssetPreviewManagerImpl(listViewImageCache, contextFile)
+        DesignAssetPreviewManagerImpl(listViewImageCache)
 
     override fun clearCacheForCurrentResources() {
         getDesignSections().whenCompleteAsync({ lists, throwable ->
