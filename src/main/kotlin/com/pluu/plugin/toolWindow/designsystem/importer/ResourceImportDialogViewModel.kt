@@ -35,7 +35,7 @@ class ResourceImportDialogViewModel(
         .groupIntoDesignAssetSet()
         .toIdentitySet()
 
-    val assetSets get() = assetSetsToImport
+    val assetSets: Set<DesignAssetSet> get() = assetSetsToImport
 
     private val rendererManager = DesignAssetRendererManager.getInstance()
 
