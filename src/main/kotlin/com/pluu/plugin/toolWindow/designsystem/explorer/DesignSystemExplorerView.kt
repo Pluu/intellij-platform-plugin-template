@@ -42,7 +42,7 @@ internal class DesignSystemExplorerView(
 
     private val root: JPanel = panel {
         row { cell(resourcesTabsPanel).align(AlignX.FILL) }
-        row { cell(centerPanel).align(Align.FILL) }
+        row { cell(centerPanel).align(Align.FILL) }.resizableRow()
     }
 
     private var listView: DesignSystemExplorerListView? = null
