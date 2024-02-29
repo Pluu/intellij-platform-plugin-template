@@ -1,15 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.android.tools.idea.projectsystem.SourceProviderManager
-import com.intellij.ide.IdeView
-import com.intellij.ide.util.DirectoryChooserUtil
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
-import com.intellij.openapi.application.runReadAction
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiManager
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
@@ -21,7 +15,7 @@ class DesignSystemExplorerToolbarViewModel(
     facet: AndroidFacet,
     initialDesignSystemType: DesignSystemType?,
     private val filterOptions: FilterOptions
-) : DataProvider, IdeView {
+) : DataProvider {
 
     /**
      * Callback added by the view to be called when data of this
@@ -67,15 +61,6 @@ class DesignSystemExplorerToolbarViewModel(
         }
 
     var typeFiltersModel: TypeFiltersModel = filterOptions.typeFiltersModel
-
-    override fun getDirectories(): Array<PsiDirectory> =
-        SourceProviderManager.getInstance(facet).mainIdeaSourceProvider.resDirectories.mapNotNull {
-            runReadAction {
-                PsiManager.getInstance(facet.module.project).findDirectory(it)
-            }
-        }.toTypedArray()
-
-    override fun getOrChooseDirectory() = DirectoryChooserUtil.getOrChooseDirectory(this)
 
     override fun getData(dataId: String): Any? = when (dataId) {
         CommonDataKeys.PROJECT.name -> facet.module.project
