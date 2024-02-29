@@ -23,7 +23,7 @@ private const val PREFERENCE_LAST_SELECTED_DIRECTORY = "designSystemExplorer.las
  * Recursively find all files that can be converted to [DesignSystemItem] in hierarchies
  * of this [Sequence]'s files.
  *
- * The conversion is done by the first [com.android.tools.idea.ui.resourcemanager.plugin.ResourceImporter]
+ * The conversion is done by the first [com.pluu.plugin.toolWindow.designsystem.plugin.ResourceImporter]
  * provided by [importersProvider] and compatible with a given file.
  */
 fun Sequence<File>.findAllDesignAssets(importersProvider: ImportersProvider): Sequence<DesignSystemItem> =
@@ -37,7 +37,7 @@ fun Sequence<File>.findAllDesignAssets(importersProvider: ImportersProvider): Se
  *
  * @see ImportersProvider
  * @see ImportersProvider.getImportersForExtension
- * @see com.android.tools.idea.ui.resourcemanager.plugin.ResourceImporter.processFile
+ * @see com.pluu.plugin.toolWindow.designsystem.plugin.ResourceImporter.processFile
  */
 fun Sequence<File>.toDesignAsset(importersProvider: ImportersProvider): Sequence<DesignSystemItem> =
     mapNotNull {

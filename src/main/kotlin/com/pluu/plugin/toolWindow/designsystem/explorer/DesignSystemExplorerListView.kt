@@ -191,7 +191,7 @@ class DesignSystemExplorerListView(
     }
 
     /**
-     * A mouse listener that opens a [ResourceDetailView] when double clicking
+     * A mouse listener that opens a detail file when double clicking
      * on an item from the list.
      * @see doSelectAssetAction
      */

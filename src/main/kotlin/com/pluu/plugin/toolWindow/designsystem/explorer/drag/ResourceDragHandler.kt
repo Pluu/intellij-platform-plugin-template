@@ -16,8 +16,6 @@ import javax.swing.TransferHandler
  * Handles dragging out [DesignAssetSet]s in a list.
  *
  * E.g: Drag a Drawable [DesignAssetSet] into the LayoutEditor.
- *
- * @param importResourceDelegate Object to which [TransferHandler.importData] is delegated.
  */
 fun resourceDragHandler() = if (GraphicsEnvironment.isHeadless()) {
     HeadlessDragHandler()
@@ -80,15 +78,13 @@ internal class ResourceDragHandlerImpl (
 private fun createDragPreview(draggedAssets: JList<DesignAssetSet>): BufferedImage {
     val component = draggedAssets.cellRenderer.getListCellRendererComponent(
         draggedAssets,
-        draggedAssets.selectedValue, //show the preview of the focused and selected item
+        draggedAssets.selectedValue, // 프리뷰로 노출할 아이템
         draggedAssets.selectedIndex,
         false,
         false
     )
-    // The component having no parent to lay it out an set its size, we need to manually to it, otherwise
-    // validate() won't be executed.
 
-    // Drag시 나오는 이미지의 넓이은 JList의 넓이를 사용
+    // Drag시 Preview 크기 : JList의 넓이 x Component의 높이
     component.setSize(draggedAssets.width, component.preferredSize.height)
     component.validate()
 

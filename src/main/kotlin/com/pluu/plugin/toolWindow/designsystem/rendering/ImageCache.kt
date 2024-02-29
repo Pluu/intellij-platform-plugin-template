@@ -53,7 +53,7 @@ class ImageCache private constructor(
         }
 
         /**
-         * Returns an ImageCache that uses an image pool of size [CACHE_WEIGHT_BYTES] to store previews for a given [Asset]
+         * Returns an ImageCache that uses an image pool of size [CACHE_WEIGHT_BYTES] to store previews for a given [ImageCacheValue]
          *
          * @param parentDisposable Used to dispose of the returned [ImageCache], used as the parent disposable for the default
          * [MergingUpdateQueue] when the [mergingUpdateQueue] parameter is null.
