@@ -74,7 +74,7 @@
                     class="com.pluu.plugin.action.FragmentCreateWizardAction"/>
         </group>
 
-        <group>
+        <group id="com.pluu.plugin.test">
             <action id="com.pluu.plugin.wizard.action.testcreator.viewmodel"
                     class="com.pluu.plugin.action.testIntegration.ViewModelTestCreatorAction"
                     icon="PluuIcons.Konata"/>
