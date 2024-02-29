@@ -66,6 +66,8 @@ class DesignSystemExplorerToolbarViewModel(
             filterOptions.sampleImageSize = value
         }
 
+    var typeFiltersModel: TypeFiltersModel = filterOptions.typeFiltersModel
+
     override fun getDirectories(): Array<PsiDirectory> =
         SourceProviderManager.getInstance(facet).mainIdeaSourceProvider.resDirectories.mapNotNull {
             runReadAction {
@@ -79,28 +81,6 @@ class DesignSystemExplorerToolbarViewModel(
         CommonDataKeys.PROJECT.name -> facet.module.project
         PlatformCoreDataKeys.MODULE.name -> facet.module
         LangDataKeys.IDE_VIEW.name -> this
-        PlatformCoreDataKeys.BGT_DATA_PROVIDER.name -> DataProvider { getDataInBackground(it) }
         else -> null
-    }
-
-    private fun getDataInBackground(dataId: String): Any? = when (dataId) {
-        CommonDataKeys.PSI_ELEMENT.name -> getPsiDirForDesignSystemType()
-        else -> null
-    }
-
-    var typeFiltersModel: TypeFiltersModel = filterOptions.typeFiltersModel
-
-    /**
-     * Returns one of the existing directories used for the current [DesignSystemType], or the default 'res' directory.
-     *
-     * Needed for AssetStudio.
-     */
-    private fun getPsiDirForDesignSystemType(): PsiDirectory? {
-//        val resDirs = SourceProviderManager.getInstance(facet).mainIdeaSourceProvider.resDirectories
-//        val subDir = FolderTypeRelationship.getRelatedFolders(resourceType).firstOrNull()?.let { resourceFolderType ->
-//            getResourceSubdirs(resourceFolderType, resDirs).firstOrNull()
-//        }
-//        return (subDir ?: resDirs.firstOrNull())?.let { PsiManager.getInstance(facet.module.project).findDirectory(it) }
-        return null
     }
 }

@@ -149,8 +149,6 @@ private fun ToolWindow.displayWaitingView(message: String, showWarning: Boolean)
     contentManager.addContent(content)
 }
 
-private fun ToolWindow.displayWaitingForBuild() = displayWaitingView("Waiting for build to finish...", false)
-
 private fun ToolWindow.displayWaitingForGoodSync() = displayWaitingView("Waiting for successful sync...", true)
 
 private fun ToolWindow.displayLoading() = displayWaitingView("Loading...", false)

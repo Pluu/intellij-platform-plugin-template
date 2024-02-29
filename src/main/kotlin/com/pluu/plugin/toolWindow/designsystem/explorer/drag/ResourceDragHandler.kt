@@ -41,7 +41,7 @@ class HeadlessDragHandler internal constructor() : ResourceDragHandler {
  */
 private class ResourceFilesTransferHandler(
     private val assetList: JList<DesignAssetSet>
-): TransferHandler() {
+) : TransferHandler() {
 
     override fun canImport(support: TransferSupport): Boolean {
         if (support.sourceDropActions and COPY != COPY) return false
@@ -66,8 +66,7 @@ private class ResourceFilesTransferHandler(
     }
 }
 
-internal class ResourceDragHandlerImpl (
-) : ResourceDragHandler {
+internal class ResourceDragHandlerImpl : ResourceDragHandler {
     override fun registerSource(assetList: JList<DesignAssetSet>) {
         assetList.dragEnabled = true
         assetList.dropMode = DropMode.ON

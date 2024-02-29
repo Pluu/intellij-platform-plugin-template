@@ -118,7 +118,7 @@ class ResourceImportDialog(
                 if (!isWindowActive) {
                     isWindowActive = true
                     dialogViewModel.importMoreAssetIfEmpty { resourceSet, designAssets ->
-                        this@ResourceImportDialog.addAssets(resourceSet, designAssets)
+                        addAssets(resourceSet, designAssets)
                     }
                 }
             }

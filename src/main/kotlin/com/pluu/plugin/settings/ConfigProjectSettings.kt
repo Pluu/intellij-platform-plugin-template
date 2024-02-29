@@ -47,7 +47,10 @@ class ConfigProjectSettings(
     }
 }
 
-class ValueWithDefault<T : String?>(val prop: KMutableProperty0<T?>, val default: () -> T) {
+class ValueWithDefault<T : String?>(
+    private val prop: KMutableProperty0<T?>,
+    val default: () -> T
+) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         val value: T? = prop.get()
         return if (value !== null) value else default()

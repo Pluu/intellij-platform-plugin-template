@@ -53,11 +53,6 @@ class SectionList(private val model: SectionListModel) : JBScrollPane() {
      */
     private val listsGap = JBUI.scale(16)
 
-    /**
-     * Returns the list of [Section] name
-     */
-    val sectionsComponent = sectionList
-
     private val multiLisLayoutManager = VerticalFlowLayout(true, false)
 
     private val focusListener = object : FocusAdapter() {
