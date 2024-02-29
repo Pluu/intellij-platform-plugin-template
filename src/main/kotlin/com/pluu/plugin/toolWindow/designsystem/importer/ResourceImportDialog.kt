@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage")
+@file:Suppress("DialogTitleCapitalization")
 
 package com.pluu.plugin.toolWindow.designsystem.importer
 
@@ -29,10 +29,9 @@ import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.awt.BorderLayout
-import java.awt.KeyboardFocusManager
+import java.awt.Rectangle
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
-import java.beans.PropertyChangeListener
 import java.util.*
 import javax.swing.BorderFactory
 import javax.swing.ImageIcon
@@ -76,14 +75,6 @@ class ResourceImportDialog(
         border = null
     }
 
-    private val focusPropertyChangeListener = PropertyChangeListener { evt ->
-        if (evt.newValue !is JComponent) {
-            return@PropertyChangeListener
-        }
-        val focused: JComponent = evt.newValue as JComponent
-//        scrollViewPortIfNeeded(focused)
-    }
-
     init {
         title = "Import Component"
         setSize(DIALOG_SIZE.width(), DIALOG_SIZE.height())
@@ -93,8 +84,6 @@ class ResourceImportDialog(
         dialogViewModel.assetSets.forEach(this::addDesignAssetSet)
         updateValues()
         setupWindowListener()
-        KeyboardFocusManager.getCurrentKeyboardFocusManager()
-            .addPropertyChangeListener("focusOwner", focusPropertyChangeListener)
     }
 
     /**
@@ -175,6 +164,7 @@ class ResourceImportDialog(
             override fun actionPerformed(e: AnActionEvent) {
                 dialogViewModel.importMoreAssets { designAssetSet, newDesignAssets ->
                     addAssets(designAssetSet, newDesignAssets)
+                    jumpToImportStep()
                 }
             }
         }
@@ -187,6 +177,13 @@ class ResourceImportDialog(
             "Resource Explorer",
             JBUI.size(25)
         ).apply { isFocusable = true }
+    }
+
+    /** Import 후 추가된 항목이 보이도록 끝부분을 스크롤 */
+    private fun jumpToImportStep() {
+        centerPanel.viewport.scrollRectToVisible(
+            Rectangle(content.width, content.height, content.width + 1, content.height + 1)
+        )
     }
 
     private fun updateOkButton() {
