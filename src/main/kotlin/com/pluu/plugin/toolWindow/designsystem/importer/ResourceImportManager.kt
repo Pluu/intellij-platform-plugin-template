@@ -41,9 +41,8 @@ fun Sequence<File>.findAllDesignAssets(importersProvider: ImportersProvider): Se
  */
 fun Sequence<File>.toDesignAsset(importersProvider: ImportersProvider): Sequence<DesignSystemItem> =
     mapNotNull {
-        importersProvider.getImportersForExtension(it.extension).firstOrNull()?.processFile(it)
+        importersProvider.getImportersForExtension(it.extension)?.processFile(it)
     }
-
 
 /**
  * Group [DesignSystemItem]s by their name into [DesignAssetSet].
