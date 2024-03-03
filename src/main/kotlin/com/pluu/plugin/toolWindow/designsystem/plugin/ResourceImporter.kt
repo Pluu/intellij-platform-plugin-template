@@ -5,6 +5,7 @@ package com.pluu.plugin.toolWindow.designsystem.plugin
 ///////////////////////////////////////////////////////////////////////////
 
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -22,11 +23,15 @@ class ResourceImporter {
 
     fun processFile(file: File): DesignSystemItem? {
         val virtualFile = VfsUtil.findFileByIoFile(file, true) ?: return null
+        return processFile(virtualFile)
+    }
+
+    fun processFile(file: VirtualFile): DesignSystemItem {
         return DesignSystemItem(
             type = DesignSystemType.NONE,
-            name = virtualFile.nameWithoutExtension,
+            name = file.nameWithoutExtension,
             aliasNames = null,
-            file = virtualFile,
+            file = file,
             applicableFileType = ApplicableFileType.NONE,
             sampleCode = null
         )
