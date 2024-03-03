@@ -169,14 +169,12 @@ class ResourceImportDialog(
             }
         }
 
-        val presentation = importAction.templatePresentation.clone()
-        presentation.text = "Import more files"
         return ActionButtonWithText(
             importAction,
-            presentation,
-            "Resource Explorer",
+            importAction.templatePresentation.clone(),
+            "",
             JBUI.size(25)
-        ).apply { isFocusable = true }
+        )
     }
 
     /** Import 후 추가된 항목이 보이도록 끝부분을 스크롤 */
