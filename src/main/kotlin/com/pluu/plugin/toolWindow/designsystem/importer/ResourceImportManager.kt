@@ -3,8 +3,8 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 import com.android.tools.idea.ui.resourcemanager.importer.getAllLeafFiles
 import com.android.tools.idea.util.toIoFile
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
-import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
@@ -68,20 +68,21 @@ fun chooseDesignAssets(
         ?.let {
             try {
                 VfsUtil.findFile(File(it).toPath(), true)
-            }
-            catch (ex: InvalidPathException) {
+            } catch (ex: InvalidPathException) {
                 null
             }
         }
     val fileChooserDescriptor = createFileDescriptor(importersProvider)
-    FileChooserFactory
-        .getInstance()
-        .createPathChooser(fileChooserDescriptor, null, parent)
-        .choose(lastChosenDirFile) { selectedFiles ->
-            val allDesignAssets = selectedFiles.asSequence().map { it.toIoFile() }.findAllDesignAssets(importersProvider)
-            fileChosenCallback(allDesignAssets)
-            PropertiesComponent.getInstance().setValue(PREFERENCE_LAST_SELECTED_DIRECTORY, selectedFiles.firstOrNull()?.path)
-        }
+    FileChooser.chooseFiles(fileChooserDescriptor, null, parent, lastChosenDirFile) { selectedFiles ->
+        val allDesignAssets = selectedFiles.asSequence()
+            .map { it.toIoFile() }
+            .findAllDesignAssets(importersProvider)
+        fileChosenCallback(allDesignAssets)
+
+        // 마지막 로드한 위치 저장
+        PropertiesComponent.getInstance()
+            .setValue(PREFERENCE_LAST_SELECTED_DIRECTORY, selectedFiles.firstOrNull()?.path)
+    }
 }
 
 /**

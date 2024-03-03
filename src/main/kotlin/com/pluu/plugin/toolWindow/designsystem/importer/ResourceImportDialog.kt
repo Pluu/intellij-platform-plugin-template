@@ -81,6 +81,7 @@ class ResourceImportDialog(
         isResizable = false
         dialogViewModel.updateCallback = ::updateValues
         init()
+        // 최초 데이터 추가
         dialogViewModel.assetSets.forEach(this::addDesignAssetSet)
         updateValues()
         setupWindowListener()
