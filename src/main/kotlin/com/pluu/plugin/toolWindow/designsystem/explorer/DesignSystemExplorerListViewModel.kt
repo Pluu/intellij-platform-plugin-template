@@ -2,6 +2,7 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.speedSearch.SpeedSearch
+import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemTab
@@ -68,7 +69,7 @@ interface DesignSystemExplorerListViewModel {
      * Returns a list of [DesignSection] with one section per namespace, the first section being the
      * one containing the resource of the current module.
      */
-    fun getDesignSections(): CompletableFuture<List<DesignSection>>
+    fun getDesignAssetSets(): CompletableFuture<List<DesignAssetSet>>
 
     /**
      * Delegate method to handle calls to [com.intellij.openapi.actionSystem.DataProvider.getData].

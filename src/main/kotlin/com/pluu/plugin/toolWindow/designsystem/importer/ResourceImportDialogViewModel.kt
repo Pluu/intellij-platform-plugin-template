@@ -1,6 +1,8 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
-import com.android.tools.idea.ui.resourcemanager.plugin.DesignAssetRendererManager
+import com.android.tools.adtui.ImageUtils
+import com.intellij.openapi.fileChooser.FileChooser
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.util.ui.JBUI
@@ -18,7 +20,6 @@ const val MAX_IMPORT_FILES = 400
 class ResourceImportDialogViewModel(
     val project: Project,
     assets: Sequence<DesignSystemItem>,
-    val fileConfigurationViewModel: FileConfigurationViewModel = FileConfigurationViewModel(assets),
     private val designAssetImporter: DesignAssetImporter = DesignAssetImporter(),
     private val importersProvider: ImportersProvider = ImportersProvider(),
     private val importDoneCallback: () -> Unit,
@@ -36,8 +37,6 @@ class ResourceImportDialogViewModel(
         .toIdentitySet()
 
     val assetSets: Set<DesignAssetSet> get() = assetSetsToImport
-
-    private val rendererManager = DesignAssetRendererManager.getInstance()
 
     val fileCount: Int get() = assetSets.size
 
@@ -74,22 +73,37 @@ class ResourceImportDialogViewModel(
      * This allows the view to merge the new [DesignSystemItem] within a potential existing view of a [DesignAssetSet].
      * The callback won't be called if there is no new file.
      */
-    fun importMoreAssets(assetAddedCallback: (DesignAssetSet, DesignSystemItem) -> Unit) {
+    fun importMoreAssets(assetAddedCallback: (DesignAssetSet) -> Unit) {
         val assetByName = assetSetsToImport.associateBy { it.name }
-        chooseDesignAssets(importersProvider) { newAssetSets ->
-            newAssetSets
-                .take(MAX_IMPORT_FILES)
-                .groupIntoDesignAssetSet()
-                .forEach {
-                    addAssetSet(assetByName, it, assetAddedCallback)
-                }
-        }
+
+        val supportedFileTypes = importersProvider.supportedFileTypes
+        val descriptor = FileChooserDescriptor(true, true, false, false, false, true)
+            .withFileFilter { it.extension in supportedFileTypes }
+
+        FileChooser.chooseFiles(descriptor, project, null)
+            .asSequence()
+            .map { file ->
+                val name = file.nameWithoutExtension
+                DesignAssetSet(
+                    name,
+                    DesignSystemItem(
+                        type = DesignSystemType.NONE,
+                        name = name,
+                        aliasName = null,
+                        file = file,
+                        applicableFileType = ApplicableFileType.NONE,
+                        sampleCode = null
+                    )
+                )
+            }.forEach {
+                addAssetSet(assetByName, it, assetAddedCallback)
+            }
     }
 
     /**
      * Same as [importMoreAssets] but only if the list of asset to be imported is currently empty.
      */
-    fun importMoreAssetIfEmpty(assetAddedCallback: (DesignAssetSet, DesignSystemItem) -> Unit) {
+    fun importMoreAssetIfEmpty(assetAddedCallback: (DesignAssetSet) -> Unit) {
         if (assetSets.isEmpty()) {
             importMoreAssets(assetAddedCallback)
         }
@@ -107,7 +121,7 @@ class ResourceImportDialogViewModel(
     private fun addAssetSet(
         existingAssets: Map<String, DesignAssetSet>,
         assetSet: DesignAssetSet,
-        assetAddedCallback: (DesignAssetSet, DesignSystemItem) -> Unit
+        assetAddedCallback: (DesignAssetSet) -> Unit
     ) {
         val existingAssetSet = existingAssets[assetSet.name]
         if (existingAssetSet != null) {
@@ -115,22 +129,26 @@ class ResourceImportDialogViewModel(
             val onlyNewFiles = assetSet.asset.file?.path != existingPaths
             if (onlyNewFiles) {
                 assetAddedCallback(
-                    existingAssetSet.copy(asset = assetSet.asset), assetSet.asset
+                    existingAssetSet.copy(asset = assetSet.asset)
                 )
                 updateCallback()
             }
         } else {
             assetSetsToImport.add(assetSet)
-            assetAddedCallback(assetSet, assetSet.asset)
+            assetAddedCallback(assetSet)
             updateCallback()
         }
     }
 
     fun getAssetPreview(asset: DesignSystemItem): CompletableFuture<out Image?> {
         return asset.file?.let { file ->
-            rendererManager
-                .getViewer(file)
-                .getImage(file, null, JBUI.size(150))
+            CompletableFuture.supplyAsync {
+                try {
+                    ImageUtils.readImageAtScale(file.inputStream, JBUI.size(150))
+                } catch (e: NullPointerException) {
+                    null
+                }
+            }
         } ?: CompletableFuture.completedFuture(null)
     }
 
@@ -273,11 +291,11 @@ class ResourceImportDialogViewModel(
 
     fun updateAliasName(
         assetSet: DesignAssetSet,
-        alisNames: List<String>,
+        alisNames: String?,
         callback: (newAssetSet: DesignAssetSet) -> Unit
     ) {
         update(assetSet, callback) {
-            assetSet.copy(asset = assetSet.asset.copy(aliasNames = alisNames))
+            assetSet.copy(asset = assetSet.asset.copy(aliasName = alisNames))
         }
     }
 }

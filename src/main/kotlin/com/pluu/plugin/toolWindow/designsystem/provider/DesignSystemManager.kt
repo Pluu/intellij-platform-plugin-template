@@ -97,13 +97,12 @@ object DesignSystemManager {
             .create()
 
         WriteCommandAction.runWriteCommandAction(project, "Write Json", null, {
-            sampleRootDirectory(project)
-                ?.findChild(sampleJsonFileName)
-                ?.let {
-                    Files.newBufferedWriter(it.toNioPath(), Charsets.UTF_8).use { writer ->
-                        gson.toJson(jsonObject, writer)
-                    }
+            val sampleRootDirectory: VirtualFile = sampleRootDirectory(project)!!
+            sampleRootDirectory.findChild(sampleJsonFileName)?.let {
+                Files.newBufferedWriter(it.toNioPath(), Charsets.UTF_8).use { writer ->
+                    gson.toJson(jsonObject, writer)
                 }
+            }
         })
         return true
     }
@@ -125,7 +124,7 @@ object DesignSystemManager {
 
     @WorkerThread
     fun findDesignKit(project: Project, types: List<DesignSystemType>): List<DesignSystemItem> {
-        val rootPath = sampleRootDirectory(project) ?: return emptyList()
+        val rootPath: VirtualFile = sampleRootDirectory(project) ?: return emptyList()
         LocalFileSystem.getInstance().refreshFiles(listOf(rootPath))
 
         val jsonObject = loadJsonFromSampleFile(project, false)
@@ -140,12 +139,15 @@ object DesignSystemManager {
         }
     }
 
-    private fun JsonObject.asDesignSystemItem(rootPath: VirtualFile, type: DesignSystemType): DesignSystemItem {
+    private fun JsonObject.asDesignSystemItem(
+        rootPath: VirtualFile,
+        type: DesignSystemType
+    ): DesignSystemItem {
         return DesignSystemItem(
             type = type,
             name = get("id").asString,
             file = rootPath.findChild(type.sampleDirName)?.findChild(get("thumbnail").asString),
-            aliasNames = getAsJsonArray("alias")?.map { it.asString },
+            aliasName = get("alias")?.asString,
             applicableFileType = ApplicableFileType.of(get("applicableFileType").asString),
             sampleCode = get("code").asString
         )
@@ -155,15 +157,7 @@ object DesignSystemManager {
         val json = JsonObject()
         json.addProperty("id", asset.name)
         json.addProperty("thumbnail", "${name}.${asset.file!!.extension}")
-
-        val alisNames = JsonArray()
-        asset.aliasNames?.forEach {
-            alisNames.add(it)
-        }
-        if (!alisNames.isEmpty) {
-            json.add("alias", alisNames)
-        }
-
+        json.addProperty("alias", asset.aliasName)
         json.addProperty("applicableFileType", asset.applicableFileType.name)
         json.addProperty("code", asset.sampleCode)
         return json

@@ -7,7 +7,6 @@ import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.EdtExecutorService
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
-import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemTab
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
@@ -56,11 +55,11 @@ class DesignSystemExplorerListViewModelImpl(
         DesignAssetPreviewManagerImpl(listViewImageCache)
 
     override fun clearCacheForCurrentResources() {
-        getDesignSections().whenCompleteAsync({ lists, throwable ->
+        getDesignAssetSets().whenCompleteAsync({ lists, throwable ->
             if (throwable == null) {
-                lists.flatMap { section ->
-                    section.assetSets.map { it.asset }
-                }.forEach(::clearImageCache)
+                for (item in lists) {
+                    clearImageCache(item.asset)
+                }
                 updateUiCallback?.invoke(UpdateUiReason.IMAGE_CACHE_CHANGED)
             }
         }, EdtExecutorService.getInstance())
@@ -70,25 +69,17 @@ class DesignSystemExplorerListViewModelImpl(
         listViewImageCache.clear(asset)
     }
 
-    override fun getDesignSections() = resourceExplorerSupplyAsync {
+    override fun getDesignAssetSets() = resourceExplorerSupplyAsync {
         getResourceSections(project)
     }
 
-    private fun getResourceSections(project: Project): List<DesignSection> {
+    private fun getResourceSections(project: Project): List<DesignAssetSet> {
         val designSystemType = currentTab.filterType
-        val designSections = mutableListOf<DesignSection>()
-        designSections.add(
-            DesignSection(
-                name = currentTab.name,
-                assetSets = DesignSystemManager.getModuleResources(project, designSystemType)
-                    .sortedBy { it.name }
-                    .map {
-                        DesignAssetSet(it.name, it)
-                    },
-                isVisibleTypeName = currentTab.filterType == null
-            )
-        )
-        return designSections
+        return DesignSystemManager.getModuleResources(project, designSystemType)
+            .sortedBy { it.name }
+            .map {
+                DesignAssetSet(it.name, it)
+            }
     }
 
     override fun getData(dataId: String?, selectedAssets: List<DesignSystemItem>): Any? {

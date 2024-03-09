@@ -4,6 +4,7 @@ import com.android.tools.idea.ui.resourcemanager.rendering.AssetIconProvider
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import java.awt.Component
+import java.awt.Dimension
 import javax.swing.JList
 import javax.swing.ListCellRenderer
 
@@ -23,7 +24,7 @@ class DesignAssetCellRenderer(
         isSelected: Boolean,
         cellHasFocus: Boolean
     ): Component {
-        val assetView = (list as AssetListView).assetView
+        val assetView = (list as DesignSystemExplorerListView).assetView
         val designSystemItem = value.asset
 
         if (assetView.sampleImageSize.isVisible()) {
@@ -43,8 +44,9 @@ class DesignAssetCellRenderer(
 
         assetView.componentName = designSystemItem.name
         assetView.applicableFileType = designSystemItem.applicableFileType.takeIf { it.isSelectable() }
-        assetView.aliasName = designSystemItem.aliasNames?.joinToString(", ") ?: "-"
+        assetView.aliasName = designSystemItem.aliasName ?: "-"
         assetView.typeName = designSystemItem.type.name.takeIf { isVisibleComponentName }.orEmpty()
+        assetView.preferredSize = Dimension(Integer.MAX_VALUE, assetView.preferredSize.height)
         return assetView
     }
 }

@@ -30,7 +30,7 @@ class ResourceImporter {
         return DesignSystemItem(
             type = DesignSystemType.NONE,
             name = file.nameWithoutExtension,
-            aliasNames = null,
+            aliasName = null,
             file = file,
             applicableFileType = ApplicableFileType.NONE,
             sampleCode = null

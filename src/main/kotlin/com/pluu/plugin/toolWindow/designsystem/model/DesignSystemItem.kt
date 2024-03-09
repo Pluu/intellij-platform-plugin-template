@@ -11,7 +11,7 @@ val RESOURCE_DESIGN_ASSETS_KEY: DataKey<List<DesignSystemItem>> = DataKey.create
 data class DesignSystemItem(
     val type: DesignSystemType,
     override val name: String,
-    val aliasNames: List<String>?,
+    val aliasName: String?,
     val file: VirtualFile?,
     val applicableFileType: ApplicableFileType,
     val sampleCode: String?

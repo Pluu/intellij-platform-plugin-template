@@ -24,7 +24,7 @@ class DesignAssetImporter {
     ) {
         if (assetSets.isEmpty()) return
 
-        val sampleRoot = DesignSystemManager.getOrCreateDefaultRootDirectory(project)
+        val sampleRoot: VirtualFile = DesignSystemManager.getOrCreateDefaultRootDirectory(project)
         LocalFileSystem.getInstance().refreshIoFiles(listOf(sampleRoot.toIoFile()))
 
         val groupedAssets = assetSets.groupBy {

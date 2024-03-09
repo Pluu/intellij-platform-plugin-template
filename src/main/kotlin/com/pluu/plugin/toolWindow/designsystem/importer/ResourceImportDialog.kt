@@ -2,6 +2,7 @@
 
 package com.pluu.plugin.toolWindow.designsystem.importer
 
+import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
@@ -9,26 +10,36 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComponentValidator
-import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.IdeBorderFactory
+import com.intellij.ui.JBColor
+import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.SideBorder
+import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.components.panels.VerticalLayout
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.whenItemSelectedFromUi
+import com.intellij.ui.util.preferredWidth
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
+import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import org.jdesktop.swingx.prompt.PromptSupport
 import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
@@ -38,9 +49,11 @@ import javax.swing.ImageIcon
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
+import javax.swing.JTextArea
 import javax.swing.event.DocumentEvent
 
 private val DIALOG_SIZE = JBUI.size(1000, 700)
+private val PREVIEW_SIZE = JBUI.size(150)
 
 private val CONTENT_PANEL_BORDER = JBUI.Borders.empty(0, 8)
 
@@ -53,11 +66,24 @@ class ResourceImportDialog(
 
     private lateinit var fileCountLabel: JLabel
 
-    private val northPanel = panel {
+    private lateinit var content: JPanel
+
+    private val centerPanel = panel {
         row {
             fileCountLabel = label("").component
             cell(createImportButtonAction())
                 .align(AlignX.RIGHT)
+        }
+        row {
+            content = JPanel(VerticalLayout(0)).apply {
+                border = CONTENT_PANEL_BORDER
+            }
+
+            val centerScroll = JBScrollPane(content).apply {
+                preferredSize = DIALOG_SIZE
+                border = null
+            }
+            cell(centerScroll)
         }
     }.withBorder(
         BorderFactory.createCompoundBorder(
@@ -65,15 +91,6 @@ class ResourceImportDialog(
             CONTENT_PANEL_BORDER
         )
     )
-
-    private val content = JPanel(VerticalLayout(0)).apply {
-        border = CONTENT_PANEL_BORDER
-    }
-
-    private val centerPanel = JBScrollPane(content).apply {
-        preferredSize = DIALOG_SIZE
-        border = null
-    }
 
     init {
         title = "Import Component"
@@ -107,8 +124,8 @@ class ResourceImportDialog(
                 super.windowActivated(e)
                 if (!isWindowActive) {
                     isWindowActive = true
-                    dialogViewModel.importMoreAssetIfEmpty { resourceSet, designAssets ->
-                        addAssets(resourceSet, designAssets)
+                    dialogViewModel.importMoreAssetIfEmpty { resourceSet ->
+                        addAssets(resourceSet)
                     }
                 }
             }
@@ -122,8 +139,6 @@ class ResourceImportDialog(
             }
         })
     }
-
-    override fun createNorthPanel(): DialogPanel = northPanel
 
     override fun createCenterPanel(): JComponent = centerPanel
 
@@ -144,15 +159,9 @@ class ResourceImportDialog(
      * within this view, otherwise create a new [DesignAssetSetView].
      */
     private fun addAssets(
-        designAssetSet: DesignAssetSet,
-        newDesignAssets: DesignSystemItem
+        designAssetSet: DesignAssetSet
     ) {
-        val existingView = assetSetToView[designAssetSet]
-        if (existingView != null) {
-            existingView.addAssetView(newDesignAssets)
-        } else {
-            addDesignAssetSet(designAssetSet)
-        }
+        addDesignAssetSet(designAssetSet)
         updateOkButton()
     }
 
@@ -163,8 +172,8 @@ class ResourceImportDialog(
             AllIcons.Actions.Upload
         ) {
             override fun actionPerformed(e: AnActionEvent) {
-                dialogViewModel.importMoreAssets { designAssetSet, newDesignAssets ->
-                    addAssets(designAssetSet, newDesignAssets)
+                dialogViewModel.importMoreAssets { designAssetSet ->
+                    addAssets(designAssetSet)
                     jumpToImportStep()
                 }
             }
@@ -180,7 +189,7 @@ class ResourceImportDialog(
 
     /** Import 후 추가된 항목이 보이도록 끝부분을 스크롤 */
     private fun jumpToImportStep() {
-        centerPanel.viewport.scrollRectToVisible(
+        content.scrollRectToVisible(
             Rectangle(content.width, content.height, content.width + 1, content.height + 1)
         )
     }
@@ -203,7 +212,11 @@ class ResourceImportDialog(
         private var assetSet: DesignAssetSet
     ) : JPanel(BorderLayout()) {
 
-        val assetNameField = JBTextField(assetSet.name).apply {
+        ///////////////////////////////////////////////////////////////////////////
+        // Header Panel
+        ///////////////////////////////////////////////////////////////////////////
+
+        private val assetNameField = JBTextField(assetSet.name).apply {
             this.font = StartupUiUtil.labelFont.deriveFont(JBUI.scaleFontSize(14f))
             document.addDocumentListener(object : DocumentAdapter() {
                 override fun textChanged(e: DocumentEvent) {
@@ -220,8 +233,14 @@ class ResourceImportDialog(
                 .revalidate()
         }
 
-        val fileViewContainer = JPanel(VerticalFlowLayout(true, false)).apply {
-            add(singleAssetView(assetSet.asset))
+        private val assetAliasNameField = JBTextField(assetSet.asset.aliasName).apply {
+            this.font = StartupUiUtil.labelFont.deriveFont(JBUI.scaleFontSize(14f))
+            document.addDocumentListener(object : DocumentAdapter() {
+                override fun textChanged(e: DocumentEvent) {
+                    updateAliasName(this@apply.text)
+                    ComponentValidator.getInstance(this@apply).ifPresent(ComponentValidator::revalidate)
+                }
+            })
         }
 
         private val header = panel {
@@ -231,37 +250,107 @@ class ResourceImportDialog(
                     .columns(30)
             }
             row {
-                cell(FileConfigurationPanel(dialogViewModel.fileConfigurationViewModel))
+                cell(assetAliasNameField)
+                    .label("Alias name:")
+                    .columns(30)
+            }
+        }
+
+        private val preview = JBLabel().apply {
+            horizontalAlignment = JBLabel.CENTER
+        }
+
+        private val previewWrapper = ChessBoardPanel().apply {
+            preferredSize = PREVIEW_SIZE
+            maximumSize = PREVIEW_SIZE
+            border = JBUI.Borders.customLine(JBColor.border(), 1)
+            add(preview)
+        }
+
+        private val sampleCodeTextArea = JTextArea(assetSet.asset.sampleCode).apply {
+            setLineWrap(true)
+            setWrapStyleWord(true)
+            PromptSupport.setPrompt("Input sample code", this)
+
+            document.addDocumentListener(object : DocumentAdapter() {
+                override fun textChanged(event: DocumentEvent) {
+                    updateSampleCode(this@apply.text)
+                }
+            })
+        }
+
+        private val configurationPanel = panel {
+            row("Design system Type:") {
+                comboBox(
+                    ConfigSettings.getInstance().getTypes(),
+                    SimpleListCellRenderer.create("") { it.name }
+                ).applyToComponent {
+                    selectedItem = null
+                }.whenItemSelectedFromUi {
+                    updateDesignSystemType(it)
+                }
+            }
+            row {
+                label("Sample code:")
+                    .applyToComponent { preferredWidth = 150 }
+                comboBox(
+                    ApplicableFileType.selectableTypes().toList(),
+                    SimpleListCellRenderer.create("") { it.name }
+                ).label("Applicable file:")
+                    .applyToComponent {
+                        selectedItem = null
+                    }.whenItemSelectedFromUi {
+                        updateApplicableFileType(it)
+                    }
+            }
+            row {
+                cell(
+                    JBScrollPane(sampleCodeTextArea).apply {
+                        border = BorderFactory.createCompoundBorder(
+                            RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(4), JBUI.scale(2)),
+                            JBUI.Borders.empty(4)
+                        )
+                        preferredSize = Dimension(sampleCodeTextArea.preferredSize.width, 80)
+                        minimumSize = preferredSize
+                        setViewportView(sampleCodeTextArea)
+                    }
+                ).align(Align.FILL)
+            }
+        }
+
+        private val middlePane = panel {
+            border = JBUI.Borders.empty(4)
+            row {
+                panel {
+                    row {
+                        label(assetSet.asset.name)
+                        label(StringUtil.formatFileSize(assetSet.asset.file?.length ?: 0))
+                    }
+                }
+                link("Do not import") {
+                    removeAsset()
+                }.align(AlignX.RIGHT)
+            }
+            row {
+                cell(configurationPanel).align(Align.FILL)
             }
         }
 
         init {
             add(header, BorderLayout.NORTH)
-            add(fileViewContainer)
+            add(panel {
+                row {
+                    cell(previewWrapper).align(AlignY.TOP)
+                    cell(middlePane).align(Align.FILL)
+                }
+            })
 
-            dialogViewModel.fileConfigurationViewModel.onConfigurationUpdated = this::updateAliasName
-        }
-
-        fun addAssetView(asset: DesignSystemItem) {
-            fileViewContainer.add(singleAssetView(asset))
-        }
-
-        private fun singleAssetView(asset: DesignSystemItem): FileImportRow {
-            val viewModel = dialogViewModel.createFileViewModel(
-                asset,
-                updateDesignSystemTypeCallback = this::updateDesignSystemType,
-                updateSampleCodeCallback = this::updateSampleCode,
-                updateApplicableFileTypeCallback = this::updateApplicableFileType,
-                removeCallback = this::removeAsset,
-            )
-            val fileImportRow = FileImportRow(viewModel)
-            dialogViewModel.getAssetPreview(asset).whenComplete { image, _ ->
+            dialogViewModel.getAssetPreview(assetSet.asset).whenComplete { image, _ ->
                 image?.let {
-                    fileImportRow.preview.icon = ImageIcon(it)
-                    fileImportRow.preview.repaint()
+                    preview.icon = ImageIcon(it)
+                    preview.repaint()
                 }
             }
-            return fileImportRow
         }
 
         private fun updateDesignSystemType(designSystemType: DesignSystemType) {
@@ -280,7 +369,7 @@ class ResourceImportDialog(
             dialogViewModel.updateName(assetSet, assetName, ::updateNewAssetSet)
         }
 
-        private fun updateAliasName(aliasName: List<String>) {
+        private fun updateAliasName(aliasName: String?) {
             dialogViewModel.updateAliasName(assetSet, aliasName, ::updateNewAssetSet)
         }
 
@@ -293,13 +382,11 @@ class ResourceImportDialog(
 
         private fun removeAsset() {
             dialogViewModel.removeAsset(this.assetSet)
-            if (fileViewContainer.componentCount == 0) {
-                assetSetToView.remove(this.assetSet, this)
-                parent.remove(this)
-                centerPanel.revalidate()
-                centerPanel.repaint()
-                updateOkButton()
-            }
+            assetSetToView.remove(this.assetSet, this)
+            parent.remove(this)
+            content.revalidate()
+            content.repaint()
+            updateOkButton()
         }
     }
 }
