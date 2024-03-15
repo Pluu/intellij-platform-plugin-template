@@ -6,7 +6,6 @@ import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androi
 import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androidModuleStrings
 import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androidModuleThemes
 import com.android.tools.idea.npw.module.recipes.copyMipmapFolder
-import com.android.tools.idea.npw.module.recipes.createDefaultDirectories
 import com.android.tools.idea.npw.module.recipes.generateManifest
 import com.android.tools.idea.npw.module.recipes.gitignore
 import com.android.tools.idea.npw.module.recipes.proguardRecipe
@@ -36,23 +35,20 @@ fun RecipeExecutor.generateFeatureSampleModule(
     val baseFeature = moduleData.baseFeature!!
     val namespace = moduleData.namespace
 
-    createDefaultDirectories(moduleOut, srcOut)
+    createDirectory(srcOut)
     addIncludeToSettings(moduleData.name)
 
     val buildFile = if (useGradleKts) SdkConstants.FN_BUILD_GRADLE_KTS else SdkConstants.FN_BUILD_GRADLE
 
     val gradleFile: String = if (useConventionPlugins) {
         buildFeatureSampleGradle(
-            isKts = useGradleKts,
             isLibraryProject = isLibraryProject,
             applicationId = namespace,
-            useVersionCatalog = useVersionCatalog,
             baseFeature = baseFeature
         )
     } else {
         buildFeatureSampleDefaultGradle(
             agpVersion = agpVersion,
-            isKts = useGradleKts,
             applicationId = namespace,
             buildApiString = apis.buildApi.apiString,
             minApi = minApi.apiString,
@@ -60,8 +56,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
             useAndroidX = useAndroidX,
             baseFeature = baseFeature,
             hasTests = false,
-            addLintOptions = false,
-            useVersionCatalog = useVersionCatalog
+            addLintOptions = false
         )
     }
     save(

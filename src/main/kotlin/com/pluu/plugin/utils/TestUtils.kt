@@ -1,6 +1,6 @@
 package com.pluu.plugin.utils
 
-import com.intellij.codeInsight.navigation.NavigationUtil
+import com.intellij.codeInsight.navigation.openFileWithPsiElement
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
@@ -49,7 +49,7 @@ fun generatorUnitTestFile(
             return@runWriteAction
         }
 
-        NavigationUtil.openFileWithPsiElement(createdFile, true, true)
+        openFileWithPsiElement(createdFile, true, true)
     }
 }
 
@@ -83,6 +83,6 @@ fun generatorAndroidTestFile(
             return@runWriteAction
         }
 
-        NavigationUtil.openFileWithPsiElement(createdFile, true, true)
+        openFileWithPsiElement(createdFile, true, true)
     }
 }

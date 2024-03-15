@@ -8,10 +8,8 @@ import com.android.tools.idea.wizard.template.CppStandardType
 import com.pluu.plugin.wizard.module.recipes.feature.androidFeatureConfig
 
 internal fun buildFeatureSampleGradle(
-    isKts: Boolean,
     isLibraryProject: Boolean,
     applicationId: String,
-    useVersionCatalog: Boolean,
     baseFeature: BaseFeature
 ): String {
     val androidConfigBlock = androidFeatureConfig(
@@ -26,7 +24,7 @@ internal fun buildFeatureSampleGradle(
     """
 
     return """
-    ${emptyPluginsBlock(isKts = isKts, useVersionCatalog = useVersionCatalog)}
+    ${emptyPluginsBlock()}
     $androidConfigBlock
     $dependenciesBlock
 """
@@ -34,7 +32,6 @@ internal fun buildFeatureSampleGradle(
 
 internal fun buildFeatureSampleDefaultGradle(
     agpVersion: AgpVersion,
-    isKts: Boolean,
     /** The application ID; also used for the namespace. */
     applicationId: String,
     buildApiString: String,
@@ -43,8 +40,7 @@ internal fun buildFeatureSampleDefaultGradle(
     useAndroidX: Boolean,
     baseFeature: BaseFeature,
     hasTests: Boolean = true,
-    addLintOptions: Boolean = false,
-    useVersionCatalog: Boolean
+    addLintOptions: Boolean = false
 ): String {
     val androidConfigBlock = androidConfig(
         agpVersion = agpVersion,
@@ -71,7 +67,7 @@ internal fun buildFeatureSampleDefaultGradle(
     """
 
     return """
-${emptyPluginsBlock(isKts = isKts, useVersionCatalog = useVersionCatalog)}
+${emptyPluginsBlock()}
 $androidConfigBlock
 $dependenciesBlock
 """
