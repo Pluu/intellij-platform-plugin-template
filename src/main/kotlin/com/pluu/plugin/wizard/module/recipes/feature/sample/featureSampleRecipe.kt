@@ -42,16 +42,13 @@ fun RecipeExecutor.generateFeatureSampleModule(
 
     val gradleFile: String = if (useConventionPlugins) {
         buildFeatureSampleGradle(
-            isKts = useGradleKts,
             isLibraryProject = isLibraryProject,
             applicationId = namespace,
-            useVersionCatalog = useVersionCatalog,
             baseFeature = baseFeature
         )
     } else {
         buildFeatureSampleDefaultGradle(
             agpVersion = agpVersion,
-            isKts = useGradleKts,
             applicationId = namespace,
             buildApiString = apis.buildApi.apiString,
             minApi = minApi.apiString,
@@ -59,8 +56,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
             useAndroidX = useAndroidX,
             baseFeature = baseFeature,
             hasTests = false,
-            addLintOptions = false,
-            useVersionCatalog = useVersionCatalog
+            addLintOptions = false
         )
     }
     save(
