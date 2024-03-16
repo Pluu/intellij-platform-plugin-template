@@ -1,6 +1,6 @@
 package com.pluu.plugin.action.testIntegration
 
-import com.intellij.codeInsight.navigation.NavigationUtil
+import com.intellij.codeInsight.navigation.openFileWithPsiElement
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -50,7 +50,7 @@ abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionNa
                 return@runWriteAction
             }
 
-            NavigationUtil.openFileWithPsiElement(createdFile, true, true)
+            openFileWithPsiElement(createdFile, true, true)
         }
     }
 

@@ -25,6 +25,7 @@ fun RecipeExecutor.sampleActivitySetup(
     packageName: String,
     activityClass: String,
     layoutName: String,
+    containerId: String?,
     isUsedViewModel: Boolean,
     viewModelClass: String,
     viewBindingType: ViewBindingType,
@@ -78,7 +79,7 @@ fun RecipeExecutor.sampleActivitySetup(
             resOut.resolve("layout/${layoutName}.xml")
         )
     } else {
-        generateSimpleLayout(moduleData, activityClass, layoutName)
+        generateSimpleLayout(moduleData, activityClass, layoutName, containerId)
     }
     open(resOut.resolve("layout/${layoutName}.xml"))
 

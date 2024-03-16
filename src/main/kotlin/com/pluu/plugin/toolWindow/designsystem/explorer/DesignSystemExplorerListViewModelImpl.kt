@@ -1,6 +1,6 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.intellij.codeInsight.navigation.NavigationUtil.openFileWithPsiElement
+import com.intellij.codeInsight.navigation.openFileWithPsiElement
 import com.intellij.openapi.project.Project
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil

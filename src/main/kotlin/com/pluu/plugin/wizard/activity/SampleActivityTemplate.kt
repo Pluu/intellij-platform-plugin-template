@@ -100,6 +100,7 @@ val sampleActivitySetupTemplate
                 packageName = packageNameParam.value,
                 activityClass = activityClass.value,
                 layoutName = layoutName.value,
+                containerId = null,
                 isUsedViewModel = isViewModel.value,
                 viewModelClass = viewModelClass.value,
                 viewBindingType = useBinding.value

@@ -4,6 +4,57 @@
 
 ## [Unreleased]
 
+## [1.13.0] - 2024-03-11
+
+### Changed
+
+- Dependencies - upgrade `org.jetbrains.kotlin.jvm` to `1.9.23`
+- Dependencies - upgrade `org.jetbrains.kotlinx.kover` to `0.7.6`
+- Dependencies - upgrade `org.jetbrains.qodana` to `2023.3.1`
+- Dependencies (GitHub Actions) - upgrade `actions/upload-artifact` to `4`
+- Dependencies (GitHub Actions) - upgrade `codecov/codecov-action` to `4`
+- Dependencies (GitHub Actions) - upgrade `gradle/wrapper-validation-action` to `2`
+- Dependencies (GitHub Actions) - upgrade `actions/cache` to `4`
+- Gradle - upgrade `org.gradle.toolchains.foojay-resolver-convention` to `0.8.0`
+- Gradle - cleanup the `jvmToolchain` setup
+- Run Configurations - `Run Qodana` runs the `qodanaScan` Gradle task
+
+### Fixed
+
+- Fixed calculation of the plugin publication channel
+- Run Configurations - `Run Tests` uses the `RunAsTest` IDE feature
+- Replace the whole `IntelliJ Platform Plugin Template` with the new project name when running the GitHub Actions Cleanup workflow
+
+### Removed
+
+- GitHub Actions: Remove the `Setup Java` step from the `releaseDraft` build step
+- Gradle - Removed Qodana Gradle Plugin configuration to rely on defaults
+
+## [1.12.0] - 2024-02-20
+
+### Added
+
+- GitHub Actions: Reduce the number of concurrent builds
+
+### Changed
+
+- Change since/until build to `223-241.*` (2022.3-2024.1.*)
+- Upgrade Gradle Wrapper to `8.6`
+- Dependencies - upgrade `org.jetbrains.intellij` to `1.17.2`
+- Dependencies (GitHub Actions) - upgrade `gradle/gradle-build-action@v2` to `gradle/actions/setup-gradle@v3`
+- Dependencies (GitHub Actions) - upgrade `JetBrains/qodana-action` to `v2023.3.1`
+
+### Fixed
+
+- Adjusted obtaining the value for `publishPlugin.channels` property in `build.gradle.kts`
+- Fixed bash variable access in the Create Release Draft step.
+
+### Removed
+
+- Remove Gradle Kotlin DSL Lazy Property Assignment because it's default now
+
+## [1.11.3] - 2023-12-01
+
 ### Changed
 
 - Upgrade Gradle Wrapper to `8.5`
@@ -646,7 +697,10 @@
 - GitHub Actions to automate testing and deployment
 - Kotlin support
 
-[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.11.2...HEAD
+[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.12.0...v1.13.0
+[1.12.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.11.3...v1.12.0
+[1.11.3]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.11.2...v1.11.3
 [1.11.2]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.11.1...v1.11.2
 [1.11.1]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.10.0...v1.11.0
