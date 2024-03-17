@@ -70,14 +70,4 @@ interface DesignSystemExplorerListViewModel {
      * one containing the resource of the current module.
      */
     fun getDesignAssetSets(): CompletableFuture<List<DesignAssetSet>>
-
-    /**
-     * Delegate method to handle calls to [com.intellij.openapi.actionSystem.DataProvider.getData].
-     */
-    fun getData(dataId: String?, selectedAssets: List<DesignSystemItem>): Any?
-
-    /**
-     * Action when selecting an [DesignSystemItem] (double click or select + ENTER key).
-     */
-    val doSelectAssetAction: (asset: DesignSystemItem) -> Unit
 }

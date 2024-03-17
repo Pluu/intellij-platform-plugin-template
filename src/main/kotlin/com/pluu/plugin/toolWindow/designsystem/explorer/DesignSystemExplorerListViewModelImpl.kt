@@ -1,6 +1,5 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
-import com.intellij.codeInsight.navigation.openFileWithPsiElement
 import com.intellij.openapi.project.Project
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -10,7 +9,6 @@ import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemTab
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
-import com.pluu.plugin.toolWindow.designsystem.model.ResourceDataManager
 import com.pluu.plugin.toolWindow.designsystem.provider.DesignSystemManager
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManagerImpl
@@ -41,7 +39,7 @@ class DesignSystemExplorerListViewModelImpl(
         }
     }
 
-    private val dataManager = ResourceDataManager(project)
+//    private val dataManager = ResourceDataManager(project)
 
     override val selectedTabName: String get() = currentTab.name
 
@@ -80,17 +78,6 @@ class DesignSystemExplorerListViewModelImpl(
             .map {
                 DesignAssetSet(it.name, it)
             }
-    }
-
-    override fun getData(dataId: String?, selectedAssets: List<DesignSystemItem>): Any? {
-        return dataManager.getData(dataId, selectedAssets)
-    }
-
-    override val doSelectAssetAction: (asset: DesignSystemItem) -> Unit = selectAssetAction ?: { asset ->
-        val psiElement = dataManager.findPsiElement(asset)
-        psiElement?.let {
-            openFileWithPsiElement(it, true, true)
-        }
     }
 }
 

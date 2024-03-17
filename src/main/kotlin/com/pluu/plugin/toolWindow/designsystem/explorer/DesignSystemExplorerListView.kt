@@ -1,50 +1,43 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.intellij.concurrency.JobScheduler
+import com.intellij.ide.CopyProvider
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
-import com.intellij.ui.JBColor
+import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBList
 import com.intellij.util.ModalityUiUtil
 import com.intellij.util.concurrency.EdtExecutorService
-import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
+import com.pluu.plugin.toolWindow.designsystem.explorer.drag.ResourceFilesTransferHandler
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.RESOURCE_DESIGN_ASSETS_KEY
 import com.pluu.plugin.toolWindow.designsystem.widget.AssetView
 import com.pluu.plugin.toolWindow.designsystem.widget.RowAssetView
-import java.awt.font.TextAttribute
+import java.awt.Component
+import java.awt.Point
+import java.awt.datatransfer.StringSelection
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import javax.swing.BorderFactory
 import javax.swing.DefaultListModel
+import javax.swing.DropMode
 import javax.swing.JList
 import javax.swing.ListSelectionModel
-
-private val SECTION_HEADER_SECONDARY_COLOR get() = JBColor.border()
-
-private val SECTION_HEADER_BORDER
-    get() = BorderFactory.createCompoundBorder(
-        JBUI.Borders.empty(2),
-        JBUI.Borders.customLine(SECTION_HEADER_SECONDARY_COLOR, 0, 0, 1, 0)
-    )
-
-private val SECTION_LIST_BORDER get() = JBUI.Borders.empty()
-
-private val SECTION_HEADER_LABEL_FONT
-    get() = JBUI.Fonts.label().deriveFont(
-        mapOf(
-            TextAttribute.WEIGHT to TextAttribute.WEIGHT_SEMIBOLD,
-            TextAttribute.SIZE to JBUI.scaleFontSize(14f)
-        )
-    )
-
-private val LIST_MODE_BACKGROUND = UIUtil.getListBackground()
 
 /**
  * Delay to wait for before showing the "Loading" state.
@@ -58,8 +51,7 @@ private val UNIT_DELAY_BEFORE_LOADING_STATE = TimeUnit.MILLISECONDS
 class DesignSystemExplorerListView(
     private val viewModel: DesignSystemExplorerListViewModel,
     val project: Project,
-    withMultiModuleSearch: Boolean = true,
-) : JBList<DesignAssetSet>(), Disposable, DataProvider {
+) : JBList<DesignAssetSet>(), Disposable, DataProvider, CopyProvider {
 
     var assetView: AssetView
         private set
@@ -74,9 +66,37 @@ class DesignSystemExplorerListView(
 
     private val listModel = DefaultListModel<DesignAssetSet>()
 
+    private val popupHandler = object : PopupHandler() {
+        val actionManager = ActionManager.getInstance()
+
+        val actionGroup = DefaultActionGroup(CopyComponentAction())
+
+        override fun invokePopup(comp: Component, x: Int, y: Int) {
+            val list = comp as JList<*>
+            // Select the element before invoking the popup menu
+            val clickedIndex = list.locationToIndex(Point(x, y))
+            if (!list.isSelectedIndex(clickedIndex)) {
+                list.selectedIndex = clickedIndex
+            }
+
+            val popupMenu = actionManager.createActionPopupMenu("ResourceExplorer", actionGroup)
+            popupMenu.setTargetComponent(list)
+            val menu = popupMenu.component
+            menu.show(comp, x, y)
+        }
+    }
+
     init {
         layoutOrientation = JList.VERTICAL
         cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager, true)
+
+        dragEnabled = true
+        dropMode = DropMode.ON
+        transferHandler = ResourceFilesTransferHandler(this)
+
+        // Popup Handler
+        addMouseListener(popupHandler)
+
         setExpandableItemsEnabled(false)
         selectionMode = ListSelectionModel.SINGLE_SELECTION
         visibleRowCount = 0
@@ -89,6 +109,7 @@ class DesignSystemExplorerListView(
                 UpdateUiReason.IMAGE_CACHE_CHANGED -> {
                     repaint()
                 }
+
                 UpdateUiReason.DESIGN_SYSTEM_TYPE_CHANGED -> {
                     populateResourcesLists()
                 }
@@ -145,13 +166,42 @@ class DesignSystemExplorerListView(
         repaint()
     }
 
-    override fun getData(dataId: String): Any? {
-        return viewModel.getData(dataId, getSelectedAssets())
-    }
-
     override fun dispose() {
         populateResourcesFuture?.cancel(true)
         searchFuture?.cancel(true)
         showLoadingFuture?.cancel(true)
+    }
+
+    override fun getData(dataId: String): Any? {
+        return when (dataId) {
+            RESOURCE_DESIGN_ASSETS_KEY.name -> {
+                selectedValuesList.map { it.asset }
+            }
+
+            PlatformDataKeys.COPY_PROVIDER.name -> this
+            else -> null
+        }
+    }
+
+    override fun performCopy(dataContext: DataContext) {
+        val item = dataContext.getData(RESOURCE_DESIGN_ASSETS_KEY)?.firstOrNull() ?: return
+        CopyPasteManager.getInstance().setContents(StringSelection(item.sampleCode))
+    }
+
+    override fun isCopyVisible(dataContext: DataContext): Boolean = isCopyEnabled(dataContext)
+
+    override fun isCopyEnabled(dataContext: DataContext): Boolean = selectedValuesList.isNotEmpty()
+
+    class CopyComponentAction : AnAction() {
+        init {
+            ActionUtil.copyFrom(this, IdeActions.ACTION_COPY)
+        }
+
+        override fun actionPerformed(dataContext: AnActionEvent) {
+            val item = dataContext.getData(RESOURCE_DESIGN_ASSETS_KEY)?.firstOrNull() ?: return
+            CopyPasteManager.getInstance().setContents(StringSelection(item.sampleCode))
+        }
+
+        override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
     }
 }

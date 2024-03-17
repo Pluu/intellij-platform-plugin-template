@@ -1,6 +1,7 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer.drag
 
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
+import com.pluu.plugin.toolWindow.designsystem.model.createCopyTransferable
 import java.awt.Cursor
 import java.awt.GraphicsEnvironment
 import java.awt.datatransfer.Transferable
@@ -39,18 +40,9 @@ class HeadlessDragHandler internal constructor() : ResourceDragHandler {
 /**
  * Handles the transfers of the assets when they gets dragged
  */
-private class ResourceFilesTransferHandler(
+class ResourceFilesTransferHandler(
     private val assetList: JList<DesignAssetSet>
 ) : TransferHandler() {
-
-    override fun canImport(support: TransferSupport): Boolean {
-        if (support.sourceDropActions and COPY != COPY) return false
-        return false
-    }
-
-    override fun importData(comp: JComponent?, t: Transferable?): Boolean {
-        return t != null
-    }
 
     override fun getSourceActions(c: JComponent?) = COPY_OR_MOVE
 
@@ -58,11 +50,7 @@ private class ResourceFilesTransferHandler(
 
     override fun createTransferable(c: JComponent?): Transferable {
         c?.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
-        return com.pluu.plugin.toolWindow.designsystem.model.createTransferable(assetList.selectedValue.asset)
-    }
-
-    override fun exportDone(source: JComponent?, data: Transferable?, action: Int) {
-        source?.cursor = Cursor.getDefaultCursor()
+        return createCopyTransferable(assetList.selectedValue.asset)
     }
 }
 
@@ -84,7 +72,7 @@ private fun createDragPreview(draggedAssets: JList<DesignAssetSet>): BufferedIma
     )
 
     // Drag시 Preview 크기 : JList의 넓이 x Component의 높이
-    component.setSize(draggedAssets.width, component.preferredSize.height)
+    component.setSize(draggedAssets.preferredSize.width, component.preferredSize.height)
     component.validate()
 
     // Dimensions for BufferedImage are pre-scaled.
