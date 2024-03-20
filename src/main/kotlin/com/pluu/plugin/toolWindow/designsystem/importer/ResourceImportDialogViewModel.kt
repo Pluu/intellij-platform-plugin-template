@@ -49,6 +49,8 @@ class ResourceImportDialogViewModel(
 
     private val fileViewModels = mutableMapOf<DesignSystemItem, FileImportRowViewModel>()
 
+    private val designSystemImportValidator = DesignSystemDataValidator.forSamples(project)
+
     fun commit() {
         val modifyAssetId = modifyAssetItem
         if (modifyAssetId != null) {
@@ -177,18 +179,18 @@ class ResourceImportDialogViewModel(
         return fileImportRowViewModel
     }
 
+    // TODO: 수정 모드일 경우 중복 추가 필요
     fun validateName(type: DesignSystemType, newName: String, field: JTextField? = null): ValidationInfo? {
         return when {
             newName.isEmpty() -> ValidationInfo("Cannot be empty", field)
-            hasDuplicate(type, newName) -> createDuplicateValidationInfo(field)
+            isAddMode && hasDuplicate(type, newName) -> createDuplicateValidationInfo(field)
             checkIfNameUnique(type, newName) -> getSameNameIsImportedValidationInfo(field)
             else -> null
         }
     }
 
     private fun hasDuplicate(type: DesignSystemType, newName: String): Boolean {
-        // TODO: 선행 저장된 데이터 중복 체크
-        return false
+        return designSystemImportValidator.isExist(type, newName)
     }
 
     private fun createDuplicateValidationInfo(field: JTextField?) =

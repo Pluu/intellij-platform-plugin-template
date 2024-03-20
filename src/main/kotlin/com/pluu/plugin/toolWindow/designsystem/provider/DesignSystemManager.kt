@@ -29,7 +29,7 @@ object DesignSystemManager {
      * Returns a list of local design systems.
      */
     @Slow
-    fun getModuleResources(
+    fun getDesignSystemResources(
         project: Project,
         type: DesignSystemType?
     ): List<DesignSystemItem> {

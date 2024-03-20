@@ -80,7 +80,7 @@ class DesignSystemExplorerListViewModelImpl(
         designSections.add(
             DesignSection(
                 name = currentTab.name,
-                assetSets = DesignSystemManager.getModuleResources(project, designSystemType)
+                assetSets = DesignSystemManager.getDesignSystemResources(project, designSystemType)
                     .sortedBy { it.name }
                     .map {
                         DesignAssetSet(it.name, it)

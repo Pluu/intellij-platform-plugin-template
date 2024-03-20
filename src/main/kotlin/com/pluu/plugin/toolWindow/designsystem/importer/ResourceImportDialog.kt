@@ -290,7 +290,7 @@ class ResourceImportDialog(
             val assetSetView = assetSetToView.remove(assetSet) ?: return
             assetSet = newDesignAssetSet
             assetSetToView[newDesignAssetSet] = assetSetView
-            updateOkButton()
+            ComponentValidator.getInstance(assetNameField).ifPresent(ComponentValidator::revalidate)
         }
 
         private fun removeAsset() {
