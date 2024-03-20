@@ -58,6 +58,7 @@ class ResourceImportDialog(
             fileCountLabel = label("").component
             cell(createImportButtonAction())
                 .align(AlignX.RIGHT)
+                .enabled(dialogViewModel.isAddMode)
         }
     }.withBorder(
         BorderFactory.createCompoundBorder(
@@ -134,7 +135,7 @@ class ResourceImportDialog(
     }
 
     private fun addDesignAssetSet(assetSet: DesignAssetSet) {
-        val view = DesignAssetSetView(assetSet)
+        val view = DesignAssetSetView(assetSet, dialogViewModel.isAddMode)
         content.add(view)
         assetSetToView[assetSet] = view
     }
@@ -200,7 +201,8 @@ class ResourceImportDialog(
      * View showing a [DesignAssetSet] and its contained [DesignSystemItem].
      */
     private inner class DesignAssetSetView(
-        private var assetSet: DesignAssetSet
+        private var assetSet: DesignAssetSet,
+        private val isAddMode: Boolean
     ) : JPanel(BorderLayout()) {
 
         val assetNameField = JBTextField(assetSet.name).apply {
@@ -254,7 +256,7 @@ class ResourceImportDialog(
                 updateApplicableFileTypeCallback = this::updateApplicableFileType,
                 removeCallback = this::removeAsset,
             )
-            val fileImportRow = FileImportRow(viewModel)
+            val fileImportRow = FileImportRow(viewModel, isAddMode)
             dialogViewModel.getAssetPreview(asset).whenComplete { image, _ ->
                 image?.let {
                     fileImportRow.preview.icon = ImageIcon(it)

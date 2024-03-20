@@ -44,6 +44,8 @@ class ResourceImportDialogViewModel(
     var updateCallback: () -> Unit = {}
 
     var modifyAssetItem: DesignSystemItem? = null
+    val isAddMode: Boolean
+        get() = modifyAssetItem == null
 
     private val fileViewModels = mutableMapOf<DesignSystemItem, FileImportRowViewModel>()
 

@@ -34,7 +34,8 @@ private val PREVIEW_SIZE = JBUI.size(150)
 private val COMPONENT_GAP = JBUI.scale(4)
 
 class FileImportRow(
-    val viewModel: FileImportRowViewModel
+    val viewModel: FileImportRowViewModel,
+    isAddMode: Boolean
 ) : JPanel(BorderLayout()), Disposable {
     val preview = JBLabel().apply {
         horizontalAlignment = JBLabel.CENTER
@@ -114,6 +115,7 @@ class FileImportRow(
             link("Do not import") {
                 removeButtonClicked()
             }.align(AlignX.RIGHT)
+                .enabled(isAddMode)
         }
         row {
             cell(configurationPanel).align(Align.FILL)
