@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin ; https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/explorer/ResourceExplorerToolbarViewModel.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.LangDataKeys

@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/explorer/AssetListView.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.intellij.ui.CollectionListModel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.FilteringListModel

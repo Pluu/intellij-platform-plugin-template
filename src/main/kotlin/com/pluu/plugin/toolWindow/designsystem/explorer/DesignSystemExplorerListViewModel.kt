@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/explorer/ResourceExplorerListViewModel.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.intellij.openapi.project.Project
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection

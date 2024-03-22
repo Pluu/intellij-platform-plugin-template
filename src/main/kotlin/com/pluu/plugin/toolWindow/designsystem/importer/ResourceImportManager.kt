@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/importer/ResourceImportManager.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.android.tools.idea.ui.resourcemanager.importer.getAllLeafFiles
 import com.android.tools.idea.util.toIoFile
 import com.intellij.ide.util.PropertiesComponent

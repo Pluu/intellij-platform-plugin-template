@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.model
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/model/ResourcePasteProvider.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.ide.PasteProvider
 import com.intellij.ide.highlighter.XmlFileType

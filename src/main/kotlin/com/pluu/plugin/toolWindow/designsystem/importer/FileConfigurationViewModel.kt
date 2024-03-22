@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/qualifiers/QualifierConfigurationViewModel.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import java.util.*
 import kotlin.properties.Delegates

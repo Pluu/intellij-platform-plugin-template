@@ -1,7 +1,7 @@
 package com.pluu.plugin.toolWindow.designsystem.plugin
 
 ///////////////////////////////////////////////////////////////////////////
-// Origin: https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/plugin/ResourceImporter.kt
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/plugin/ResourceImporter.kt
 ///////////////////////////////////////////////////////////////////////////
 
 import com.intellij.openapi.vfs.VfsUtil

@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/explorer/DesignAssetCellRenderer.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.android.tools.idea.ui.resourcemanager.rendering.AssetIconProvider
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager

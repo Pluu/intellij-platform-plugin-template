@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.model
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/model/DesignAsset.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCacheValue

@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/explorer/ResourceAssetSetFilteringListModel.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.android.resources.ResourceType
 import com.intellij.openapi.util.Condition
 import com.intellij.ui.CollectionListModel

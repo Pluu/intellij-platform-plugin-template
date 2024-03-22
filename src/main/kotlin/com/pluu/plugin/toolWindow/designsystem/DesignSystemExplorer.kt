@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/ResourceExplorer.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.android.tools.adtui.stdui.registerActionShortCutSet
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.CommonShortcuts

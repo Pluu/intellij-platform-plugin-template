@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.explorer.action
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/explorer/ResourceExplorerToolbar.kt;l=143-168
+///////////////////////////////////////////////////////////////////////////
+
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
