@@ -26,6 +26,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.settings.ConfigSettingsListener
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
 import org.jetbrains.android.facet.AndroidFacet
 import javax.swing.JComponent
 

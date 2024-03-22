@@ -1,8 +1,8 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
 import com.intellij.openapi.project.Project
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.provider.DesignSystemManager
 
 class DesignSystemDataValidator private constructor(

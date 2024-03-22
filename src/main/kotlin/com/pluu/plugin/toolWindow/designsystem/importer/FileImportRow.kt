@@ -1,5 +1,9 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/importer/FileImportRow.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.android.tools.idea.ui.resourcemanager.widget.ChessBoardPanel
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.ComponentValidator
@@ -19,8 +23,8 @@ import com.intellij.ui.dsl.builder.whenItemSelectedFromUi
 import com.intellij.ui.util.preferredWidth
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
 import org.jdesktop.swingx.prompt.PromptSupport
 import java.awt.BorderLayout
 import java.awt.Dimension

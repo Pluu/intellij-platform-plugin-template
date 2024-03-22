@@ -2,7 +2,6 @@ package com.pluu.plugin.toolWindow.designsystem.model
 
 import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.vfs.VirtualFile
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCacheValue
 
 /** [DataKey] to pass an array of [DesignSystemItem]s. */

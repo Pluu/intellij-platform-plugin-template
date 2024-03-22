@@ -22,7 +22,7 @@ import com.intellij.ui.dsl.builder.TopGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.selected
 import com.intellij.util.ui.UIUtil
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.utils.DesignSystemTypeNameValidator
 import java.awt.Color
 import javax.swing.JComponent

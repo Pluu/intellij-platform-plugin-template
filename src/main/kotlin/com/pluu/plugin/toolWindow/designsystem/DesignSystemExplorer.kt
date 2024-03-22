@@ -8,6 +8,7 @@ import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerTool
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerToolbarViewModel
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerView
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerViewModel
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
 import org.jetbrains.android.facet.AndroidFacet
 import java.awt.BorderLayout
 import javax.swing.JPanel

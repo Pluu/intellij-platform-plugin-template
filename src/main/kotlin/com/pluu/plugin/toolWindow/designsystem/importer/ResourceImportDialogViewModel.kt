@@ -1,13 +1,17 @@
 package com.pluu.plugin.toolWindow.designsystem.importer
 
+///////////////////////////////////////////////////////////////////////////
+// Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/importer/ResourceImportDialogViewModel.kt
+///////////////////////////////////////////////////////////////////////////
+
 import com.android.tools.idea.ui.resourcemanager.plugin.DesignAssetRendererManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.util.ui.JBUI
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
 import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import java.awt.Image
 import java.util.concurrent.CompletableFuture

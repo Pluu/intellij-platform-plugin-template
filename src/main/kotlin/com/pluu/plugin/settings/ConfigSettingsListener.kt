@@ -2,7 +2,7 @@ package com.pluu.plugin.settings
 
 import com.android.annotations.concurrency.UiThread
 import com.intellij.util.messages.Topic
-import com.pluu.plugin.toolWindow.designsystem.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
 import java.util.*
 
 interface ConfigSettingsListener : EventListener {

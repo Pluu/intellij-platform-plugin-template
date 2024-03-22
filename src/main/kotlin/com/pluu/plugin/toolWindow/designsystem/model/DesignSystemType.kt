@@ -1,4 +1,4 @@
-package com.pluu.plugin.toolWindow.designsystem
+package com.pluu.plugin.toolWindow.designsystem.model
 
 data class DesignSystemType(
     val name: String,
