@@ -15,9 +15,9 @@ import kotlin.properties.Delegates
 
 private fun FilterImageSize.thumbnailWidth(): Int = when (this) {
     FilterImageSize.None -> JBUI.scale(0)
-    FilterImageSize.S -> JBUI.scale(100)
-    FilterImageSize.M -> JBUI.scale(150)
-    FilterImageSize.L -> JBUI.scale(200)
+    FilterImageSize.S -> JBUI.scale(50)
+    FilterImageSize.M -> JBUI.scale(100)
+    FilterImageSize.L -> JBUI.scale(150)
 }
 
 /**
