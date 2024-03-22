@@ -28,7 +28,6 @@ import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
-import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -215,7 +214,6 @@ class ResourceImportDialog(
     ) : JPanel(BorderLayout()) {
 
         val assetNameField = JBTextField(assetSet.name).apply {
-            this.font = StartupUiUtil.labelFont.deriveFont(JBUI.scaleFontSize(14f))
             document.addDocumentListener(object : DocumentAdapter() {
                 override fun textChanged(e: DocumentEvent) {
                     performRename(this@apply.text)

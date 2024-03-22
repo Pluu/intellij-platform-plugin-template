@@ -17,7 +17,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.NamedColorUtil
 import com.intellij.util.ui.UIUtil
-import com.pluu.plugin.toolWindow.designsystem.StartupUiUtil
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import java.awt.BorderLayout
@@ -55,14 +54,6 @@ private val LARGE_MAIN_CELL_BORDER
     get() = BorderFactory.createCompoundBorder(
         JBUI.Borders.empty(2),
         RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(2), JBUI.scale(1))
-    )
-
-private val PRIMARY_FONT
-    get() = StartupUiUtil.labelFont.deriveFont(
-        mapOf(
-            TextAttribute.WEIGHT to TextAttribute.WEIGHT_DEMIBOLD,
-            TextAttribute.SIZE to JBUI.scaleFontSize(14f)
-        )
     )
 
 private val SECONDARY_FONT_SIZE get() = JBUI.scaleFontSize(12f).toFloat()
@@ -108,7 +99,7 @@ abstract class AssetView(
     /**
      * Set the [JComponent] acting as the thumbnail of the object represented (e.g an image or a color)
      */
-    private val thumbnailLabel= JLabel().apply { horizontalAlignment = JLabel.CENTER }
+    private val thumbnailLabel = JLabel().apply { horizontalAlignment = JLabel.CENTER }
 
     /**
      * The size of the [thumbnailLabel] container that should be used to compute the size of the thumbnail component
@@ -137,8 +128,14 @@ abstract class AssetView(
     }
 
     protected val componentNameLabel = JBLabel().apply {
-        font = PRIMARY_FONT
+        font = font.deriveFont(
+            mapOf(
+                TextAttribute.WEIGHT to TextAttribute.WEIGHT_DEMIBOLD,
+                TextAttribute.SIZE to JBUI.scaleFontSize(14f)
+            )
+        )
     }
+
     protected val applicableFileTypeLabel = JBLabel().apply {
         font = font.deriveFont(SECONDARY_FONT_SIZE)
     }
