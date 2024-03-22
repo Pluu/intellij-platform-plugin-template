@@ -18,17 +18,40 @@
     </description>
 
     <extensions defaultExtensionNs="com.android">
-        <tools.idea.wizard.template.wizardTemplateProvider implementation="com.pluu.plugin.wizard.WizardTemplateProviderImpl"/>
+        <tools.idea.wizard.template.wizardTemplateProvider
+                implementation="com.pluu.plugin.wizard.WizardTemplateProviderImpl"/>
         <moduleDescriptionProvider implementation="com.pluu.plugin.module.feature.FeatureModuleDescriptionProvider"/>
-        <moduleDescriptionProvider implementation="com.pluu.plugin.module.sample.FeatureSampleModuleDescriptionProvider"/>
+        <moduleDescriptionProvider
+                implementation="com.pluu.plugin.module.sample.FeatureSampleModuleDescriptionProvider"/>
     </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService
+                serviceImplementation="com.pluu.plugin.toolWindow.designsystem.rendering.FetchImageExecutor"/>
+        <customPasteProvider implementation="com.pluu.plugin.toolWindow.designsystem.model.ResourcePasteProvider"/>
+    </extensions>
+
     <extensions defaultExtensionNs="com.intellij">
         <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl"/>
-        <internalFileTemplate name="ActivityTest" />
+        <internalFileTemplate name="ActivityTest"/>
 
         <codeInsight.template.postfixTemplateProvider
-            language="kotlin"
-            implementationClass="com.pluu.plugin.codeInsight.postfix.PluuPostfixTemplateProvider" />
+                language="kotlin"
+                implementationClass="com.pluu.plugin.codeInsight.postfix.PluuPostfixTemplateProvider"/>
+
+        <library.toolWindow
+                id="Design System"
+                anchor="left"
+                icon="PluuIcons.Konata_32"
+                doNotActivateOnStart="true"
+                librarySearchClass="com.android.tools.idea.sdk.AndroidFacetChecker"
+                factoryClass="com.pluu.plugin.toolWindow.designsystem.DesignSystemToolWindowFactory"/>
+
+        <projectConfigurable
+                instance="com.pluu.plugin.settings.ConfigConfigurable"/>
+
+        <applicationService
+                serviceImplementation="com.pluu.plugin.settings.ConfigSettings"/>
     </extensions>
 
     <actions>
@@ -51,13 +74,13 @@
                     class="com.pluu.plugin.action.FragmentCreateWizardAction"/>
         </group>
 
-        <group>
+        <group id="com.pluu.plugin.test">
             <action id="com.pluu.plugin.wizard.action.testcreator.viewmodel"
                     class="com.pluu.plugin.action.testIntegration.ViewModelTestCreatorAction"
-                    icon="PluuIcons.Konata" />
+                    icon="PluuIcons.Konata"/>
             <action id="com.pluu.plugin.wizard.action.testcreator.activity"
                     class="com.pluu.plugin.action.testIntegration.ActivityUiTestCreatorAction"
-                    icon="PluuIcons.Konata" />
+                    icon="PluuIcons.Konata"/>
             <add-to-group group-id="EditorLangPopupMenu" relative-to-action="Generate" anchor="after"/>
         </group>
     </actions>
