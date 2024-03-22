@@ -179,18 +179,17 @@ class ResourceImportDialogViewModel(
         return fileImportRowViewModel
     }
 
-    // TODO: 수정 모드일 경우 중복 추가 필요
     fun validateName(type: DesignSystemType, newName: String, field: JTextField? = null): ValidationInfo? {
         return when {
             newName.isEmpty() -> ValidationInfo("Cannot be empty", field)
-            isAddMode && hasDuplicate(type, newName) -> createDuplicateValidationInfo(field)
+            hasDuplicate(type, newName) -> createDuplicateValidationInfo(field)
             checkIfNameUnique(type, newName) -> getSameNameIsImportedValidationInfo(field)
             else -> null
         }
     }
 
     private fun hasDuplicate(type: DesignSystemType, newName: String): Boolean {
-        return designSystemImportValidator.isExist(type, newName)
+        return designSystemImportValidator.isExist(type, newName, modifyAssetItem?.name)
     }
 
     private fun createDuplicateValidationInfo(field: JTextField?) =

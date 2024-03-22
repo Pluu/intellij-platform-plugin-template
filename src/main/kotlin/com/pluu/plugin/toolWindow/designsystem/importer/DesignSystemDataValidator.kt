@@ -8,9 +8,9 @@ import com.pluu.plugin.toolWindow.designsystem.provider.DesignSystemManager
 class DesignSystemDataValidator private constructor(
     private val existing: List<DesignSystemItem>
 ) {
-    fun isExist(type: DesignSystemType, name: String): Boolean {
+    fun isExist(type: DesignSystemType, name: String, skipName: String?): Boolean {
         return existing.any {
-            it.type == type && it.name == name
+            it.type == type && it.name != skipName && it.name == name
         }
     }
 
