@@ -191,7 +191,9 @@ class ResourceImportDialog(
     }
 
     private fun updateOkButton() {
-        isOKActionEnabled = assetSetToView.isNotEmpty() && doValidateAll().isEmpty()
+        isOKActionEnabled = assetSetToView.isNotEmpty()
+                && assetSetToView.all { it.key.isValidate() }
+                && doValidateAll().isEmpty()
     }
 
     override fun doValidate(): ValidationInfo? {
