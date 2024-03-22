@@ -51,6 +51,17 @@ class ResourceImportDialogViewModel(
 
     private val designSystemImportValidator = DesignSystemDataValidator.forSamples(project)
 
+    fun getValidationInfo(): ValidationInfo? = assetSetsToImport.asSequence()
+        .mapNotNull { asset ->
+            validateName(asset.asset.type, asset.name)?.let { validationInfo -> asset to validationInfo }
+        }
+        .filter { (_, info) -> !info.warning }
+        .map {
+            val (asset, error) = it
+            ValidationInfo("${asset.name}: ${error.message}")
+        }
+        .firstOrNull()
+
     fun commit() {
         val modifyAssetId = modifyAssetItem
         if (modifyAssetId != null) {
@@ -196,11 +207,10 @@ class ResourceImportDialogViewModel(
         ValidationInfo(
             "A component with this name already exists.",
             field
-        ).asWarning()
+        )
 
     private fun getSameNameIsImportedValidationInfo(field: JTextField?) =
         ValidationInfo("A component with the same name and same type is also being imported.", field)
-            .asWarning()
 
     private fun checkIfNameUnique(type: DesignSystemType, newName: String?): Boolean {
         var nameSeen = false

@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComponentValidator
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.DocumentAdapter
@@ -187,9 +188,13 @@ class ResourceImportDialog(
     }
 
     private fun updateOkButton() {
-        isOKActionEnabled = assetSetToView.isNotEmpty() && assetSetToView.all {
-            it.key.isValidate()
-        }
+        isOKActionEnabled = assetSetToView.isNotEmpty() && doValidateAll().isEmpty()
+    }
+
+    override fun doValidate(): ValidationInfo? {
+        val result = dialogViewModel.getValidationInfo()
+        setErrorInfoAll(if (result != null) listOf(result) else emptyList())
+        return result
     }
 
     override fun doOKAction() {
