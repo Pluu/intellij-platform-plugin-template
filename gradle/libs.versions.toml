@@ -5,7 +5,8 @@ annotations = "24.1.0"
 # plugins
 kotlin = "1.9.23"
 changelog = "2.2.0"
-gradleIntelliJPlugin = "1.17.2"
+# https://github.com/JetBrains/intellij-platform-gradle-plugin
+gradleIntelliJPlugin = "1.17.3"
 
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }

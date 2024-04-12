@@ -1,7 +1,7 @@
 package com.pluu.plugin.utils
 
 import com.android.AndroidProjectTypes
-import com.android.tools.idea.gradle.util.GradleUtil
+import com.android.tools.idea.gradle.util.GradleProjectSystemUtil.findGradleBuildFile
 import com.android.tools.idea.project.AndroidProjectInfo
 import com.intellij.ide.actions.CreateDirectoryOrPackageAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -119,7 +119,7 @@ object ModuleUtils {
 
     fun useConventionPlugin(moduleRootDir: File): Boolean {
         val rootVirtualFile = moduleRootDir.toVirtualFile() ?: return false
-        val buildFile = GradleUtil.findGradleBuildFile(rootVirtualFile) ?: return false
+        val buildFile = findGradleBuildFile(rootVirtualFile) ?: return false
         if (!buildFile.exists()) return false
         val buildFileText = VfsUtil.loadText(buildFile)
         return buildFileText.contains(PluuPlugin.Convension.LIBRARY)

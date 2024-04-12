@@ -6,10 +6,7 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
-    <!-- We define the dependencies we will use. -->
     <depends>org.jetbrains.android</depends>
-    <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.androidstudio</depends>
 
     <description>
         <![CDATA[
@@ -44,7 +41,7 @@
                 anchor="left"
                 icon="PluuIcons.Konata_32"
                 doNotActivateOnStart="true"
-                librarySearchClass="com.android.tools.idea.sdk.AndroidFacetChecker"
+                librarySearchClass="com.android.tools.idea.sdk.AndroidProjectChecker"
                 factoryClass="com.pluu.plugin.toolWindow.designsystem.DesignSystemToolWindowFactory"/>
 
         <projectConfigurable

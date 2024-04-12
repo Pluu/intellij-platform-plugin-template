@@ -4,11 +4,11 @@ package com.pluu.plugin.module.feature
 // Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android-npw/src/com/android/tools/idea/npw/model/NewAndroidModuleModel.kt
 ///////////////////////////////////////////////////////////////////////////
 
-import com.android.tools.idea.gradle.npw.project.GradleAndroidModuleTemplate.createDefaultModuleTemplate
 import com.android.tools.idea.npw.model.ExistingProjectModelData
 import com.android.tools.idea.npw.model.ProjectModelData
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.npw.module.ModuleModel
+import com.android.tools.idea.npw.project.GradleAndroidModuleTemplate.createDefaultModuleTemplate
 import com.android.tools.idea.observable.core.*
 import com.android.tools.idea.wizard.template.*
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent
