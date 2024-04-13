@@ -16,6 +16,7 @@ import com.android.tools.idea.wizard.template.WizardUiContext
 import com.android.tools.idea.wizard.ui.SimpleStudioWizardLayout
 import com.android.tools.idea.wizard.ui.StudioWizardDialogBuilder
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -110,4 +111,6 @@ abstract class UiComponentCreateWizardAction(
             .show()
         createdFiles?.addAll(templateModel.createdFiles)
     }
+
+    final override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }

@@ -44,7 +44,5 @@ class FeatureSampleModuleCreateWizardAction : AnAction(
             .show()
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
-    }
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }

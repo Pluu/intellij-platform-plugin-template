@@ -3,6 +3,7 @@ package com.pluu.plugin.action
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.wizard.model.ModelWizard
 import com.android.tools.idea.wizard.ui.StudioWizardDialogBuilder
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.util.ui.JBUI
@@ -41,4 +42,6 @@ class FeatureModuleCreateWizardAction : AnAction(
             .build()
             .show()
     }
+
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }
