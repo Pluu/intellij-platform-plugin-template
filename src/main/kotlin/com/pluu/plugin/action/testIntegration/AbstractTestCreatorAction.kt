@@ -50,7 +50,7 @@ abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionNa
                 return@runWriteAction
             }
 
-            openFileWithPsiElement(createdFile, true, true)
+            openFileWithPsiElement(createdFile, searchForOpen = true, requestFocus = true)
         }
     }
 

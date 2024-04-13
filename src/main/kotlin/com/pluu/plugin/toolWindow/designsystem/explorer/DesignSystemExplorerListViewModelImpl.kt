@@ -102,7 +102,7 @@ class DesignSystemExplorerListViewModelImpl(
     override val doSelectAssetAction: (asset: DesignSystemItem) -> Unit = selectAssetAction ?: { asset ->
         val psiElement = dataManager.findPsiElement(asset)
         psiElement?.let {
-            openFileWithPsiElement(it, true, true)
+            openFileWithPsiElement(it, searchForOpen = true, requestFocus = true)
         }
     }
 }

@@ -49,7 +49,7 @@ fun generatorUnitTestFile(
             return@runWriteAction
         }
 
-        openFileWithPsiElement(createdFile, true, true)
+        openFileWithPsiElement(createdFile, searchForOpen = true, requestFocus = true)
     }
 }
 
@@ -83,6 +83,6 @@ fun generatorAndroidTestFile(
             return@runWriteAction
         }
 
-        openFileWithPsiElement(createdFile, true, true)
+        openFileWithPsiElement(createdFile, searchForOpen = true, requestFocus = true)
     }
 }
