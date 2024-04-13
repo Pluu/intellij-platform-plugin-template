@@ -4,7 +4,6 @@ package com.pluu.plugin.toolWindow.designsystem.model
 // Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/model/ResourcePasteProvider.kt
 ///////////////////////////////////////////////////////////////////////////
 
-import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.ide.PasteProvider
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -16,6 +15,7 @@ import com.intellij.openapi.editor.actions.PasteAction
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 
 class ResourcePasteProvider : PasteProvider {
@@ -45,15 +45,17 @@ class ResourcePasteProvider : PasteProvider {
     private fun pasteAtCaret(caret: Caret, text: String, project: Project) {
         runWriteAction {
             caret.editor.document.insertString(caret.offset, text)
-        }
-        caret.selectStringFromOffset(text, caret.offset)
+            caret.selectStringFromOffset(text, caret.offset)
 
-        // Reformat code
-        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(caret.editor.document) ?: return
-        ReformatCodeProcessor(
-            psiFile,
-            caret.editor.selectionModel
-        ).run()
+            // Reformat code
+            val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(caret.editor.document) ?: return@runWriteAction
+            val psiDocumentManager = PsiDocumentManager.getInstance(project)
+            psiDocumentManager.commitDocument(caret.editor.document)
+            CodeStyleManager.getInstance(project).reformatRange(psiFile, caret.selectionStart, caret.selectionEnd)
+            psiDocumentManager.doPostponedOperationsAndUnblockDocument(caret.editor.document)
+        }
+        caret.removeSelection()
+        caret.moveToOffset(caret.offset - text.length)
     }
 
     override fun isPastePossible(dataContext: DataContext): Boolean {
