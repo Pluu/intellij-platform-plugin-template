@@ -20,7 +20,6 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.Box
 import javax.swing.JComponent
-import javax.swing.JLabel
 import javax.swing.JList
 import javax.swing.JPanel
 import javax.swing.JScrollPane
@@ -281,9 +280,3 @@ interface Section<T> {
     var list: JList<T>
     var header: JComponent
 }
-
-class SimpleSection<T>(
-    override var name: String = "",
-    override var list: JList<T>,
-    override var header: JComponent = JLabel(name)
-) : Section<T>

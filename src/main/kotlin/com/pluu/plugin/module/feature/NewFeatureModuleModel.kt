@@ -9,8 +9,17 @@ import com.android.tools.idea.npw.model.ProjectModelData
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.npw.module.ModuleModel
 import com.android.tools.idea.npw.project.GradleAndroidModuleTemplate.createDefaultModuleTemplate
-import com.android.tools.idea.observable.core.*
-import com.android.tools.idea.wizard.template.*
+import com.android.tools.idea.observable.core.BoolValueProperty
+import com.android.tools.idea.observable.core.ObjectProperty
+import com.android.tools.idea.observable.core.ObjectValueProperty
+import com.android.tools.idea.observable.core.OptionalProperty
+import com.android.tools.idea.observable.core.OptionalValueProperty
+import com.android.tools.idea.wizard.template.BytecodeLevel
+import com.android.tools.idea.wizard.template.Category
+import com.android.tools.idea.wizard.template.FormFactor
+import com.android.tools.idea.wizard.template.ModuleTemplateData
+import com.android.tools.idea.wizard.template.Recipe
+import com.android.tools.idea.wizard.template.TemplateData
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext.NEW_MODULE
 import com.intellij.openapi.module.Module
@@ -89,7 +98,7 @@ class NewFeatureModuleModel(
     private fun getInitialBytecodeLevel(): BytecodeLevel {
         if (isLibrary) {
             val savedValue = properties.getValue(PROPERTIES_BYTECODE_LEVEL_KEY)
-            return BytecodeLevel.values().firstOrNull { it.toString() == savedValue } ?: BytecodeLevel.default
+            return BytecodeLevel.entries.firstOrNull { it.toString() == savedValue } ?: BytecodeLevel.default
         }
         return BytecodeLevel.default
     }

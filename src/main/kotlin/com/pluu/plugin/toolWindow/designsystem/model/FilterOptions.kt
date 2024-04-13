@@ -66,7 +66,7 @@ class TypeFiltersModel {
     /**
      * Returns a list of the supported [FilterOption]s.
      */
-    fun getSupportedImageSize() = FilterImageSize.values()
+    fun getSupportedImageSize() = FilterImageSize.entries
 
     /**
      * The current state for the given [FilterOption], returns false if it doesn't exist for the given [DesignSystemType].

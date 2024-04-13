@@ -57,12 +57,12 @@ enum class ApplicableFileType {
     fun isSelectable(): Boolean = this != NONE
 
     companion object {
-        fun selectableTypes(): Array<ApplicableFileType> = ApplicableFileType.values()
+        fun selectableTypes(): Array<ApplicableFileType> = ApplicableFileType.entries
             .filter { it.isSelectable() }
             .toTypedArray()
 
         fun of(name: String?): ApplicableFileType {
-            return ApplicableFileType.values()
+            return ApplicableFileType.entries
                 .firstOrNull { it.name == name } ?: defaultType
         }
 
