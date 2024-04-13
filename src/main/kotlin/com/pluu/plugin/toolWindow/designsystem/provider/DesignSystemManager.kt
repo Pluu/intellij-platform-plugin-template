@@ -54,7 +54,7 @@ object DesignSystemManager {
 
     fun getOrCreateDefaultRootDirectory(project: Project): VirtualFile {
         val rootFile = sampleRootDirectory(project)
-        if (rootFile != null) return rootFile
+        if (rootFile != null && rootFile.isDirectory) return rootFile
 
         WriteCommandAction.runWriteCommandAction(project, "Write Sample Root", null, {
             val sampleRootPath = requireNotNull(sampleRootDirectoryPath(project))
@@ -117,7 +117,7 @@ object DesignSystemManager {
                 JsonParser.parseReader(it.inputStream.reader(Charsets.UTF_8)) as? JsonObject
             } ?: run {
             if (isRequiredFile) {
-                VfsUtil.createChildSequent(this, rootPath, "sample", "json")
+                rootPath.createChildData(this, sampleJsonFileName)
             }
             JsonObject()
         }
