@@ -39,7 +39,7 @@
         <library.toolWindow
                 id="Design System"
                 anchor="left"
-                icon="PluuIcons.Konata_32"
+                icon="PluuIcons.Konata"
                 doNotActivateOnStart="true"
                 librarySearchClass="com.android.tools.idea.sdk.AndroidProjectChecker"
                 factoryClass="com.pluu.plugin.toolWindow.designsystem.DesignSystemToolWindowFactory"/>
