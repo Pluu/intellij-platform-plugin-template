@@ -14,11 +14,13 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.impl.source.codeStyle.JavaCodeStyleManagerImpl
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
+import org.jetbrains.kotlin.psi.KtClass
 
 abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionName) {
 
@@ -55,21 +57,31 @@ abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionNa
     }
 
     override fun update(event: AnActionEvent) {
+        event.presentation.isVisible = false
         val project = event.project ?: return
         val psiFile = event.getData(LangDataKeys.VIRTUAL_FILE)?.toPsiFile(project) ?: return
         val editor = event.getData(CommonDataKeys.EDITOR) ?: return
-        val element = getElement(editor, psiFile) ?: return
-        event.presentation.isVisible = isAvailable(element.text)
+        val className = getElement(editor, psiFile)?.name?.takeIf {
+            it.isNotEmpty()
+        } ?: return
+        event.presentation.isVisible = isAvailable(className)
     }
 
     final override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
     }
 
-    protected fun getElement(editor: Editor, file: PsiFile): PsiElement? {
+    protected fun getElement(editor: Editor, file: PsiFile): PsiNamedElement? {
         val caretModel = editor.caretModel
         val position = caretModel.offset
-        return file.findElementAt(position)
+        var matchElement = file.findElementAt(position)
+        while (matchElement != null) {
+            if (matchElement is KtClass) {
+                return matchElement
+            }
+            matchElement = matchElement.parent
+        }
+        return matchElement
     }
 
     protected abstract fun isAvailable(fileName: String): Boolean
