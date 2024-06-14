@@ -76,7 +76,8 @@ class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware, ToolWindowMa
             },
             onSourceGenerationError = {
                 toolWindow.displayWaitingForGoodSync()
-            }
+            },
+            toolWindow.disposable
         )
         project.messageBus.connect(project)
             .subscribe(ToolWindowManagerListener.TOPIC, MyToolWindowManagerListener(project))
