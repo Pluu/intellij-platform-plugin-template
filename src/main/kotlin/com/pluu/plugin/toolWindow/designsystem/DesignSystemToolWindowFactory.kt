@@ -54,7 +54,7 @@ class DesignSystemToolWindowFactory : ToolWindowFactory, DumbAware, ToolWindowMa
             })
     }
 
-    override fun isApplicable(project: Project): Boolean {
+    override suspend fun isApplicableAsync(project: Project): Boolean {
         return true
     }
 
