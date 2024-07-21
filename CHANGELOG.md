@@ -4,6 +4,20 @@
 
 ## [Unreleased]
 
+## [1.14.2] - 2024-07-12
+
+### Changed
+
+- Upgrade Gradle Wrapper to `8.9`
+
+### Removed
+
+- Remove default plugin icon (`pluginIcon.svg`)
+
+## [1.14.1] - 2024-06-19
+
+### Changed
+
 - Update `platformVersion` to `2023.2.7`
 - Upgrade Gradle Wrapper to `8.8`
 - Dependencies - upgrade `org.jetbrains.intellij` to `1.17.4`
@@ -720,7 +734,9 @@
 - GitHub Actions to automate testing and deployment
 - Kotlin support
 
-[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.0...HEAD
+[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.2...HEAD
+[1.14.2]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.1...v1.14.2
+[1.14.1]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.12.0...v1.13.0
 [1.12.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.11.3...v1.12.0
