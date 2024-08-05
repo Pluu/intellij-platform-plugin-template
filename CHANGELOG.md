@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [2.0.0] - 2024-07-30
+
+### Changed
+
+- Migrate to [IntelliJ Platform Gradle Plugin 2.0](https://blog.jetbrains.com/platform/2024/07/intellij-platform-gradle-plugin-2-0/).
+
 ## [1.14.2] - 2024-07-12
 
 ### Changed
@@ -47,7 +53,7 @@
 
 - Dependencies - upgrade `org.jetbrains.kotlin.jvm` to `1.9.23`
 - Dependencies - upgrade `org.jetbrains.kotlinx.kover` to `0.7.6`
-- Dependencies - upgrade `org.jetbrains.qodana` to `2023.3.1`
+- Dependencies - upgrade `org.jetbrains.qodana` to `2023.3.2`
 - Dependencies (GitHub Actions) - upgrade `actions/upload-artifact` to `4`
 - Dependencies (GitHub Actions) - upgrade `codecov/codecov-action` to `4`
 - Dependencies (GitHub Actions) - upgrade `gradle/wrapper-validation-action` to `2`
@@ -734,7 +740,8 @@
 - GitHub Actions to automate testing and deployment
 - Kotlin support
 
-[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.2...HEAD
+[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.2...v2.0.0
 [1.14.2]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.1...v1.14.2
 [1.14.1]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.13.0...v1.14.0
@@ -776,5 +783,5 @@
 [0.3.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v0.0.2...v0.1.0
-[0.0.2]: https://github.com/JetBrains/intellij-platform-plugin-template/commits/v0.0.2
-[0.0.1]: https://github.com/JetBrains/intellij-platform-plugin-template/commits
+[0.0.2]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/JetBrains/intellij-platform-plugin-template/commits/v0.0.1

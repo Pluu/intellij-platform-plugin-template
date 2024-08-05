@@ -1,17 +1,16 @@
 [versions]
 # libraries
-exampleLibrary = "24.1.0"
+junit = "4.13.2"
 
 # plugins
+changelog = "2.2.1"
+intelliJPlatform = "2.0.0"
 kotlin = "2.0.0"
-changelog = "2.2.0"
-# https://github.com/JetBrains/intellij-platform-gradle-plugin
-gradleIntelliJPlugin = "1.17.4"
 
 [libraries]
-exampleLibrary = { group = "com.example", name = "exampleLibrary", version.ref = "exampleLibrary" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
-gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleIntelliJPlugin" }
+intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
