@@ -1,7 +1,6 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.Constants.Constraints
-import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id("java") // Java support
@@ -34,18 +33,17 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
-
-        // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
         bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
-
-        // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
-        plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
-
         instrumentationTools()
-        pluginVerifier()
-        zipSigner()
-        testFramework(TestFrameworkType.Platform)
+//        pluginVerifier()
+//        zipSigner()
+//        testFramework(TestFrameworkType.Platform)
+
+        if (project.hasProperty("StudioCompilePath")) {
+            local(property("StudioCompilePath").toString())
+        } else {
+            androidStudio(property("platformVersion").toString())
+        }
     }
 }
 
@@ -86,24 +84,17 @@ intellijPlatform {
         }
     }
 
-    signing {
-        certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN")
-        privateKey = providers.environmentVariable("PRIVATE_KEY")
-        password = providers.environmentVariable("PRIVATE_KEY_PASSWORD")
-    }
-
     publishing {
         token = providers.environmentVariable("PUBLISH_TOKEN")
         // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-        channels = providers.gradleProperty("pluginVersion").map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
-    }
-
-    pluginVerification {
-        ides {
-            recommended()
-        }
+        channels = providers.gradleProperty("pluginVersion")
+            .map {
+                listOf(it.substringAfter('-', "")
+                    .substringBefore('.')
+                    .ifEmpty { "default" })
+            }
     }
 }
 
@@ -138,21 +129,4 @@ val runIdeForUiTests by intellijPlatformTesting.runIde.registering {
     plugins {
         robotServerPlugin(Constraints.LATEST_VERSION)
     }
-}
-
-fun localProperties(propertyKey: String): String {
-    val propertiesFile = file("local.properties")
-    var studioCompilePath: String? = null
-    if (propertiesFile.exists()) {
-        val properties = Properties()
-        properties.load(propertiesFile.inputStream())
-        if (properties.containsKey(propertyKey)) {
-            studioCompilePath = properties.getProperty(propertyKey)
-        }
-    }
-    if (studioCompilePath == null) {
-        throw GradleException("No $propertyKey value was set, please create local.properties file")
-    }
-
-    return studioCompilePath
 }
