@@ -44,11 +44,22 @@
                 librarySearchClass="com.android.tools.idea.sdk.AndroidProjectChecker"
                 factoryClass="com.pluu.plugin.toolWindow.designsystem.DesignSystemToolWindowFactory"/>
 
+        <library.toolWindow
+                id="Device Manager"
+                anchor="left"
+                icon="PluuIcons.Konata"
+                librarySearchClass="com.android.tools.idea.sdk.AndroidEnvironmentChecker"
+                factoryClass="com.pluu.plugin.toolWindow.device.DeviceManagerToolWindowFactory"/>
+
         <projectConfigurable
                 instance="com.pluu.plugin.settings.ConfigConfigurable"/>
 
         <applicationService
                 serviceImplementation="com.pluu.plugin.settings.ConfigSettings"/>
+
+        <projectService
+                serviceInterface="com.pluu.plugin.toolWindow.device.combobox.DeviceComboBoxDeviceTrackerFactory"
+                serviceImplementation="com.pluu.plugin.toolWindow.device.combobox.DeviceComboBoxDeviceTrackerFactoryImpl"/>
     </extensions>
 
     <actions>
