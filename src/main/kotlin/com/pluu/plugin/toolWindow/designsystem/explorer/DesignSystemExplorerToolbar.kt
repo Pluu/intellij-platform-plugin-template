@@ -45,10 +45,10 @@ class DesignSystemExplorerToolbar(
         val addAction = action(NewSampleAction(toolbarViewModel))
         val filterAction = action(FilterAction(toolbarViewModel))
 
-       add(addAction)
-       add(refreshAction)
-       add(searchAction)
-       add(filterAction)
+        add(addAction)
+        add(refreshAction)
+        add(searchAction)
+        add(filterAction)
 
         border = JBUI.Borders.merge(
             JBUI.Borders.empty(4, 2),
