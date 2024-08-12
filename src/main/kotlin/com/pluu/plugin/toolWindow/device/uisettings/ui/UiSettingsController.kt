@@ -23,15 +23,13 @@ internal abstract class UiSettingsController(
 ) {
 
     init {
-        model.clearUiChangeListener()
-
         model.inDarkMode.uiChangeListener = LoggingChangeListener(::setDarkMode, stats::setDarkMode)
         model.fontScaleInPercent.uiChangeListener = LoggingChangeListener(::setFontScale, stats::setFontScale)
         model.screenDensity.uiChangeListener = LoggingChangeListener(::setScreenDensity, stats::setScreenDensity)
         model.talkBackOn.uiChangeListener = LoggingChangeListener(::setTalkBack, stats::setTalkBack)
         model.selectToSpeakOn.uiChangeListener = LoggingChangeListener(::setSelectToSpeak, stats::setSelectToSpeak)
         model.gestureNavigation.uiChangeListener = LoggingChangeListener(::setGestureNavigation, stats::setGestureNavigation)
-        model.debugLayout.uiChangeListener =  LoggingChangeListener(::setDebugLayout, stats::setDebugLayout)
+        model.debugLayout.uiChangeListener = LoggingChangeListener(::setDebugLayout, stats::setDebugLayout)
         model.resetAction = { reset(); stats.reset() }
     }
 

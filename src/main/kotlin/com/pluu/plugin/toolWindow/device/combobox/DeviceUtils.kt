@@ -5,10 +5,13 @@
 package com.pluu.plugin.toolWindow.device.combobox
 
 import com.android.adblib.serialNumber
+import com.android.sdklib.AndroidVersion
 import com.android.sdklib.SdkVersionInfo
 import com.android.sdklib.deviceprovisioner.DeviceState
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.sdklib.deviceprovisioner.LocalEmulatorProperties
+import com.android.tools.idea.stats.AnonymizerUtil
+import com.google.wireless.android.sdk.stats.DeviceInfo
 import com.pluu.plugin.toolWindow.device.Device
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsModel
 import java.awt.Dimension
@@ -42,7 +45,11 @@ internal fun DeviceState.toDevice(): Device? {
                 featureLevel,
                 properties.deviceType,
                 uiSettingsModel,
-                properties.deviceInfoProto
+                DeviceInfo.newBuilder()
+                    .setDeviceType(DeviceInfo.DeviceType.LOCAL_EMULATOR)
+                    .setAnonymizedSerialNumber(AnonymizerUtil.anonymizeUtf8(serialNumber))
+                    .setBuildApiLevelFull(AndroidVersion(sdk, null).apiStringWithExtension)
+                    .build()
             )
 
         else ->

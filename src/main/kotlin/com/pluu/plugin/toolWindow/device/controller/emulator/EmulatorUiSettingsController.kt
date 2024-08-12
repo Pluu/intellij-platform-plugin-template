@@ -227,7 +227,7 @@ internal class EmulatorUiSettingsController(
                 isDebuggingLayout = line == "true"
             }
         }
-//        model.debugLayout.setFromController(isDebuggingLayout)
+        model.debugLayout.setFromController(isDebuggingLayout)
         lastDebugLayout = isDebuggingLayout
     }
 

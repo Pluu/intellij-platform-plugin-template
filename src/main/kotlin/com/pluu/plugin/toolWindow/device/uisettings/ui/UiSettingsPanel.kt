@@ -36,7 +36,6 @@ private const val TITLE = "Device Settings Shortcuts"
 private const val LANGUAGE_WIDTH = 200
 internal const val DARK_THEME_TITLE = "Dark Theme:"
 internal const val GESTURE_NAVIGATION_TITLE = "Navigation Mode:"
-internal const val APP_LANGUAGE_TITLE = "App Language:"
 internal const val TALKBACK_TITLE = "TalkBack:"
 internal const val SELECT_TO_SPEAK_TITLE = "Select to Speak:"
 internal const val FONT_SCALE_TITLE = "Font Size:"
@@ -60,11 +59,30 @@ private val SPACING = object : IntelliJSpacingConfiguration() {
  * @param model the UI settings model
  * @param deviceType some controls are only available for certain device types
  */
-internal class UiSettingsPanel(
-    private val model: UiSettingsModel,
-    deviceType: DeviceType
-) : BorderLayoutPanel() {
+internal class UiSettingsPanel : BorderLayoutPanel() {
+
     init {
+        updateBackground()
+
+        isFocusCycleRoot = true
+        isFocusTraversalPolicyProvider = true
+        focusTraversalPolicy = object : LayoutFocusTraversalPolicy() {
+            override fun getFirstComponent(container: Container): Component? {
+                val first = super.getFirstComponent(container) ?: return null
+                val from = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner
+                val fromOutside = from == null || !SwingUtilities.isDescendingFrom(from, container)
+                return if (first.name == RESET_TITLE && fromOutside) super.getComponentAfter(
+                    container,
+                    first
+                ) else first
+            }
+        }
+    }
+
+    fun bind(model: UiSettingsModel) {
+        val deviceType = model.deviceType
+
+        removeAll()
         add(panel {
             border = JBUI.Borders.empty(6)
 
@@ -136,21 +154,8 @@ internal class UiSettingsPanel(
                 })
             }.visibleIf(model.permissionMonitoringDisabled.not())
         })
-        updateBackground()
-
-        isFocusCycleRoot = true
-        isFocusTraversalPolicyProvider = true
-        focusTraversalPolicy = object : LayoutFocusTraversalPolicy() {
-            override fun getFirstComponent(container: Container): Component? {
-                val first = super.getFirstComponent(container) ?: return null
-                val from = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner
-                val fromOutside = from == null || !SwingUtilities.isDescendingFrom(from, container)
-                return if (first.name == RESET_TITLE && fromOutside) super.getComponentAfter(
-                    container,
-                    first
-                ) else first
-            }
-        }
+        revalidate()
+        repaint()
     }
 
     /**

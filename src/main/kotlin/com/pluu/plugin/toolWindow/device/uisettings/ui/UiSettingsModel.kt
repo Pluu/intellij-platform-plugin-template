@@ -105,15 +105,4 @@ internal class UiSettingsModel(screenSize: Dimension, physicalDensity: Int, api:
     private fun toDensityIndex(density: Int): Int =
         densities.indexOf(densities.minBy { abs(it - density) })
 
-    fun clearUiChangeListener() {
-        inDarkMode.clearUiChangeListener()
-        gestureNavigation.clearUiChangeListener()
-        talkBackOn.clearUiChangeListener()
-        selectToSpeakOn.clearUiChangeListener()
-        fontScaleInPercent.clearUiChangeListener()
-        fontScaleIndex.clearUiChangeListener()
-        screenDensity.clearUiChangeListener()
-        screenDensityIndex.clearUiChangeListener()
-        debugLayout.clearUiChangeListener()
-    }
 }
