@@ -28,6 +28,7 @@ import javax.swing.AbstractButton
 import javax.swing.JComponent
 import javax.swing.JSlider
 import javax.swing.LayoutFocusTraversalPolicy
+import javax.swing.ListCellRenderer
 import javax.swing.SwingUtilities
 import javax.swing.plaf.basic.BasicComboBoxEditor
 
@@ -85,19 +86,19 @@ internal class UiSettingsPanel(
                 }
             }
 
-//                if (deviceType == DeviceType.HANDHELD) {
-//                    row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
-//                        comboBox(model.navigationModel)
-//                            .accessibleName(GESTURE_NAVIGATION_TITLE)
-//                            .bindItem(model.navigationModel.selection)
-//                            .apply {
-//                                component.name = GESTURE_NAVIGATION_TITLE
-//                                component.renderer = ListCellRenderer { _, value, _, _, _ ->
-//                                    JBLabel(if (value == true) "Gestures" else "Buttons")
-//                                }
-//                            }
-//                    }.visibleIf(model.permissionMonitoringDisabled.and(model.gestureOverlayInstalled))
-//                }
+            if (deviceType == DeviceType.HANDHELD) {
+                row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
+                    comboBox(model.navigationModel)
+                        .accessibleName(GESTURE_NAVIGATION_TITLE)
+                        .bindItem(model.navigationModel.selection)
+                        .apply {
+                            component.name = GESTURE_NAVIGATION_TITLE
+                            component.renderer = ListCellRenderer { _, value, _, _, _ ->
+                                JBLabel(if (value == true) "Gestures" else "Buttons")
+                            }
+                        }
+                }.visibleIf(model.permissionMonitoringDisabled.and(model.gestureOverlayInstalled))
+            }
 
             row(JBLabel(FONT_SCALE_TITLE)) {
                 slider(0, model.fontScaleMaxIndex.value, 1, 1)
@@ -119,6 +120,13 @@ internal class UiSettingsPanel(
                         .bindSliderMaximum(model.screenDensityMaxIndex)
                         .apply { component.name = DENSITY_TITLE }
                 }.visibleIf(model.permissionMonitoringDisabled)
+            }
+
+            row(JBLabel(DEBUG_LAYOUT_TITLE)) {
+                checkBox("")
+                    .accessibleName(DEBUG_LAYOUT_TITLE)
+                    .bind(model.debugLayout)
+                    .apply { component.name = DEBUG_LAYOUT_TITLE }
             }
 
             row {

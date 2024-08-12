@@ -15,29 +15,34 @@ import com.google.wireless.android.sdk.stats.UiDeviceSettingsEvent.OperationKind
  */
 class UiSettingsStats(private val deviceInfo: DeviceInfo?) {
 
-  fun setDarkMode() = logUiSettingsChange(OperationKind.DARK_THEME)
+    fun setDarkMode() = logUiSettingsChange(OperationKind.DARK_THEME)
 
-  fun setGestureNavigation() = logUiSettingsChange(OperationKind.GESTURE_NAVIGATION)
+    fun setGestureNavigation() = logUiSettingsChange(OperationKind.GESTURE_NAVIGATION)
 
-  fun setAppLanguage() = logUiSettingsChange(OperationKind.APP_LANGUAGE)
+    fun setAppLanguage() = logUiSettingsChange(OperationKind.APP_LANGUAGE)
 
-  fun setTalkBack() = logUiSettingsChange(OperationKind.TALKBACK)
+    fun setTalkBack() = logUiSettingsChange(OperationKind.TALKBACK)
 
-  fun setSelectToSpeak() = logUiSettingsChange(OperationKind.SELECT_TO_SPEAK)
+    fun setSelectToSpeak() = logUiSettingsChange(OperationKind.SELECT_TO_SPEAK)
 
-  fun setFontScale() = logUiSettingsChange(OperationKind.FONT_SIZE)
+    fun setFontScale() = logUiSettingsChange(OperationKind.FONT_SIZE)
 
-  fun setScreenDensity() = logUiSettingsChange(OperationKind.SCREEN_DENSITY)
+    fun setScreenDensity() = logUiSettingsChange(OperationKind.SCREEN_DENSITY)
 
-  fun reset() = logUiSettingsChange(OperationKind.RESET)
-
-  private fun logUiSettingsChange(operation: OperationKind) {
-    val studioEvent = AndroidStudioEvent.newBuilder()
-      .setKind(AndroidStudioEvent.EventKind.UI_DEVICE_SETTINGS_EVENT)
-      .setUiDeviceSettingsEvent(UiDeviceSettingsEvent.newBuilder().setOperation(operation))
-    if (deviceInfo != null) {
-      studioEvent.setDeviceInfo(deviceInfo)
+    fun setDebugLayout() {
+        // TODO:
+//        logUiSettingsChange(OperationKind.DEBUG_LAYOUT)
     }
-    UsageTracker.log(studioEvent)
-  }
+
+    fun reset() = logUiSettingsChange(OperationKind.RESET)
+
+    private fun logUiSettingsChange(operation: OperationKind) {
+        val studioEvent = AndroidStudioEvent.newBuilder()
+            .setKind(AndroidStudioEvent.EventKind.UI_DEVICE_SETTINGS_EVENT)
+            .setUiDeviceSettingsEvent(UiDeviceSettingsEvent.newBuilder().setOperation(operation))
+        if (deviceInfo != null) {
+            studioEvent.setDeviceInfo(deviceInfo)
+        }
+        UsageTracker.log(studioEvent)
+    }
 }

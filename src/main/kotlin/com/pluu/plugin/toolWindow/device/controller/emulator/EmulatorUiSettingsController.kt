@@ -341,11 +341,11 @@ internal class EmulatorUiSettingsController(
         updateResetButton()
     }
 
-//    override fun setDebugLayout(on: Boolean) {
-//        scope.launch { executeShellCommand("setprop debug.layout $on; service call activity $SYSPROPS_TRANSACTION") }
-//        lastDebugLayout = on
-//        updateResetButton()
-//    }
+    override fun setDebugLayout(on: Boolean) {
+        scope.launch { executeShellCommand("setprop debug.layout $on; service call activity $SYSPROPS_TRANSACTION") }
+        lastDebugLayout = on
+        updateResetButton()
+    }
 
     override fun reset() {
         scope.launch {
@@ -356,12 +356,8 @@ internal class EmulatorUiSettingsController(
 
                 else -> FACTORY_RESET_COMMAND.format(readApplicationId, readPhysicalDensity)
             }
-//            if (StudioFlags.EMBEDDED_EMULATOR_DEBUG_LAYOUT_IN_UI_SETTINGS.get()) {
-//                command += FACTORY_RESET_DEBUG_LAYOUT
-//            }
-//            if (StudioFlags.EMBEDDED_EMULATOR_GESTURE_NAVIGATION_IN_UI_SETTINGS.get()) {
-//                command += FACTORY_RESET_GESTURE_NAVIGATION
-//            }
+            command += FACTORY_RESET_DEBUG_LAYOUT
+            command += FACTORY_RESET_GESTURE_NAVIGATION
             executeShellCommand(command)
             populateModel()
         }
@@ -379,12 +375,8 @@ internal class EmulatorUiSettingsController(
                     lastDensity == readPhysicalDensity
         }
         isDefault = isDefault && extraChecks
-//        if (StudioFlags.EMBEDDED_EMULATOR_DEBUG_LAYOUT_IN_UI_SETTINGS.get()) {
-//            isDefault = isDefault && !lastDebugLayout
-//        }
-//        if (StudioFlags.EMBEDDED_EMULATOR_GESTURE_NAVIGATION_IN_UI_SETTINGS.get()) {
-//            isDefault = isDefault && lastGestureNavigation
-//        }
+        isDefault = isDefault && !lastDebugLayout
+        isDefault = isDefault && lastGestureNavigation
         model.differentFromDefault.setFromController(!isDefault)
     }
 
