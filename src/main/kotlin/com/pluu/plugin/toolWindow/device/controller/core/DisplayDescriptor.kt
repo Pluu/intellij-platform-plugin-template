@@ -16,9 +16,6 @@ internal data class DisplayDescriptor(
     var type: DisplayType = DisplayType.UNKNOWN
 ) : Comparable<DisplayDescriptor> {
 
-    constructor(displayId: Int, size: Dimension, orientation: Int = 0, type: DisplayType = DisplayType.UNKNOWN) :
-            this(displayId, size.width, size.height, orientation, type)
-
     @Suppress("unused") // Used by XML deserializer.
     constructor() : this(0, 0, 0)
 
