@@ -49,7 +49,8 @@ internal fun DeviceState.toDevice(): Device? {
                     .setDeviceType(DeviceInfo.DeviceType.LOCAL_EMULATOR)
                     .setAnonymizedSerialNumber(AnonymizerUtil.anonymizeUtf8(serialNumber))
                     .setBuildApiLevelFull(AndroidVersion(sdk, null).apiStringWithExtension)
-                    .build()
+                    .build(),
+                this
             )
 
         else ->
@@ -63,7 +64,8 @@ internal fun DeviceState.toDevice(): Device? {
                 featureLevel,
                 properties.deviceType,
                 uiSettingsModel,
-                properties.deviceInfoProto
+                properties.deviceInfoProto,
+                this
             )
     }
 }

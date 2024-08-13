@@ -20,7 +20,7 @@ class DeviceManagerExplorer(
 ) : JPanel(BorderLayout()), Disposable {
 
     private val coroutineScope = AndroidCoroutineScope(this)
-    private val emulators = mutableMapOf<String, EmulatorUiSettingsController>()
+    private val emulators = mutableMapOf<Device, EmulatorUiSettingsController>()
 
     private val deviceComboBox = DeviceComboBox(project, null)
     private val settingsPanel = UiSettingsPanel()
@@ -47,7 +47,13 @@ class DeviceManagerExplorer(
     private fun updatePanel(item: Device) {
         settingsPanel.bind(item.uiSettingsModel)
 
-        val controller = emulators.getOrPut(item.serialNumber) {
+        val newEmulators = emulators.filter {
+            it.key.isDeviceOnline
+        }
+        emulators.clear()
+        emulators.putAll(newEmulators)
+
+        val controller = emulators.getOrPut(item) {
             EmulatorUiSettingsController(
                 project,
                 item.serialNumber,

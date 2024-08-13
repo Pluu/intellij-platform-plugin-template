@@ -19,7 +19,7 @@ class UiSettingsStats(private val deviceInfo: DeviceInfo?) {
 
     fun setGestureNavigation() = logUiSettingsChange(OperationKind.GESTURE_NAVIGATION)
 
-    fun setAppLanguage() = logUiSettingsChange(OperationKind.APP_LANGUAGE)
+//    fun setAppLanguage() = logUiSettingsChange(OperationKind.APP_LANGUAGE)
 
     fun setTalkBack() = logUiSettingsChange(OperationKind.TALKBACK)
 

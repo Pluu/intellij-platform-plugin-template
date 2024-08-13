@@ -55,9 +55,6 @@ private val SPACING = object : IntelliJSpacingConfiguration() {
 
 /**
  * Displays a picker with setting shortcuts.
- *
- * @param model the UI settings model
- * @param deviceType some controls are only available for certain device types
  */
 internal class UiSettingsPanel : BorderLayoutPanel() {
 
@@ -79,6 +76,11 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
         }
     }
 
+    /**
+     * UI 데이터 바인딩 처리
+     *
+     * @param model the UI settings model
+     */
     fun bind(model: UiSettingsModel) {
         val deviceType = model.deviceType
 

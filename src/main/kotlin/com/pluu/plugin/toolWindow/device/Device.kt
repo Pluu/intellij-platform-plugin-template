@@ -4,6 +4,7 @@
 
 package com.pluu.plugin.toolWindow.device
 
+import com.android.sdklib.deviceprovisioner.DeviceState
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.google.wireless.android.sdk.stats.DeviceInfo
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsModel
@@ -22,10 +23,14 @@ private constructor(
     val model: String,
     val type: DeviceType?,
     val uiSettingsModel: UiSettingsModel,
-    val deviceInfo: DeviceInfo
+    val deviceInfo: DeviceInfo,
+    private val deviceStatus: DeviceState,
 ) {
 
     val isEmulator: Boolean = serialNumber.startsWith("emulator-")
+
+    val isDeviceOnline: Boolean
+        get() = deviceStatus.isOnline()
 
     companion object {
         fun createPhysical(
@@ -38,7 +43,8 @@ private constructor(
             featureLevel: Int = sdk,
             type: DeviceType? = null,
             uiSettingsModel: UiSettingsModel,
-            deviceInfo: DeviceInfo
+            deviceInfo: DeviceInfo,
+            deviceStatus: DeviceState
         ): Device {
             val deviceName = if (model.startsWith(manufacturer)) model else "$manufacturer $model"
             return Device(
@@ -52,7 +58,8 @@ private constructor(
                 model,
                 type,
                 uiSettingsModel,
-                deviceInfo
+                deviceInfo,
+                deviceStatus
             )
         }
 
@@ -65,7 +72,8 @@ private constructor(
             featureLevel: Int = sdk,
             type: DeviceType? = null,
             uiSettingsModel: UiSettingsModel,
-            deviceInfo: DeviceInfo
+            deviceInfo: DeviceInfo,
+            deviceStatus: DeviceState
         ): Device {
             return Device(
                 deviceId = avdName,
@@ -78,7 +86,8 @@ private constructor(
                 model = "",
                 type,
                 uiSettingsModel,
-                deviceInfo
+                deviceInfo,
+                deviceStatus
             )
         }
     }
