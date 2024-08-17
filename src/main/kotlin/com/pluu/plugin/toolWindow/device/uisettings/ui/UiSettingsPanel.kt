@@ -12,11 +12,9 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Cell
-import com.intellij.ui.dsl.builder.IntelliJSpacingConfiguration
 import com.intellij.ui.dsl.builder.Row
 import com.intellij.ui.dsl.builder.actionListener
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.pluu.plugin.toolWindow.device.uisettings.binding.ReadOnlyProperty
@@ -33,11 +31,8 @@ import javax.swing.SwingUtilities
 import javax.swing.plaf.basic.BasicComboBoxEditor
 
 private const val TITLE = "Device Settings Shortcuts"
-private const val LANGUAGE_WIDTH = 200
 internal const val DARK_THEME_TITLE = "Dark Theme:"
 internal const val GESTURE_NAVIGATION_TITLE = "Navigation Mode:"
-internal const val TALKBACK_TITLE = "TalkBack:"
-internal const val SELECT_TO_SPEAK_TITLE = "Select to Speak:"
 internal const val FONT_SCALE_TITLE = "Font Size:"
 internal const val DENSITY_TITLE = "Display Size:"
 internal const val DEBUG_LAYOUT_TITLE = "Debug Layout:"
@@ -45,13 +40,6 @@ internal const val RESET_TITLE = "Reset"
 internal const val PERMISSION_HINT_LINE1 =
     "More options may be available if \"Disable permission monitoring\" is turned on in"
 internal const val PERMISSION_HINT_LINE2 = "\"Developer Options\" and the device is restarted."
-
-/**
- * Custom horizontal spacing between labels and controls.
- */
-private val SPACING = object : IntelliJSpacingConfiguration() {
-    override val horizontalSmallGap = 50
-}
 
 /**
  * Displays a picker with setting shortcuts.
@@ -81,13 +69,18 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
      *
      * @param model the UI settings model
      */
-    fun bind(model: UiSettingsModel) {
-        val deviceType = model.deviceType
-
+    fun bind(model: UiSettingsModel?) {
         removeAll()
-        add(panel {
-            border = JBUI.Borders.empty(6)
+        if (model != null) {
+            bindModel(model)
+        }
+        revalidate()
+        repaint()
+    }
 
+    private fun bindModel(model: UiSettingsModel) {
+        val deviceType = model.deviceType
+        add(panel {
             row(title(TITLE)) {
                 link(RESET_TITLE) { model.resetAction() }
                     .accessibleName(RESET_TITLE)
@@ -95,7 +88,6 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                     .visibleIf(model.differentFromDefault)
                     .align(AlignX.RIGHT)
             }
-            separator()
 
             if (deviceType != DeviceType.WEAR) {
                 row(JBLabel(DARK_THEME_TITLE)) {
@@ -110,6 +102,7 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                 row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
                     comboBox(model.navigationModel)
                         .accessibleName(GESTURE_NAVIGATION_TITLE)
+                        .align(Align.FILL)
                         .bindItem(model.navigationModel.selection)
                         .apply {
                             component.name = GESTURE_NAVIGATION_TITLE
@@ -156,8 +149,6 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                 })
             }.visibleIf(model.permissionMonitoringDisabled.not())
         })
-        revalidate()
-        repaint()
     }
 
     /**

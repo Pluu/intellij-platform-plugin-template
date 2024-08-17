@@ -2,7 +2,7 @@
 // Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:logcat/src/com/android/tools/idea/logcat/devices/DeviceUtils.kt
 ///////////////////////////////////////////////////////////////////////////
 
-package com.pluu.plugin.toolWindow.device.combobox
+package com.pluu.plugin.toolWindow.device.tracker
 
 import com.android.adblib.serialNumber
 import com.android.sdklib.AndroidVersion

@@ -1,51 +1,71 @@
 package com.pluu.plugin.toolWindow.device
 
+import com.android.sdklib.deviceprovisioner.DeviceProvisioner
 import com.android.tools.idea.concurrency.AndroidCoroutineScope
 import com.android.tools.idea.concurrency.AndroidDispatchers.workerThread
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.ui.dsl.builder.Align
-import com.intellij.ui.dsl.builder.TopGap
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
-import com.pluu.plugin.toolWindow.device.combobox.DeviceComboBox
-import com.pluu.plugin.toolWindow.device.controller.emulator.EmulatorUiSettingsController
+import com.intellij.util.ui.UIUtil
+import com.pluu.plugin.toolWindow.device.controller.EmulatorUiSettingsController
+import com.pluu.plugin.toolWindow.device.tracker.DeviceComboBoxDeviceTracker
+import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.Added
+import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.StateChanged
+import com.pluu.plugin.toolWindow.device.tracker.IDeviceComboBoxDeviceTracker
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsPanel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import java.awt.BorderLayout
+import java.awt.event.ActionListener
 import javax.swing.JPanel
 
 class DeviceManagerExplorer(
-    val project: Project
+    val project: Project,
+    deviceProvisioner: DeviceProvisioner
 ) : JPanel(BorderLayout()), Disposable {
+
+    private val deviceTracker: IDeviceComboBoxDeviceTracker =
+        DeviceComboBoxDeviceTracker(deviceProvisioner)
 
     private val coroutineScope = AndroidCoroutineScope(this)
     private val emulators = mutableMapOf<Device, EmulatorUiSettingsController>()
 
-    private val deviceComboBox = DeviceComboBox(project, null)
+    private val deviceComboBox = DeviceComboBox()
     private val settingsPanel = UiSettingsPanel()
 
-    private val toolbarPanel = panel {
+    private val root = panel {
+        border = JBUI.Borders.empty(0, 10)
         row {
-            cell(deviceComboBox).align(Align.FILL)
-        }.topGap(TopGap.SMALL)
-    }.withBorder(JBUI.Borders.empty())
+            label("Select device: ")
+                .applyToComponent {
+                    foreground = UIUtil.getInactiveTextColor()
+                }
+        }
+        row { cell(deviceComboBox).align(AlignX.FILL) }
+        separator()
+        row { cell(settingsPanel).align(AlignX.FILL) }
+    }
 
     init {
-        border = JBUI.Borders.empty(4)
-
-        add(toolbarPanel, BorderLayout.NORTH)
-        add(settingsPanel)
+        add(root)
 
         coroutineScope.launch(workerThread) {
-            deviceComboBox.trackSelected().collect { item ->
+            trackSelected().collect { item ->
                 updatePanel(item)
             }
         }
     }
 
     private fun updatePanel(item: Device) {
-        settingsPanel.bind(item.uiSettingsModel)
+        settingsPanel.bind(
+            item.takeIf { it.isDeviceOnline }
+                ?.uiSettingsModel
+        )
 
         val newEmulators = emulators.filter {
             it.key.isDeviceOnline
@@ -65,6 +85,62 @@ class DeviceManagerExplorer(
 
         AndroidCoroutineScope(this).launch {
             controller.populateModel()
+        }
+    }
+
+    private fun trackSelected(): Flow<Device> = callbackFlow {
+        // If an item is already selected, the listener will not send it, so we send it now
+        (deviceComboBox.selectedItem as? Device)?.let { trySendBlocking(it) }
+        val listener = ActionListener { deviceComboBox.item?.let { trySendBlocking(it) } }
+        deviceComboBox.addActionListener(listener)
+        launch {
+            deviceTracker.trackDevices().collect {
+                when (it) {
+                    is Added -> deviceAdded(it.device)
+                    is StateChanged -> {
+                        if (it.device.isDeviceOnline) {
+                            deviceStateChanged(it.device)
+                        } else {
+                            deviceRemove(it.device)
+                            settingsPanel.bind(null)
+                        }
+                    }
+                }
+            }
+            this@callbackFlow.close()
+        }
+        awaitClose { deviceComboBox.removeActionListener(listener) }
+    }
+
+    private fun deviceAdded(device: Device) {
+        if (deviceComboBox.containsDevice(device)) {
+            deviceStateChanged(device)
+        } else {
+            val item = deviceComboBox.addDevice(device)
+            when {
+                deviceComboBox.selectedItem != null -> return
+                else -> selectItem(item)
+            }
+        }
+    }
+
+    private fun deviceRemove(device: Device) {
+        deviceComboBox.removeDevice(device)
+    }
+
+    private fun selectItem(item: Device?) {
+        deviceComboBox.selectedItem = item
+    }
+
+    private fun deviceStateChanged(device: Device) {
+        when (deviceComboBox.containsDevice(device)) {
+            true ->
+                deviceComboBox.replaceDevice(
+                    device,
+                    device.deviceId == deviceComboBox.item.deviceId,
+                )
+
+            false -> deviceAdded(device) // Device was removed manually so we re-add it
         }
     }
 

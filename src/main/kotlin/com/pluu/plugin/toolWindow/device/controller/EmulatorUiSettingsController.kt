@@ -2,17 +2,14 @@
 // Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:streaming/src/com/android/tools/idea/streaming/emulator/EmulatorUiSettingsController.kt
 ///////////////////////////////////////////////////////////////////////////
 
-package com.pluu.plugin.toolWindow.device.controller.emulator
+package com.pluu.plugin.toolWindow.device.controller
 
 import com.android.adblib.DeviceSelector
 import com.android.adblib.ShellCommandOutputElement
 import com.android.adblib.shellAsLines
-import com.android.sdklib.AndroidVersion
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.tools.idea.adblib.AdbLibService
 import com.android.tools.idea.concurrency.AndroidCoroutineScope
-import com.android.tools.idea.stats.AnonymizerUtil
-import com.android.tools.idea.streaming.emulator.EmulatorConfiguration
 import com.google.wireless.android.sdk.stats.DeviceInfo
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
@@ -108,14 +105,6 @@ internal const val FACTORY_RESET_DEBUG_LAYOUT =
 internal const val FACTORY_RESET_GESTURE_NAVIGATION =
     "cmd overlay enable $GESTURES_OVERLAY; " +
             "cmd overlay disable $THREE_BUTTON_OVERLAY; "
-
-private fun EmulatorConfiguration.toDeviceInfo(serialNumber: String): DeviceInfo {
-    return DeviceInfo.newBuilder()
-        .setDeviceType(DeviceInfo.DeviceType.LOCAL_EMULATOR)
-        .setAnonymizedSerialNumber(AnonymizerUtil.anonymizeUtf8(serialNumber))
-        .setBuildApiLevelFull(AndroidVersion(api, null).apiStringWithExtension)
-        .build()
-}
 
 /**
  * A controller for the UI settings for an Emulator,

@@ -2,7 +2,7 @@
 // Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:logcat/src/com/android/tools/idea/logcat/devices/DeviceEvent.kt
 ///////////////////////////////////////////////////////////////////////////
 
-package com.pluu.plugin.toolWindow.device.combobox
+package com.pluu.plugin.toolWindow.device.tracker
 
 import com.pluu.plugin.toolWindow.device.Device
 
