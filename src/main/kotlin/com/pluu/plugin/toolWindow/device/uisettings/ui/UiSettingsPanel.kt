@@ -19,16 +19,20 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.pluu.plugin.toolWindow.device.uisettings.binding.ReadOnlyProperty
 import com.pluu.plugin.toolWindow.device.uisettings.binding.TwoWayProperty
+import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Container
 import java.awt.KeyboardFocusManager
 import javax.swing.AbstractButton
 import javax.swing.JComponent
 import javax.swing.JSlider
+import javax.swing.JTextField
 import javax.swing.LayoutFocusTraversalPolicy
 import javax.swing.ListCellRenderer
 import javax.swing.SwingUtilities
 import javax.swing.plaf.basic.BasicComboBoxEditor
+
+private const val APP_SCHEME_TITLE = "Run App scheme"
 
 private const val TITLE = "Device Settings Shortcuts"
 internal const val DARK_THEME_TITLE = "Dark Theme:"
@@ -46,6 +50,8 @@ internal const val PERMISSION_HINT_LINE2 = "\"Developer Options\" and the device
  * Displays a picker with setting shortcuts.
  */
 internal class UiSettingsPanel : BorderLayoutPanel() {
+
+    private lateinit var adbTextFiled: JTextField
 
     init {
         updateBackground()
@@ -81,89 +87,108 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
 
     private fun bindModel(model: UiSettingsModel) {
         val deviceType = model.deviceType
-        add(panel {
-            row(title(TITLE)) {
-                link(RESET_TITLE) { model.resetAction() }
-                    .accessibleName(RESET_TITLE)
-                    .apply { component.name = RESET_TITLE }
-                    .visibleIf(model.differentFromDefault)
-                    .align(AlignX.RIGHT)
-            }
 
-            if (deviceType != DeviceType.WEAR) {
-                row(JBLabel(DARK_THEME_TITLE)) {
-                    checkBox("")
-                        .accessibleName(DARK_THEME_TITLE)
-                        .bind(model.inDarkMode)
-                        .apply { component.name = DARK_THEME_TITLE }
+        add(panel {
+            group(APP_SCHEME_TITLE, indent = false) {
+                panel {
+                    row {
+                        adbTextFiled = textField()
+                            .align(AlignX.FILL)
+                            .applyToComponent {
+                                emptyText.setText("Input app scheme")
+                            }.component
+                    }
+                    row {
+                        button("Run") {
+// TODO:
+                        }.align(AlignX.FILL)
+                    }
                 }
             }
+        }, BorderLayout.NORTH)
 
-            if (deviceType == DeviceType.HANDHELD) {
-                row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
-                    comboBox(model.navigationModel)
-                        .accessibleName(GESTURE_NAVIGATION_TITLE)
-                        .align(Align.FILL)
-                        .bindItem(model.navigationModel.selection)
-                        .apply {
-                            component.name = GESTURE_NAVIGATION_TITLE
-                            component.renderer = ListCellRenderer { _, value, _, _, _ ->
-                                JBLabel(if (value == true) "Gestures" else "Buttons")
-                            }
+        add(panel {
+            separator()
+            group(TITLE, indent = false) {
+                panel {
+                    row {
+                        link(RESET_TITLE) { model.resetAction() }
+                            .accessibleName(RESET_TITLE)
+                            .apply { component.name = RESET_TITLE }
+                            .visibleIf(model.differentFromDefault)
+                            .align(AlignX.RIGHT)
+                    }
+
+                    if (deviceType != DeviceType.WEAR) {
+                        row(JBLabel(DARK_THEME_TITLE)) {
+                            checkBox("")
+                                .accessibleName(DARK_THEME_TITLE)
+                                .bind(model.inDarkMode)
+                                .apply { component.name = DARK_THEME_TITLE }
                         }
-                }.visibleIf(model.permissionMonitoringDisabled.and(model.gestureOverlayInstalled))
+                    }
+
+                    if (deviceType == DeviceType.HANDHELD) {
+                        row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
+                            comboBox(model.navigationModel)
+                                .accessibleName(GESTURE_NAVIGATION_TITLE)
+                                .align(Align.FILL)
+                                .bindItem(model.navigationModel.selection)
+                                .apply {
+                                    component.name = GESTURE_NAVIGATION_TITLE
+                                    component.renderer = ListCellRenderer { _, value, _, _, _ ->
+                                        JBLabel(if (value == true) "Gestures" else "Buttons")
+                                    }
+                                }
+                        }.visibleIf(model.permissionMonitoringDisabled.and(model.gestureOverlayInstalled))
+                    }
+
+                    row(JBLabel(FONT_SCALE_TITLE)) {
+                        slider(0, model.fontScaleMaxIndex.value, 1, 1)
+                            .accessibleName(FONT_SCALE_TITLE)
+                            .noLabels()
+                            .align(Align.FILL)
+                            .bindSliderPosition(model.fontScaleIndex)
+                            .bindSliderMaximum(model.fontScaleMaxIndex)
+                            .apply { component.name = FONT_SCALE_TITLE }
+                    }.visibleIf(model.permissionMonitoringDisabled)
+
+                    if (deviceType == DeviceType.HANDHELD) {
+                        row(JBLabel(DENSITY_TITLE)) {
+                            slider(0, model.screenDensityIndex.value, 1, 1)
+                                .accessibleName(DENSITY_TITLE)
+                                .noLabels()
+                                .align(Align.FILL)
+                                .bindSliderPosition(model.screenDensityIndex)
+                                .bindSliderMaximum(model.screenDensityMaxIndex)
+                                .apply { component.name = DENSITY_TITLE }
+                        }.visibleIf(model.permissionMonitoringDisabled)
+                    }
+
+                    row(JBLabel(DEBUG_LAYOUT_TITLE)) {
+                        checkBox("")
+                            .accessibleName(DEBUG_LAYOUT_TITLE)
+                            .bind(model.debugLayout)
+                            .apply { component.name = DEBUG_LAYOUT_TITLE }
+                    }
+
+                    row(JBLabel(DONT_KEEP_ACTIVITIES_TITLE)) {
+                        checkBox("")
+                            .accessibleName(DONT_KEEP_ACTIVITIES_TITLE)
+                            .bind(model.dontKeepActivities)
+                            .apply { component.name = DONT_KEEP_ACTIVITIES_TITLE }
+                    }
+
+                    row {
+                        cell(BorderLayoutPanel().apply {
+                            addToTop(JBLabel(PERMISSION_HINT_LINE1, UIUtil.ComponentStyle.MINI))
+                            addToBottom(JBLabel(PERMISSION_HINT_LINE2, UIUtil.ComponentStyle.MINI))
+                        })
+                    }.visibleIf(model.permissionMonitoringDisabled.not())
+                }
             }
-
-            row(JBLabel(FONT_SCALE_TITLE)) {
-                slider(0, model.fontScaleMaxIndex.value, 1, 1)
-                    .accessibleName(FONT_SCALE_TITLE)
-                    .noLabels()
-                    .align(Align.FILL)
-                    .bindSliderPosition(model.fontScaleIndex)
-                    .bindSliderMaximum(model.fontScaleMaxIndex)
-                    .apply { component.name = FONT_SCALE_TITLE }
-            }.visibleIf(model.permissionMonitoringDisabled)
-
-            if (deviceType == DeviceType.HANDHELD) {
-                row(JBLabel(DENSITY_TITLE)) {
-                    slider(0, model.screenDensityIndex.value, 1, 1)
-                        .accessibleName(DENSITY_TITLE)
-                        .noLabels()
-                        .align(Align.FILL)
-                        .bindSliderPosition(model.screenDensityIndex)
-                        .bindSliderMaximum(model.screenDensityMaxIndex)
-                        .apply { component.name = DENSITY_TITLE }
-                }.visibleIf(model.permissionMonitoringDisabled)
-            }
-
-            row(JBLabel(DEBUG_LAYOUT_TITLE)) {
-                checkBox("")
-                    .accessibleName(DEBUG_LAYOUT_TITLE)
-                    .bind(model.debugLayout)
-                    .apply { component.name = DEBUG_LAYOUT_TITLE }
-            }
-
-            row(JBLabel(DONT_KEEP_ACTIVITIES_TITLE)) {
-                checkBox("")
-                    .accessibleName(DONT_KEEP_ACTIVITIES_TITLE)
-                    .bind(model.dontKeepActivities)
-                    .apply { component.name = DONT_KEEP_ACTIVITIES_TITLE }
-            }
-
-            row {
-                cell(BorderLayoutPanel().apply {
-                    addToTop(JBLabel(PERMISSION_HINT_LINE1, UIUtil.ComponentStyle.MINI))
-                    addToBottom(JBLabel(PERMISSION_HINT_LINE2, UIUtil.ComponentStyle.MINI))
-                })
-            }.visibleIf(model.permissionMonitoringDisabled.not())
-        })
+        }, BorderLayout.SOUTH)
     }
-
-    /**
-     * Create a label for the title of the panel.
-     */
-    private fun title(title: String): JBLabel =
-        JBLabel(title).apply { foreground = UIUtil.getInactiveTextColor() }
 
     /**
      * Bind a [Boolean] property to an [AbstractButton] cell.
