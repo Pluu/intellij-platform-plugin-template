@@ -4,8 +4,7 @@
 
 package com.pluu.plugin.toolWindow.device.uisettings.ui
 
-import com.pluu.plugin.toolWindow.device.uisettings.status.LoggingChangeListener
-import com.pluu.plugin.toolWindow.device.uisettings.status.UiSettingsStats
+import com.pluu.plugin.toolWindow.device.uisettings.binding.ChangeListener
 
 /**
  * A controller for the [UiSettingsPanel] that populates the model and reacts to changes to the model initiated by the UI.
@@ -14,24 +13,19 @@ internal abstract class UiSettingsController(
     /**
      * The model that this controller is interacting with.
      */
-    protected val model: UiSettingsModel,
-
-    /**
-     * Logger for statistics
-     */
-    private val stats: UiSettingsStats
+    protected val model: UiSettingsModel
 ) {
 
     init {
-        model.inDarkMode.uiChangeListener = LoggingChangeListener(::setDarkMode, stats::setDarkMode)
-        model.fontScaleInPercent.uiChangeListener = LoggingChangeListener(::setFontScale, stats::setFontScale)
-        model.screenDensity.uiChangeListener = LoggingChangeListener(::setScreenDensity, stats::setScreenDensity)
-        model.talkBackOn.uiChangeListener = LoggingChangeListener(::setTalkBack, stats::setTalkBack)
-        model.selectToSpeakOn.uiChangeListener = LoggingChangeListener(::setSelectToSpeak, stats::setSelectToSpeak)
-        model.gestureNavigation.uiChangeListener = LoggingChangeListener(::setGestureNavigation, stats::setGestureNavigation)
-        model.debugLayout.uiChangeListener = LoggingChangeListener(::setDebugLayout, stats::setDebugLayout)
-        model.dontKeepActivities.uiChangeListener = LoggingChangeListener(::setDontKeepActivities, stats::setDontKeepActivities)
-        model.resetAction = { reset(); stats.reset() }
+        model.inDarkMode.uiChangeListener = ChangeListener(::setDarkMode)
+        model.fontScaleInPercent.uiChangeListener = ChangeListener(::setFontScale)
+        model.screenDensity.uiChangeListener = ChangeListener(::setScreenDensity)
+        model.talkBackOn.uiChangeListener = ChangeListener(::setTalkBack)
+        model.selectToSpeakOn.uiChangeListener = ChangeListener(::setSelectToSpeak)
+        model.gestureNavigation.uiChangeListener = ChangeListener(::setGestureNavigation)
+        model.debugLayout.uiChangeListener = ChangeListener(::setDebugLayout)
+        model.dontKeepActivities.uiChangeListener = ChangeListener(::setDontKeepActivities)
+        model.resetAction = { reset(); }
     }
 
     /**

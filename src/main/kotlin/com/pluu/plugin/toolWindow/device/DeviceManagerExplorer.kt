@@ -78,7 +78,6 @@ class DeviceManagerExplorer(
                 project,
                 item.serialNumber,
                 item.uiSettingsModel,
-                item.deviceInfo,
                 this
             )
         }

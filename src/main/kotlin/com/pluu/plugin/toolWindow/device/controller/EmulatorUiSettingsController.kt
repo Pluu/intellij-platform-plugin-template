@@ -10,10 +10,8 @@ import com.android.adblib.shellAsLines
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.tools.idea.adblib.AdbLibService
 import com.android.tools.idea.concurrency.AndroidCoroutineScope
-import com.google.wireless.android.sdk.stats.DeviceInfo
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.pluu.plugin.toolWindow.device.uisettings.status.UiSettingsStats
 import com.pluu.plugin.toolWindow.device.uisettings.ui.FontScale
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsController
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsModel
@@ -120,9 +118,8 @@ internal class EmulatorUiSettingsController(
     private val project: Project,
     private val deviceSerialNumber: String,
     model: UiSettingsModel,
-    deviceInfo: DeviceInfo,
     parentDisposable: Disposable,
-) : UiSettingsController(model, UiSettingsStats(deviceInfo)) {
+) : UiSettingsController(model) {
     private val scope = AndroidCoroutineScope(parentDisposable)
     private val decimalFormat = DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ROOT))
     private var readApplicationId = ""
