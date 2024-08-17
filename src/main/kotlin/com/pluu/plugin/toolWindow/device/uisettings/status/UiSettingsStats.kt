@@ -34,6 +34,10 @@ class UiSettingsStats(private val deviceInfo: DeviceInfo?) {
 //        logUiSettingsChange(OperationKind.DEBUG_LAYOUT)
     }
 
+    fun setDontKeepActivities() {
+
+    }
+
     fun reset() = logUiSettingsChange(OperationKind.RESET)
 
     private fun logUiSettingsChange(operation: OperationKind) {

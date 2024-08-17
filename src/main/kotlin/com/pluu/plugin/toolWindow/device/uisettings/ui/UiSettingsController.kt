@@ -30,6 +30,7 @@ internal abstract class UiSettingsController(
         model.selectToSpeakOn.uiChangeListener = LoggingChangeListener(::setSelectToSpeak, stats::setSelectToSpeak)
         model.gestureNavigation.uiChangeListener = LoggingChangeListener(::setGestureNavigation, stats::setGestureNavigation)
         model.debugLayout.uiChangeListener = LoggingChangeListener(::setDebugLayout, stats::setDebugLayout)
+        model.dontKeepActivities.uiChangeListener = LoggingChangeListener(::setDontKeepActivities, stats::setDontKeepActivities)
         model.resetAction = { reset(); stats.reset() }
     }
 
@@ -72,6 +73,8 @@ internal abstract class UiSettingsController(
      * Turns debug layout boxes on or off.
      */
     protected abstract fun setDebugLayout(on: Boolean)
+
+    protected abstract fun setDontKeepActivities(on: Boolean)
 
     /**
      * Reset UI settings to factory defaults.

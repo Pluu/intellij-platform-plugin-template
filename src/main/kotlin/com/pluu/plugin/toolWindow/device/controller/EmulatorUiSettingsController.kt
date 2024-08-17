@@ -36,6 +36,7 @@ private const val DENSITY_DIVIDER = "-- Density --"
 private const val DEBUG_LAYOUT_DIVIDER = "-- Debug Layout --"
 private const val FOREGROUND_APPLICATION_DIVIDER = "-- Foreground Application --"
 private const val APP_LANGUAGE_DIVIDER = "-- App Language --"
+private const val DONT_KEEP_ACTIVITIES_DIVIDER = "-- Dont Keep Activities --"
 
 internal const val GESTURES_OVERLAY = "com.android.internal.systemui.navbar.gestural"
 internal const val THREE_BUTTON_OVERLAY = "com.android.internal.systemui.navbar.threebutton"
@@ -55,23 +56,25 @@ private const val SYSPROPS_TRANSACTION = 1599295570 // from frameworks/base/core
 
 internal const val POPULATE_COMMAND =
     "echo $DARK_MODE_DIVIDER; " +
-            "cmd uimode night; " +
-            "echo $GESTURES_DIVIDER; " +
-            "cmd overlay list android | grep $GESTURES_OVERLAY\$; " +
-            "echo $LIST_PACKAGES_DIVIDER; " +
-            "pm list packages | grep package:$TALKBACK_PACKAGE_NAME\$; " +
-            "echo $ACCESSIBILITY_SERVICES_DIVIDER; " +
-            "settings get secure $ENABLED_ACCESSIBILITY_SERVICES; " +
-            "echo $ACCESSIBILITY_BUTTON_TARGETS_DIVIDER; " +
-            "settings get secure $ACCESSIBILITY_BUTTON_TARGETS; " +
-            "echo $FONT_SCALE_DIVIDER; " +
-            "settings get system font_scale; " +
-            "echo $DENSITY_DIVIDER; " +
-            "wm density; " +
-            "echo $DEBUG_LAYOUT_DIVIDER; " +
-            "getprop debug.layout; " +
-            "echo $FOREGROUND_APPLICATION_DIVIDER; " +
-            "dumpsys activity activities | grep mFocusedApp=ActivityRecord; "
+    "cmd uimode night; " +
+    "echo $GESTURES_DIVIDER; " +
+    "cmd overlay list android | grep $GESTURES_OVERLAY\$; " +
+    "echo $LIST_PACKAGES_DIVIDER; " +
+    "pm list packages | grep package:$TALKBACK_PACKAGE_NAME\$; " +
+    "echo $ACCESSIBILITY_SERVICES_DIVIDER; " +
+    "settings get secure $ENABLED_ACCESSIBILITY_SERVICES; " +
+    "echo $ACCESSIBILITY_BUTTON_TARGETS_DIVIDER; " +
+    "settings get secure $ACCESSIBILITY_BUTTON_TARGETS; " +
+    "echo $FONT_SCALE_DIVIDER; " +
+    "settings get system font_scale; " +
+    "echo $DENSITY_DIVIDER; " +
+    "wm density; " +
+    "echo $DEBUG_LAYOUT_DIVIDER; " +
+    "getprop debug.layout; " +
+    "echo $FOREGROUND_APPLICATION_DIVIDER; " +
+    "dumpsys activity activities | grep mFocusedApp=ActivityRecord; " +
+    "echo $DONT_KEEP_ACTIVITIES_DIVIDER; " +
+    "settings get global always_finish_activities; "
 
 internal const val POPULATE_LANGUAGE_COMMAND =
     "echo $APP_LANGUAGE_DIVIDER; " +
@@ -106,6 +109,9 @@ internal const val FACTORY_RESET_GESTURE_NAVIGATION =
     "cmd overlay enable $GESTURES_OVERLAY; " +
             "cmd overlay disable $THREE_BUTTON_OVERLAY; "
 
+internal const val FACTORY_RESET_DONT_KEEP_ACTIVITIES_DIVIDER =
+    "settings put global always_finish_activities 0; "
+
 /**
  * A controller for the UI settings for an Emulator,
  * that populates the model and reacts to changes to the model initiated by the UI.
@@ -130,6 +136,7 @@ internal class EmulatorUiSettingsController(
     private var lastFontScale = FontScale.NORMAL.percent
     private var lastDensity = readPhysicalDensity
     private var lastDebugLayout = false
+    private var lastDontKeepActivities = false
 
     override suspend fun populateModel() {
         val context = CommandContext()
@@ -161,6 +168,7 @@ internal class EmulatorUiSettingsController(
                 LIST_PACKAGES_DIVIDER -> processListPackages(iterator)
                 FOREGROUND_APPLICATION_DIVIDER -> processForegroundApplication(iterator, context)
                 APP_LANGUAGE_DIVIDER -> processAppLanguage(iterator)
+                DONT_KEEP_ACTIVITIES_DIVIDER -> processDontKeepActivities(iterator)
             }
         }
     }
@@ -246,6 +254,12 @@ internal class EmulatorUiSettingsController(
 
         readApplicationId = applicationId
         lastLocaleTag = localeTag
+    }
+
+    private fun processDontKeepActivities(iterator: ListIterator<String>) {
+        val isKeep = ((if (iterator.hasNext()) iterator.next() else "0").toIntOrNull() ?: 0) == 1
+        model.dontKeepActivities.setFromController(isKeep)
+        lastDontKeepActivities = isKeep
     }
 
     private fun processForegroundApplication(iterator: ListIterator<String>, context: CommandContext) {
@@ -336,6 +350,13 @@ internal class EmulatorUiSettingsController(
         updateResetButton()
     }
 
+    override fun setDontKeepActivities(on: Boolean) {
+        val value = if (on) 1 else 0
+        scope.launch { executeShellCommand("settings put global always_finish_activities $value") }
+        lastDontKeepActivities = on
+        updateResetButton()
+    }
+
     override fun reset() {
         scope.launch {
             var command = when (deviceType) {
@@ -347,6 +368,7 @@ internal class EmulatorUiSettingsController(
             }
             command += FACTORY_RESET_DEBUG_LAYOUT
             command += FACTORY_RESET_GESTURE_NAVIGATION
+            command += FACTORY_RESET_DONT_KEEP_ACTIVITIES_DIVIDER
             executeShellCommand(command)
             populateModel()
         }
@@ -366,6 +388,7 @@ internal class EmulatorUiSettingsController(
         isDefault = isDefault && extraChecks
         isDefault = isDefault && !lastDebugLayout
         isDefault = isDefault && lastGestureNavigation
+        isDefault = isDefault && !lastDontKeepActivities
         model.differentFromDefault.setFromController(!isDefault)
     }
 

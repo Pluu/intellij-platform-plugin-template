@@ -36,6 +36,7 @@ internal const val GESTURE_NAVIGATION_TITLE = "Navigation Mode:"
 internal const val FONT_SCALE_TITLE = "Font Size:"
 internal const val DENSITY_TITLE = "Display Size:"
 internal const val DEBUG_LAYOUT_TITLE = "Debug Layout:"
+internal const val DONT_KEEP_ACTIVITIES_TITLE = "Don't Keep Activities:"
 internal const val RESET_TITLE = "Reset"
 internal const val PERMISSION_HINT_LINE1 =
     "More options may be available if \"Disable permission monitoring\" is turned on in"
@@ -140,6 +141,13 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                     .accessibleName(DEBUG_LAYOUT_TITLE)
                     .bind(model.debugLayout)
                     .apply { component.name = DEBUG_LAYOUT_TITLE }
+            }
+
+            row(JBLabel(DONT_KEEP_ACTIVITIES_TITLE)) {
+                checkBox("")
+                    .accessibleName(DONT_KEEP_ACTIVITIES_TITLE)
+                    .bind(model.dontKeepActivities)
+                    .apply { component.name = DONT_KEEP_ACTIVITIES_TITLE }
             }
 
             row {
