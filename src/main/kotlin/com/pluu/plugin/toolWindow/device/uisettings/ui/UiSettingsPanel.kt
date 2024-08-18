@@ -131,16 +131,16 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
     private fun Panel.bindDeviceSetting(model: UiSettingsModel) {
         val deviceType = model.deviceType
 
-        group(TITLE, indent = false) {
-            panel {
-                row {
-                    link(RESET_TITLE) { model.resetAction() }
-                        .accessibleName(RESET_TITLE)
-                        .apply { component.name = RESET_TITLE }
-                        .visibleIf(model.differentFromDefault)
-                        .align(AlignX.RIGHT)
-                }
+        panel {
+            row(JBLabel(TITLE)) {
+                link(RESET_TITLE) { model.resetAction() }
+                    .accessibleName(RESET_TITLE)
+                    .apply { component.name = RESET_TITLE }
+                    .visibleIf(model.differentFromDefault)
+                    .align(AlignX.RIGHT)
+            }
 
+            indent {
                 if (deviceType != DeviceType.WEAR) {
                     row {
                         checkBox(DARK_THEME_TITLE)
