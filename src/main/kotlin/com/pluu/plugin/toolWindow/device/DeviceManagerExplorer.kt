@@ -5,10 +5,8 @@ import com.android.tools.idea.concurrency.AndroidCoroutineScope
 import com.android.tools.idea.concurrency.AndroidDispatchers.workerThread
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.ui.dsl.builder.AlignX
-import com.intellij.ui.dsl.builder.BottomGap
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.util.ui.JBUI
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.device.controller.EmulatorUiSettingsController
 import com.pluu.plugin.toolWindow.device.tracker.DeviceComboBoxDeviceTracker
@@ -21,14 +19,17 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
-import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.event.ActionListener
+import javax.swing.BorderFactory
+import javax.swing.BoxLayout
 import javax.swing.JPanel
+import javax.swing.ScrollPaneConstants
 
 class DeviceManagerExplorer(
     val project: Project,
     deviceProvisioner: DeviceProvisioner
-) : JPanel(BorderLayout()), Disposable {
+) : JPanel(), Disposable {
 
     private val deviceTracker: IDeviceComboBoxDeviceTracker =
         DeviceComboBoxDeviceTracker(deviceProvisioner)
@@ -39,21 +40,34 @@ class DeviceManagerExplorer(
     private val deviceComboBox = DeviceComboBox()
     private val settingsPanel = UiSettingsPanel()
 
-    private val root = panel {
-        border = JBUI.Borders.empty(0, 10)
-        row {
-            label("Select device: ")
-                .applyToComponent {
-                    foreground = UIUtil.getInactiveTextColor()
-                }
-        }
-        row { cell(deviceComboBox).align(AlignX.FILL) }
-            .bottomGap(BottomGap.SMALL)
-        row { cell(settingsPanel).align(AlignX.FILL) }
-    }
-
     init {
-        add(root)
+        layout = BoxLayout(this, BoxLayout.Y_AXIS)
+        border = BorderFactory.createEmptyBorder(0, 10, 0, 10)
+
+        add(
+            JBLabel("Select device: ").apply {
+                foreground = UIUtil.getInactiveTextColor()
+                preferredSize = Dimension(Int.MAX_VALUE, preferredSize.height)
+                minimumSize = preferredSize
+            }
+        )
+        add(
+            deviceComboBox.apply {
+                maximumSize = Dimension(maximumSize.width, preferredSize.height)
+            }
+        )
+        add(
+            JBScrollPane(
+                settingsPanel,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+            ).apply {
+                border = BorderFactory.createEmptyBorder()
+                verticalScrollBar.unitIncrement = 10
+                verticalScrollBar.preferredSize = Dimension(10, verticalScrollBar.preferredSize.height)
+            }
+        )
+
         coroutineScope.launch(workerThread) {
             trackSelected().collect { item ->
                 updatePanel(item)
