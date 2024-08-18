@@ -100,7 +100,8 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                     }
                     row {
                         button("Run") {
-// TODO:
+                            val command = "am start -a android.intent.action.VIEW -d '${adbTextFiled.text}'"
+                            model.runAdbCommand(command)
                         }.align(AlignX.FILL)
                     }
                 }

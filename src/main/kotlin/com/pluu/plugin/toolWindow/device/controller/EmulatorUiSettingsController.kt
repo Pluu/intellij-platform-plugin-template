@@ -371,6 +371,12 @@ internal class EmulatorUiSettingsController(
         }
     }
 
+    override fun runAdbCommand(command: String) {
+        scope.launch {
+            executeShellCommand(command)
+        }
+    }
+
     private fun updateResetButton() {
         var isDefault = lastLocaleTag.isEmpty() && !lastTalkBack && lastFontScale == FontScale.NORMAL.percent
         val extraChecks = when (deviceType) {

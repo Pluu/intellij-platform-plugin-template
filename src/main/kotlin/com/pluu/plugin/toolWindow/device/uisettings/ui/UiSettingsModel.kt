@@ -60,16 +60,19 @@ internal class UiSettingsModel(screenSize: Dimension, physicalDensity: Int, api:
     val selectToSpeakOn: TwoWayProperty<Boolean> = DefaultTwoWayProperty(false)
     val fontScaleInPercent: TwoWayProperty<Int> = DefaultTwoWayProperty(100)
     val fontScaleSettable: ReadOnlyProperty<Boolean> = DefaultTwoWayProperty(true)
-    val fontScaleIndex: TwoWayProperty<Int> = fontScaleInPercent.createMappedProperty(::toFontScaleIndex, ::toFontScaleInPercent)
+    val fontScaleIndex: TwoWayProperty<Int> =
+        fontScaleInPercent.createMappedProperty(::toFontScaleIndex, ::toFontScaleInPercent)
     val fontScaleMaxIndex: ReadOnlyProperty<Int> = DefaultTwoWayProperty(numberOfFontScales(api) - 1)
     val screenDensity: TwoWayProperty<Int> = DefaultTwoWayProperty(physicalDensity)
     val screenDensitySettable: ReadOnlyProperty<Boolean> = DefaultTwoWayProperty(true)
-    val screenDensityIndex: TwoWayProperty<Int> = screenDensity.createMappedProperty(::toDensityIndex, ::toDensityFromIndex)
+    val screenDensityIndex: TwoWayProperty<Int> =
+        screenDensity.createMappedProperty(::toDensityIndex, ::toDensityFromIndex)
     val screenDensityMaxIndex: ReadOnlyProperty<Int> = DefaultTwoWayProperty(densities.size - 1)
     val debugLayout: TwoWayProperty<Boolean> = DefaultTwoWayProperty(false)
     val dontKeepActivities: TwoWayProperty<Boolean> = DefaultTwoWayProperty(false)
     val differentFromDefault: ReadOnlyProperty<Boolean> = DefaultTwoWayProperty(false)
     var resetAction: () -> Unit = {}
+    var runAdbCommand: (String) -> Unit = {}
 
     /***
      * If font scale or density is not settable, we are likely connected to an OEM device that has
@@ -98,7 +101,7 @@ internal class UiSettingsModel(screenSize: Dimension, physicalDensity: Int, api:
         scaleMap[fontIndex.coerceIn(0, fontScaleMaxIndex.value)]
 
     private fun toFontScaleIndex(percent: Int): Int =
-        scaleMap.withIndex().minBy { (_,value) -> abs(value - percent) }.index
+        scaleMap.withIndex().minBy { (_, value) -> abs(value - percent) }.index
 
     private fun toDensityFromIndex(densityIndex: Int): Int =
         densities[densityIndex.coerceIn(0, screenDensityMaxIndex.value)]

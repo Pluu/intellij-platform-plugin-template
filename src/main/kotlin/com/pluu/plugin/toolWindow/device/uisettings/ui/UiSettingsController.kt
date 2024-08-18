@@ -25,6 +25,7 @@ internal abstract class UiSettingsController(
         model.gestureNavigation.uiChangeListener = ChangeListener(::setGestureNavigation)
         model.debugLayout.uiChangeListener = ChangeListener(::setDebugLayout)
         model.dontKeepActivities.uiChangeListener = ChangeListener(::setDontKeepActivities)
+        model.runAdbCommand = ::runAdbCommand
         model.resetAction = { reset(); }
     }
 
@@ -73,5 +74,7 @@ internal abstract class UiSettingsController(
     /**
      * Reset UI settings to factory defaults.
      */
+    protected abstract fun runAdbCommand(command: String)
+
     protected abstract fun reset()
 }
