@@ -6,6 +6,7 @@ import com.android.tools.idea.concurrency.AndroidDispatchers.workerThread
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.AlignX
+import com.intellij.ui.dsl.builder.BottomGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -47,6 +48,7 @@ class DeviceManagerExplorer(
                 }
         }
         row { cell(deviceComboBox).align(AlignX.FILL) }
+            .bottomGap(BottomGap.SMALL)
         row { cell(settingsPanel).align(AlignX.FILL) }
     }
 

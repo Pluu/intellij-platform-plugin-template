@@ -88,28 +88,26 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
     private fun bindModel(model: UiSettingsModel) {
         val deviceType = model.deviceType
 
-        add(panel {
-            group(APP_SCHEME_TITLE, indent = false) {
-                panel {
-                    row {
-                        adbTextFiled = textField()
-                            .align(AlignX.FILL)
-                            .applyToComponent {
-                                emptyText.setText("Input app scheme")
-                            }.component
-                    }
-                    row {
-                        button("Run") {
-                            val command = "am start -a android.intent.action.VIEW -d '${adbTextFiled.text}'"
-                            model.runAdbCommand(command)
-                        }.align(AlignX.FILL)
-                    }
-                }
-            }
-        }, BorderLayout.NORTH)
-
         add(
             panel {
+                group(APP_SCHEME_TITLE, indent = false) {
+                    panel {
+                        row {
+                            adbTextFiled = textField()
+                                .align(AlignX.FILL)
+                                .applyToComponent {
+                                    emptyText.setText("Input app scheme")
+                                }.component
+                        }
+                        row {
+                            button("Run") {
+                                val command = "am start -a android.intent.action.VIEW -d '${adbTextFiled.text}'"
+                                model.runAdbCommand(command)
+                            }.align(AlignX.FILL)
+                        }
+                    }
+                }
+
                 group(TITLE, indent = false) {
                     panel {
                         row {
@@ -121,11 +119,9 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                         }
 
                         if (deviceType != DeviceType.WEAR) {
-                            row(JBLabel(DARK_THEME_TITLE)) {
-                                checkBox("")
-                                    .accessibleName(DARK_THEME_TITLE)
+                            row {
+                                checkBox(DARK_THEME_TITLE)
                                     .bind(model.inDarkMode)
-                                    .apply { component.name = DARK_THEME_TITLE }
                             }
                         }
 
@@ -166,18 +162,14 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                             }.visibleIf(model.permissionMonitoringDisabled)
                         }
 
-                        row(JBLabel(DEBUG_LAYOUT_TITLE)) {
-                            checkBox("")
-                                .accessibleName(DEBUG_LAYOUT_TITLE)
+                        row {
+                            checkBox(DEBUG_LAYOUT_TITLE)
                                 .bind(model.debugLayout)
-                                .apply { component.name = DEBUG_LAYOUT_TITLE }
                         }
 
-                        row(JBLabel(DONT_KEEP_ACTIVITIES_TITLE)) {
-                            checkBox("")
-                                .accessibleName(DONT_KEEP_ACTIVITIES_TITLE)
+                        row {
+                            checkBox(DONT_KEEP_ACTIVITIES_TITLE)
                                 .bind(model.dontKeepActivities)
-                                .apply { component.name = DONT_KEEP_ACTIVITIES_TITLE }
                         }
 
                         row {
@@ -188,7 +180,7 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                         }.visibleIf(model.permissionMonitoringDisabled.not())
                     }
                 }
-            }, BorderLayout.SOUTH
+            }, BorderLayout.NORTH
         )
     }
 
