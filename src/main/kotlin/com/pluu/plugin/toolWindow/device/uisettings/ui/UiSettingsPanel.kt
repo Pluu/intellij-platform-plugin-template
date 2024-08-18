@@ -202,7 +202,7 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                     })
                 }.visibleIf(model.permissionMonitoringDisabled.not())
 
-                row(JBLabel("Reset animator scale").apply {
+                row(JBLabel("Animator scale").apply {
                     icon = StudioIcons.Common.INFO
                     toolTipText = "Window animation, Transition animation, Animator duration"
                 }) {
