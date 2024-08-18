@@ -7,6 +7,7 @@ package com.pluu.plugin.toolWindow.device.uisettings.ui
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.tools.adtui.common.AdtUiUtils
 import com.android.tools.adtui.common.secondaryPanelBackground
+import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.Align
@@ -15,6 +16,7 @@ import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.Row
 import com.intellij.ui.dsl.builder.actionListener
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.whenTextChangedFromUi
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.pluu.plugin.toolWindow.device.uisettings.binding.ReadOnlyProperty
@@ -50,6 +52,9 @@ internal const val PERMISSION_HINT_LINE2 = "\"Developer Options\" and the device
  * Displays a picker with setting shortcuts.
  */
 internal class UiSettingsPanel : BorderLayoutPanel() {
+
+    private val propertyGraph = PropertyGraph()
+    private var isEnableAppSchemeCommand = propertyGraph.property(false)
 
     private lateinit var adbTextFiled: JTextField
 
@@ -97,13 +102,20 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                                 .align(AlignX.FILL)
                                 .applyToComponent {
                                     emptyText.setText("Input app scheme")
+                                }
+                                .whenTextChangedFromUi {
+                                    isEnableAppSchemeCommand.set(it.isNotEmpty())
                                 }.component
                         }
                         row {
                             button("Run") {
-                                val command = "am start -a android.intent.action.VIEW -d '${adbTextFiled.text}'"
-                                model.runAdbCommand(command)
-                            }.align(AlignX.FILL)
+                                if (adbTextFiled.text.isNotEmpty()) {
+                                    val command = "am start -a android.intent.action.VIEW -d '${adbTextFiled.text}'"
+                                    model.runAdbCommand(command)
+                                }
+                            }
+                                .enabledIf(isEnableAppSchemeCommand)
+                                .align(AlignX.FILL)
                         }
                     }
                 }
