@@ -107,8 +107,11 @@ internal const val FACTORY_RESET_GESTURE_NAVIGATION =
     "cmd overlay enable $GESTURES_OVERLAY; " +
             "cmd overlay disable $THREE_BUTTON_OVERLAY; "
 
-internal const val FACTORY_RESET_DONT_KEEP_ACTIVITIES_DIVIDER =
+internal const val FACTORY_RESET_DONT_KEEP_ACTIVITIES =
     "settings put global always_finish_activities 0; "
+
+internal const val RESET_ANIMATOR_SCALE =
+    "settings put global transition_animation_scale 1.0; settings put global window_animation_scale 1.0; settings put global animator_duration_scale 1.0;"
 
 /**
  * A controller for the UI settings for an Emulator,
@@ -365,7 +368,7 @@ internal class EmulatorUiSettingsController(
             }
             command += FACTORY_RESET_DEBUG_LAYOUT
             command += FACTORY_RESET_GESTURE_NAVIGATION
-            command += FACTORY_RESET_DONT_KEEP_ACTIVITIES_DIVIDER
+            command += FACTORY_RESET_DONT_KEEP_ACTIVITIES
             executeShellCommand(command)
             populateModel()
         }

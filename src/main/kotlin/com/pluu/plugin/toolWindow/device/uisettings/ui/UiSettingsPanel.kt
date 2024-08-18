@@ -20,8 +20,10 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.whenTextChangedFromUi
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
+import com.pluu.plugin.toolWindow.device.controller.RESET_ANIMATOR_SCALE
 import com.pluu.plugin.toolWindow.device.uisettings.binding.ReadOnlyProperty
 import com.pluu.plugin.toolWindow.device.uisettings.binding.TwoWayProperty
+import icons.StudioIcons
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Container
@@ -119,8 +121,7 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                             val command = "am start -a android.intent.action.VIEW -d '${adbTextFiled.text}'"
                             model.runAdbCommand(command)
                         }
-                    }
-                        .enabledIf(isEnableAppSchemeCommand)
+                    }.enabledIf(isEnableAppSchemeCommand)
                         .align(AlignX.FILL)
                 }
             }
@@ -200,6 +201,15 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                         addToBottom(JBLabel(PERMISSION_HINT_LINE2, UIUtil.ComponentStyle.MINI))
                     })
                 }.visibleIf(model.permissionMonitoringDisabled.not())
+
+                row(JBLabel("Reset animator scale").apply {
+                    icon = StudioIcons.Common.INFO
+                    toolTipText = "Window animation, Transition animation, Animator duration"
+                }) {
+                    button("Reset") {
+                        model.runAdbCommand(RESET_ANIMATOR_SCALE)
+                    }.align(Align.FILL)
+                }
             }
         }
     }
