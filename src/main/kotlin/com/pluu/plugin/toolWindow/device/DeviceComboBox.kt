@@ -6,17 +6,14 @@ package com.pluu.plugin.toolWindow.device
 
 import com.android.sdklib.deviceprovisioner.DeviceIcons
 import com.android.tools.idea.deviceprovisioner.StudioDefaultDeviceIcons
-import com.intellij.ide.ui.laf.darcula.ui.DarculaComboBoxUI
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.util.ui.components.BorderLayoutPanel
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_CAR
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_PHONE
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_TV
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_WEAR
-import java.awt.Component
 import javax.swing.JList
 
 private val PHYSICAL_ICONS = StudioDefaultDeviceIcons
@@ -30,10 +27,6 @@ internal class DeviceComboBox : ComboBox<Device>() {
     init {
         renderer = DeviceComboBoxRenderer()
         model = DeviceComboModel()
-    }
-
-    override fun updateUI() {
-        setUI(DeviceComboBoxUi())
     }
 
     fun addDevice(device: Device): Device =
@@ -51,25 +44,6 @@ internal class DeviceComboBox : ComboBox<Device>() {
         deviceComboModel.containsDevice(device)
 
     class DeviceComboBoxRenderer : ColoredListCellRenderer<Device>() {
-        private val component = BorderLayoutPanel()
-
-        init {
-            component.isOpaque = false
-        }
-
-        override fun getListCellRendererComponent(
-            list: JList<out Device>,
-            value: Device?,
-            index: Int,
-            selected: Boolean,
-            hasFocus: Boolean,
-        ): Component {
-            val deviceComponent =
-                super.getListCellRendererComponent(list, value, index, selected, hasFocus)
-            component.addToLeft(deviceComponent)
-            return component
-        }
-
         override fun customizeCellRenderer(
             list: JList<out Device>,
             item: Device?,
@@ -78,6 +52,7 @@ internal class DeviceComboBox : ComboBox<Device>() {
             hasFocus: Boolean,
         ) {
             if (item == null) {
+                append("No Connected Devices", SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES)
                 return
             }
             renderDevice(item)
@@ -89,7 +64,7 @@ internal class DeviceComboBox : ComboBox<Device>() {
 
             append(device.name, SimpleTextAttributes.REGULAR_ATTRIBUTES)
             if (device.isOnline) {
-                append(" (${device.serialNumber})", SimpleTextAttributes.REGULAR_ATTRIBUTES)
+                append(" ${device.serialNumber}", SimpleTextAttributes.GRAYED_ATTRIBUTES)
             }
         }
     }
@@ -125,32 +100,5 @@ internal class DeviceComboBox : ComboBox<Device>() {
 
         fun containsDevice(device: Device): Boolean =
             items.find { it.deviceId == device.deviceId } != null
-    }
-
-    /**
-     * A custom UI based on DarculaComboBoxUI that has more control over the popup, so we can
-     * intercept mouse events.
-     */
-    private class DeviceComboBoxUi : DarculaComboBoxUI() {
-
-        override fun selectNextPossibleValue() {
-            val index = listBox.selectedIndex
-            if (index < comboBox.model.size - 1) {
-                setSelectedIndex(index + 1)
-            }
-        }
-
-        override fun selectPreviousPossibleValue() {
-            val index = listBox.selectedIndex
-            if (index > 0) {
-                setSelectedIndex(index - 1)
-            }
-        }
-
-        private fun setSelectedIndex(index: Int) {
-            listBox.selectedIndex = index
-            listBox.ensureIndexIsVisible(index)
-            comboBox.repaint()
-        }
     }
 }

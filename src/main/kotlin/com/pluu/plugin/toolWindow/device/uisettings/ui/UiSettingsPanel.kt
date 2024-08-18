@@ -107,87 +107,88 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
             }
         }, BorderLayout.NORTH)
 
-        add(panel {
-            separator()
-            group(TITLE, indent = false) {
-                panel {
-                    row {
-                        link(RESET_TITLE) { model.resetAction() }
-                            .accessibleName(RESET_TITLE)
-                            .apply { component.name = RESET_TITLE }
-                            .visibleIf(model.differentFromDefault)
-                            .align(AlignX.RIGHT)
-                    }
-
-                    if (deviceType != DeviceType.WEAR) {
-                        row(JBLabel(DARK_THEME_TITLE)) {
-                            checkBox("")
-                                .accessibleName(DARK_THEME_TITLE)
-                                .bind(model.inDarkMode)
-                                .apply { component.name = DARK_THEME_TITLE }
+        add(
+            panel {
+                group(TITLE, indent = false) {
+                    panel {
+                        row {
+                            link(RESET_TITLE) { model.resetAction() }
+                                .accessibleName(RESET_TITLE)
+                                .apply { component.name = RESET_TITLE }
+                                .visibleIf(model.differentFromDefault)
+                                .align(AlignX.RIGHT)
                         }
-                    }
 
-                    if (deviceType == DeviceType.HANDHELD) {
-                        row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
-                            comboBox(model.navigationModel)
-                                .accessibleName(GESTURE_NAVIGATION_TITLE)
-                                .align(Align.FILL)
-                                .bindItem(model.navigationModel.selection)
-                                .apply {
-                                    component.name = GESTURE_NAVIGATION_TITLE
-                                    component.renderer = ListCellRenderer { _, value, _, _, _ ->
-                                        JBLabel(if (value == true) "Gestures" else "Buttons")
+                        if (deviceType != DeviceType.WEAR) {
+                            row(JBLabel(DARK_THEME_TITLE)) {
+                                checkBox("")
+                                    .accessibleName(DARK_THEME_TITLE)
+                                    .bind(model.inDarkMode)
+                                    .apply { component.name = DARK_THEME_TITLE }
+                            }
+                        }
+
+                        if (deviceType == DeviceType.HANDHELD) {
+                            row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
+                                comboBox(model.navigationModel)
+                                    .align(AlignX.FILL)
+                                    .accessibleName(GESTURE_NAVIGATION_TITLE)
+                                    .bindItem(model.navigationModel.selection)
+                                    .apply {
+                                        component.name = GESTURE_NAVIGATION_TITLE
+                                        component.renderer = ListCellRenderer { _, value, _, _, _ ->
+                                            JBLabel(if (value == true) "Gestures" else "Buttons")
+                                        }
                                     }
-                                }
-                        }.visibleIf(model.permissionMonitoringDisabled.and(model.gestureOverlayInstalled))
-                    }
+                            }.visibleIf(model.permissionMonitoringDisabled.and(model.gestureOverlayInstalled))
+                        }
 
-                    row(JBLabel(FONT_SCALE_TITLE)) {
-                        slider(0, model.fontScaleMaxIndex.value, 1, 1)
-                            .accessibleName(FONT_SCALE_TITLE)
-                            .noLabels()
-                            .align(Align.FILL)
-                            .bindSliderPosition(model.fontScaleIndex)
-                            .bindSliderMaximum(model.fontScaleMaxIndex)
-                            .apply { component.name = FONT_SCALE_TITLE }
-                    }.visibleIf(model.permissionMonitoringDisabled)
-
-                    if (deviceType == DeviceType.HANDHELD) {
-                        row(JBLabel(DENSITY_TITLE)) {
-                            slider(0, model.screenDensityIndex.value, 1, 1)
-                                .accessibleName(DENSITY_TITLE)
+                        row(JBLabel(FONT_SCALE_TITLE)) {
+                            slider(0, model.fontScaleMaxIndex.value, 1, 1)
+                                .accessibleName(FONT_SCALE_TITLE)
                                 .noLabels()
                                 .align(Align.FILL)
-                                .bindSliderPosition(model.screenDensityIndex)
-                                .bindSliderMaximum(model.screenDensityMaxIndex)
-                                .apply { component.name = DENSITY_TITLE }
+                                .bindSliderPosition(model.fontScaleIndex)
+                                .bindSliderMaximum(model.fontScaleMaxIndex)
+                                .apply { component.name = FONT_SCALE_TITLE }
                         }.visibleIf(model.permissionMonitoringDisabled)
-                    }
 
-                    row(JBLabel(DEBUG_LAYOUT_TITLE)) {
-                        checkBox("")
-                            .accessibleName(DEBUG_LAYOUT_TITLE)
-                            .bind(model.debugLayout)
-                            .apply { component.name = DEBUG_LAYOUT_TITLE }
-                    }
+                        if (deviceType == DeviceType.HANDHELD) {
+                            row(JBLabel(DENSITY_TITLE)) {
+                                slider(0, model.screenDensityIndex.value, 1, 1)
+                                    .accessibleName(DENSITY_TITLE)
+                                    .noLabels()
+                                    .align(Align.FILL)
+                                    .bindSliderPosition(model.screenDensityIndex)
+                                    .bindSliderMaximum(model.screenDensityMaxIndex)
+                                    .apply { component.name = DENSITY_TITLE }
+                            }.visibleIf(model.permissionMonitoringDisabled)
+                        }
 
-                    row(JBLabel(DONT_KEEP_ACTIVITIES_TITLE)) {
-                        checkBox("")
-                            .accessibleName(DONT_KEEP_ACTIVITIES_TITLE)
-                            .bind(model.dontKeepActivities)
-                            .apply { component.name = DONT_KEEP_ACTIVITIES_TITLE }
-                    }
+                        row(JBLabel(DEBUG_LAYOUT_TITLE)) {
+                            checkBox("")
+                                .accessibleName(DEBUG_LAYOUT_TITLE)
+                                .bind(model.debugLayout)
+                                .apply { component.name = DEBUG_LAYOUT_TITLE }
+                        }
 
-                    row {
-                        cell(BorderLayoutPanel().apply {
-                            addToTop(JBLabel(PERMISSION_HINT_LINE1, UIUtil.ComponentStyle.MINI))
-                            addToBottom(JBLabel(PERMISSION_HINT_LINE2, UIUtil.ComponentStyle.MINI))
-                        })
-                    }.visibleIf(model.permissionMonitoringDisabled.not())
+                        row(JBLabel(DONT_KEEP_ACTIVITIES_TITLE)) {
+                            checkBox("")
+                                .accessibleName(DONT_KEEP_ACTIVITIES_TITLE)
+                                .bind(model.dontKeepActivities)
+                                .apply { component.name = DONT_KEEP_ACTIVITIES_TITLE }
+                        }
+
+                        row {
+                            cell(BorderLayoutPanel().apply {
+                                addToTop(JBLabel(PERMISSION_HINT_LINE1, UIUtil.ComponentStyle.MINI))
+                                addToBottom(JBLabel(PERMISSION_HINT_LINE2, UIUtil.ComponentStyle.MINI))
+                            })
+                        }.visibleIf(model.permissionMonitoringDisabled.not())
+                    }
                 }
-            }
-        }, BorderLayout.SOUTH)
+            }, BorderLayout.SOUTH
+        )
     }
 
     /**

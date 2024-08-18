@@ -5,7 +5,6 @@ import com.android.tools.idea.concurrency.AndroidCoroutineScope
 import com.android.tools.idea.concurrency.AndroidDispatchers.workerThread
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
@@ -21,12 +20,14 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import java.awt.BorderLayout
 import java.awt.event.ActionListener
+import javax.swing.JPanel
 
 class DeviceManagerExplorer(
     val project: Project,
     deviceProvisioner: DeviceProvisioner
-) : JBScrollPane(-1), Disposable {
+) : JPanel(BorderLayout()), Disposable {
 
     private val deviceTracker: IDeviceComboBoxDeviceTracker =
         DeviceComboBoxDeviceTracker(deviceProvisioner)
@@ -46,14 +47,11 @@ class DeviceManagerExplorer(
                 }
         }
         row { cell(deviceComboBox).align(AlignX.FILL) }
-        separator()
         row { cell(settingsPanel).align(AlignX.FILL) }
     }
 
     init {
         add(root)
-        setViewportView(root)
-
         coroutineScope.launch(workerThread) {
             trackSelected().collect { item ->
                 updatePanel(item)
