@@ -52,7 +52,11 @@ internal class DeviceComboBox : ComboBox<Device>() {
             hasFocus: Boolean,
         ) {
             if (item == null) {
-                append("No Connected Devices", SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES)
+                if (list.model.size > 0) {
+                    append("Select connected Devices", SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES)
+                } else {
+                    append("No Connected Devices", SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES)
+                }
                 return
             }
             renderDevice(item)

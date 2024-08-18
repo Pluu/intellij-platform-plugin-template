@@ -36,6 +36,7 @@ class DeviceManagerExplorer(
 
     private val coroutineScope = AndroidCoroutineScope(this)
     private val emulators = mutableMapOf<Device, EmulatorUiSettingsController>()
+    private var latestDevice: Device? = null
 
     private val deviceComboBox = DeviceComboBox()
     private val settingsPanel = UiSettingsPanel()
@@ -70,6 +71,8 @@ class DeviceManagerExplorer(
 
         coroutineScope.launch(workerThread) {
             trackSelected().collect { item ->
+                if (latestDevice == item) return@collect
+                latestDevice = item
                 updatePanel(item)
             }
         }
