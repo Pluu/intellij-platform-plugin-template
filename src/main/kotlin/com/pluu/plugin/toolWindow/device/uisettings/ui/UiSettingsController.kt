@@ -71,10 +71,11 @@ internal abstract class UiSettingsController(
 
     protected abstract fun setDontKeepActivities(on: Boolean)
 
+    protected abstract fun runAdbCommand(command: String)
+
+
     /**
      * Reset UI settings to factory defaults.
      */
-    protected abstract fun runAdbCommand(command: String)
-
     protected abstract fun reset()
 }
