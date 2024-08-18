@@ -13,6 +13,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.Row
 import com.intellij.ui.dsl.builder.actionListener
 import com.intellij.ui.dsl.builder.panel
@@ -91,109 +92,116 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
     }
 
     private fun bindModel(model: UiSettingsModel) {
-        val deviceType = model.deviceType
-
         add(
             panel {
-                group(APP_SCHEME_TITLE, indent = false) {
-                    panel {
-                        row {
-                            adbTextFiled = textField()
-                                .align(AlignX.FILL)
-                                .applyToComponent {
-                                    emptyText.setText("Input app scheme")
-                                }
-                                .whenTextChangedFromUi {
-                                    isEnableAppSchemeCommand.set(it.isNotEmpty())
-                                }.component
-                        }
-                        row {
-                            button("Run") {
-                                if (adbTextFiled.text.isNotEmpty()) {
-                                    val command = "am start -a android.intent.action.VIEW -d '${adbTextFiled.text}'"
-                                    model.runAdbCommand(command)
-                                }
-                            }
-                                .enabledIf(isEnableAppSchemeCommand)
-                                .align(AlignX.FILL)
-                        }
-                    }
-                }
-
-                group(TITLE, indent = false) {
-                    panel {
-                        row {
-                            link(RESET_TITLE) { model.resetAction() }
-                                .accessibleName(RESET_TITLE)
-                                .apply { component.name = RESET_TITLE }
-                                .visibleIf(model.differentFromDefault)
-                                .align(AlignX.RIGHT)
-                        }
-
-                        if (deviceType != DeviceType.WEAR) {
-                            row {
-                                checkBox(DARK_THEME_TITLE)
-                                    .bind(model.inDarkMode)
-                            }
-                        }
-
-                        if (deviceType == DeviceType.HANDHELD) {
-                            row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
-                                comboBox(model.navigationModel)
-                                    .align(AlignX.FILL)
-                                    .accessibleName(GESTURE_NAVIGATION_TITLE)
-                                    .bindItem(model.navigationModel.selection)
-                                    .apply {
-                                        component.name = GESTURE_NAVIGATION_TITLE
-                                        component.renderer = ListCellRenderer { _, value, _, _, _ ->
-                                            JBLabel(if (value == true) "Gestures" else "Buttons")
-                                        }
-                                    }
-                            }.visibleIf(model.permissionMonitoringDisabled.and(model.gestureOverlayInstalled))
-                        }
-
-                        row(JBLabel(FONT_SCALE_TITLE)) {
-                            slider(0, model.fontScaleMaxIndex.value, 1, 1)
-                                .accessibleName(FONT_SCALE_TITLE)
-                                .noLabels()
-                                .align(Align.FILL)
-                                .bindSliderPosition(model.fontScaleIndex)
-                                .bindSliderMaximum(model.fontScaleMaxIndex)
-                                .apply { component.name = FONT_SCALE_TITLE }
-                        }.visibleIf(model.permissionMonitoringDisabled)
-
-                        if (deviceType == DeviceType.HANDHELD) {
-                            row(JBLabel(DENSITY_TITLE)) {
-                                slider(0, model.screenDensityIndex.value, 1, 1)
-                                    .accessibleName(DENSITY_TITLE)
-                                    .noLabels()
-                                    .align(Align.FILL)
-                                    .bindSliderPosition(model.screenDensityIndex)
-                                    .bindSliderMaximum(model.screenDensityMaxIndex)
-                                    .apply { component.name = DENSITY_TITLE }
-                            }.visibleIf(model.permissionMonitoringDisabled)
-                        }
-
-                        row {
-                            checkBox(DEBUG_LAYOUT_TITLE)
-                                .bind(model.debugLayout)
-                        }
-
-                        row {
-                            checkBox(DONT_KEEP_ACTIVITIES_TITLE)
-                                .bind(model.dontKeepActivities)
-                        }
-
-                        row {
-                            cell(BorderLayoutPanel().apply {
-                                addToTop(JBLabel(PERMISSION_HINT_LINE1, UIUtil.ComponentStyle.MINI))
-                                addToBottom(JBLabel(PERMISSION_HINT_LINE2, UIUtil.ComponentStyle.MINI))
-                            })
-                        }.visibleIf(model.permissionMonitoringDisabled.not())
-                    }
-                }
+                bindAppScheme(model)
+                bindDeviceSetting(model)
             }, BorderLayout.NORTH
         )
+    }
+
+    private fun Panel.bindAppScheme(model: UiSettingsModel) {
+        group(APP_SCHEME_TITLE, indent = false) {
+            panel {
+                row {
+                    adbTextFiled = textField()
+                        .align(AlignX.FILL)
+                        .applyToComponent {
+                            emptyText.setText("Input app scheme")
+                        }
+                        .whenTextChangedFromUi {
+                            isEnableAppSchemeCommand.set(it.isNotEmpty())
+                        }.component
+                }
+                row {
+                    button("Run") {
+                        if (adbTextFiled.text.isNotEmpty()) {
+                            val command = "am start -a android.intent.action.VIEW -d '${adbTextFiled.text}'"
+                            model.runAdbCommand(command)
+                        }
+                    }
+                        .enabledIf(isEnableAppSchemeCommand)
+                        .align(AlignX.FILL)
+                }
+            }
+        }
+    }
+
+    private fun Panel.bindDeviceSetting(model: UiSettingsModel) {
+        val deviceType = model.deviceType
+
+        group(TITLE, indent = false) {
+            panel {
+                row {
+                    link(RESET_TITLE) { model.resetAction() }
+                        .accessibleName(RESET_TITLE)
+                        .apply { component.name = RESET_TITLE }
+                        .visibleIf(model.differentFromDefault)
+                        .align(AlignX.RIGHT)
+                }
+
+                if (deviceType != DeviceType.WEAR) {
+                    row {
+                        checkBox(DARK_THEME_TITLE)
+                            .bind(model.inDarkMode)
+                    }
+                }
+
+                row {
+                    checkBox(DEBUG_LAYOUT_TITLE)
+                        .bind(model.debugLayout)
+                }
+
+                row {
+                    checkBox(DONT_KEEP_ACTIVITIES_TITLE)
+                        .bind(model.dontKeepActivities)
+                }
+
+                if (deviceType == DeviceType.HANDHELD) {
+                    row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
+                        comboBox(model.navigationModel)
+                            .align(AlignX.FILL)
+                            .accessibleName(GESTURE_NAVIGATION_TITLE)
+                            .bindItem(model.navigationModel.selection)
+                            .apply {
+                                component.name = GESTURE_NAVIGATION_TITLE
+                                component.renderer = ListCellRenderer { _, value, _, _, _ ->
+                                    JBLabel(if (value == true) "Gestures" else "Buttons")
+                                }
+                            }
+                    }.visibleIf(model.permissionMonitoringDisabled.and(model.gestureOverlayInstalled))
+                }
+
+                row(JBLabel(FONT_SCALE_TITLE)) {
+                    slider(0, model.fontScaleMaxIndex.value, 1, 1)
+                        .accessibleName(FONT_SCALE_TITLE)
+                        .noLabels()
+                        .align(Align.FILL)
+                        .bindSliderPosition(model.fontScaleIndex)
+                        .bindSliderMaximum(model.fontScaleMaxIndex)
+                        .apply { component.name = FONT_SCALE_TITLE }
+                }.visibleIf(model.permissionMonitoringDisabled)
+
+                if (deviceType == DeviceType.HANDHELD) {
+                    row(JBLabel(DENSITY_TITLE)) {
+                        slider(0, model.screenDensityIndex.value, 1, 1)
+                            .accessibleName(DENSITY_TITLE)
+                            .noLabels()
+                            .align(Align.FILL)
+                            .bindSliderPosition(model.screenDensityIndex)
+                            .bindSliderMaximum(model.screenDensityMaxIndex)
+                            .apply { component.name = DENSITY_TITLE }
+                    }.visibleIf(model.permissionMonitoringDisabled)
+                }
+
+                row {
+                    cell(BorderLayoutPanel().apply {
+                        addToTop(JBLabel(PERMISSION_HINT_LINE1, UIUtil.ComponentStyle.MINI))
+                        addToBottom(JBLabel(PERMISSION_HINT_LINE2, UIUtil.ComponentStyle.MINI))
+                    })
+                }.visibleIf(model.permissionMonitoringDisabled.not())
+            }
+        }
     }
 
     /**
