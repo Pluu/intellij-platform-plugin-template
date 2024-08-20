@@ -1,5 +1,7 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
+import java.io.FileInputStream
+import java.util.*
 
 plugins {
     id("java") // Java support
@@ -10,6 +12,8 @@ plugins {
 
 group = providers.gradleProperty("pluginGroup").get()
 version = providers.gradleProperty("pluginVersion").get()
+
+val localProperties = loadLocalProperties()
 
 // Set the JVM language level used to build the project.
 kotlin {
@@ -132,4 +136,14 @@ intellijPlatformTesting {
             }
         }
     }
+}
+
+// Define a function to load properties from the 'local.properties' file
+fun loadLocalProperties(): Properties {
+    val properties = Properties()
+    val localPropertiesFile = file("local.properties")
+    if (localPropertiesFile.exists()) {
+        properties.load(FileInputStream(localPropertiesFile))
+    }
+    return properties
 }
