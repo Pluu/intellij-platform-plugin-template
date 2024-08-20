@@ -12,7 +12,6 @@ import com.android.tools.idea.deviceprovisioner.DeviceProvisionerService
 import com.android.tools.idea.streaming.emulator.EmulatorController
 import com.android.tools.idea.streaming.emulator.EmulatorController.ConnectionState
 import com.android.tools.idea.streaming.emulator.EmulatorController.ConnectionStateListener
-import com.android.tools.idea.streaming.emulator.RunningEmulatorCatalog
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
@@ -28,6 +27,7 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEve
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType.ShowToolWindow
 import com.intellij.ui.content.ContentFactory
 import com.intellij.util.IncorrectOperationException
+import com.pluu.plugin.toolWindow.device.controller.RunningEmulatorCatalog
 import java.awt.EventQueue
 
 private const val EMULATOR_DISCOVERY_INTERVAL_MILLIS = 1000
