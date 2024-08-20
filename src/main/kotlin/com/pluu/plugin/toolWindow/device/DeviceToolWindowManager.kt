@@ -24,6 +24,7 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType.ActivateToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType.HideToolWindow
+import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType.MovedOrResized
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType.ShowToolWindow
 import com.intellij.ui.content.ContentFactory
 import com.intellij.util.IncorrectOperationException
@@ -73,7 +74,7 @@ internal class DeviceToolWindowManager(
                 val toolWindow = toolWindowManager.getToolWindow(RUNNING_DEVICES_TOOL_WINDOW_ID) ?: return
 
                 when (changeType) {
-                    ActivateToolWindow, ShowToolWindow, HideToolWindow -> {
+                    ActivateToolWindow, ShowToolWindow, HideToolWindow, MovedOrResized -> {
                         toolWindowManager.invokeLater {
                             if (!toolWindow.isDisposed) {
                                 if (toolWindow.isVisible) {
