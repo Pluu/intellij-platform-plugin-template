@@ -3,6 +3,8 @@ package com.pluu.plugin.utils
 import com.android.AndroidProjectTypes
 import com.android.tools.idea.gradle.util.GradleProjectSystemUtil.findGradleBuildFile
 import com.android.tools.idea.project.AndroidProjectInfo
+import com.android.tools.idea.projectsystem.getAndroidTestModule
+import com.android.tools.idea.projectsystem.gradle.getUnitTestModule
 import com.intellij.ide.actions.CreateDirectoryOrPackageAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
@@ -42,7 +44,7 @@ object ModuleUtils {
             module
         },
         findTestRoot = { module ->
-            AndroidFacet.getInstance(module)?.unitTestModule?.sourceRoots?.firstOrNull()
+            module.getUnitTestModule()?.sourceRoots?.firstOrNull()
         },
         createDirectory = { module ->
             val directory = module.rootManager.getSourceRoots(JavaSourceRootType.SOURCE).first()
@@ -62,7 +64,7 @@ object ModuleUtils {
 //            AndroidFacet.getInstance(module.project.findAppModule()!!)?.androidTestModule!!
         },
         findTestRoot = { module ->
-            AndroidFacet.getInstance(module)?.androidTestModule!!
+            module.getAndroidTestModule()!!
                 .rootManager.getSourceRoots(JavaSourceRootType.TEST_SOURCE).firstOrNull()
 //            module.rootManager.getSourceRoots(JavaSourceRootType.TEST_SOURCE).firstOrNull()
         },

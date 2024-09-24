@@ -24,9 +24,9 @@ internal const val MODULE_NAME_KEY = "ModuleName"
  */
 internal fun findCompatibleFacetFromOpenedFiles(project: Project): AndroidFacet? =
     // Find facet for active files in editor
-    FileEditorManager.getInstance(project).selectedFiles.firstNotNullOfOrNull { file ->
+    FileEditorManager.getInstance(project).selectedFiles.mapNotNull { file ->
         ModuleUtilCore.findModuleForFile(file, project)?.getMainModule()?.androidFacet
-    } ?:
+    }.firstOrNull() ?:
     // Fallback to the first facet we can find
     findCompatibleFacets(project).firstOrNull()
 
@@ -47,7 +47,10 @@ internal fun findCompatibleFacets(project: Project): List<AndroidFacet> =
  * True if the given [androidFacet] is supported in the ResourceExplorer.
  */
 internal fun compatibleFacetExists(androidFacet: AndroidFacet): Boolean =
-    findCompatibleFacets(androidFacet.module.project).any { compatibleFacet -> androidFacet.mainModule.androidFacet == compatibleFacet }
+    when (val mainFacet = androidFacet.module.getMainModule().androidFacet) {
+        null -> false
+        else -> findCompatibleFacets(androidFacet.module.project).any { compatibleFacet -> mainFacet == compatibleFacet }
+    }
 
 internal fun getFacetForModuleName(moduleName: String?, project: Project): AndroidFacet? {
     return findCompatibleFacets(project).firstOrNull { it.module.name == moduleName }

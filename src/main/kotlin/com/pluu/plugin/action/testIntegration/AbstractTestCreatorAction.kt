@@ -32,7 +32,7 @@ abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionNa
         val psiFile = event.getData(LangDataKeys.VIRTUAL_FILE)?.toPsiFile(project) ?: return
         val element = getElement(editor, psiFile) ?: return
 
-        val srcClassName = element.text
+        val srcClassName = element.name.orEmpty()
         val srcPackage = psiFile.getFqNameByDirectory().toString()
 
         ApplicationManager.getApplication().runWriteAction {
