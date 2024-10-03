@@ -4,6 +4,23 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade Gradle Wrapper to `8.10.2`
+- Update `platformVersion` to `2023.3.8`
+- Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.1.0`
+- Dependencies - upgrade `org.jetbrains.qodana` to `2024.2.3`
+- Dependencies (GitHub Actions) - upgrade `gradle/actions/setup-gradle` to `v4`
+- Add back the `org.gradle.toolchains.foojay-resolver-convention` Gradle settings plugin
+
+### Fixed
+
+- Fixed _Run Plugin_ run configuration logs location
+
+### Removed
+
+- Removed _Run Qodana_ and _Run UI for UI Tests_ run configurations
+
 ## [2.0.1] - 2024-08-09
 
 ### Changed
