@@ -1,5 +1,6 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.intellij.platform.gradle.Constants.Configurations
 import java.io.FileInputStream
 import java.util.*
 
@@ -135,6 +136,13 @@ intellijPlatformTesting {
                 robotServerPlugin()
             }
         }
+    }
+}
+
+// https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1738
+configurations {
+    named(Configurations.INTELLIJ_PLATFORM_BUNDLED_MODULES) {
+        exclude(Configurations.Dependencies.BUNDLED_MODULE_GROUP, "com.jetbrains.performancePlugin")
     }
 }
 
