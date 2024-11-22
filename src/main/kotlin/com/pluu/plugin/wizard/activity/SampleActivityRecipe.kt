@@ -99,6 +99,6 @@ fun RecipeExecutor.sampleActivitySetup(
     }
 
     if (!useConventionPlugin && generateKotlin) {
-        requireJavaVersion("1.8", true)
+        setJavaKotlinCompileOptions(true)
     }
 }

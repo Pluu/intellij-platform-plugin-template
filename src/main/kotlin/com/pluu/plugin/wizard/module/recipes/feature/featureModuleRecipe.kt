@@ -10,7 +10,6 @@ import com.android.tools.idea.npw.module.recipes.androidModule.buildGradle
 import com.android.tools.idea.npw.module.recipes.generateManifest
 import com.android.tools.idea.npw.module.recipes.gitignore
 import com.android.tools.idea.npw.module.recipes.proguardRecipe
-import com.android.tools.idea.wizard.template.BytecodeLevel
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
@@ -25,7 +24,6 @@ fun RecipeExecutor.generateFeatureModule(
     data: ModuleTemplateData,
     useKts: Boolean = false,
     addLintOptions: Boolean = false,
-    bytecodeLevel: BytecodeLevel = BytecodeLevel.default,
     useVersionCatalog: Boolean = false,
     useConventionPlugins: Boolean = false
 ) {
@@ -79,7 +77,7 @@ fun RecipeExecutor.generateFeatureModule(
     }
     if (!useConventionPlugins) {
         addKotlinIfNeeded(projectData, targetApi = apis.targetApi.api, noKtx = true)
-        requireJavaVersion(bytecodeLevel.versionString, data.projectTemplateData.language == Language.Kotlin)
+        setJavaKotlinCompileOptions(data.projectTemplateData.language == Language.Kotlin)
     }
 
     if (data.useGenericLocalTests) {

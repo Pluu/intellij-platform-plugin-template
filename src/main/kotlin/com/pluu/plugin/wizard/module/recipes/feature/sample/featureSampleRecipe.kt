@@ -9,7 +9,6 @@ import com.android.tools.idea.npw.module.recipes.copyMipmapFolder
 import com.android.tools.idea.npw.module.recipes.generateManifest
 import com.android.tools.idea.npw.module.recipes.gitignore
 import com.android.tools.idea.npw.module.recipes.proguardRecipe
-import com.android.tools.idea.wizard.template.BytecodeLevel
 import com.android.tools.idea.wizard.template.Category
 import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
@@ -21,8 +20,6 @@ fun RecipeExecutor.generateFeatureSampleModule(
     moduleData: ModuleTemplateData,
     appTitle: String?, // may be null only for libraries
     useGradleKts: Boolean = false,
-    bytecodeLevel: BytecodeLevel = BytecodeLevel.default,
-    useVersionCatalog: Boolean = true,
     useConventionPlugins: Boolean = false
 ) {
     val (projectData, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
@@ -73,7 +70,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
     }
     if (!useConventionPlugins) {
         addKotlinIfNeeded(projectData, targetApi = apis.targetApi.api, noKtx = true)
-        requireJavaVersion(bytecodeLevel.versionString, language == Language.Kotlin)
+        setJavaKotlinCompileOptions(language == Language.Kotlin)
     }
     addMaterialDependency(useAndroidX)
     addDependency("com.android.support:appcompat-v7:$appCompatVersion.+")

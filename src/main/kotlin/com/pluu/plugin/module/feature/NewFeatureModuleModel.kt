@@ -60,13 +60,11 @@ class NewFeatureModuleModel(
                     generateFeatureSampleModule(
                         moduleData = td as ModuleTemplateData,
                         appTitle = applicationName.get(),
-                        useVersionCatalog = true,
                         useConventionPlugins = conventionPlugin.get()
                     )
                 } else {
                     generateFeatureModule(
                         data = td as ModuleTemplateData,
-                        bytecodeLevel = bytecodeLevel.value,
                         useVersionCatalog = true,
                         useConventionPlugins = conventionPlugin.get()
                     )
