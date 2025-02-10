@@ -97,7 +97,7 @@ internal class DeviceToolWindowManager(
         })
 
         messageBusConnection.subscribe(AvdLaunchListener.TOPIC,
-            AvdLaunchListener { avd, commandLine, requestType, project ->
+            AvdLaunchListener { _, commandLine, _, project ->
                 if (project == toolWindow.project && isEmbeddedEmulator(commandLine)) {
                     RunningEmulatorCatalog.getInstance().updateNow()
                 }
@@ -171,7 +171,7 @@ internal class DeviceToolWindowManager(
         try {
             contentManager.addContent(content)
             contentManager.setSelectedContent(content)
-        } catch (e: IncorrectOperationException) {
+        } catch (_: IncorrectOperationException) {
             // Content manager has been disposed already.
             Disposer.dispose(content)
         }
