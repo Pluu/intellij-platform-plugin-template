@@ -18,7 +18,12 @@ import javax.swing.JList
 
 private val PHYSICAL_ICONS = StudioDefaultDeviceIcons
 private val EMULATOR_ICONS =
-    DeviceIcons(VIRTUAL_DEVICE_PHONE, VIRTUAL_DEVICE_WEAR, VIRTUAL_DEVICE_TV, VIRTUAL_DEVICE_CAR)
+    DeviceIcons(
+        VIRTUAL_DEVICE_PHONE,
+        VIRTUAL_DEVICE_WEAR,
+        VIRTUAL_DEVICE_TV,
+        VIRTUAL_DEVICE_CAR
+    )
 
 internal class DeviceComboBox : ComboBox<Device>() {
     private val deviceComboModel: DeviceComboModel
