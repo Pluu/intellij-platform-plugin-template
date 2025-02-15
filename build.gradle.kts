@@ -1,6 +1,7 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.Constants.Configurations
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import java.io.FileInputStream
 import java.util.*
 
@@ -41,7 +42,7 @@ dependencies {
         instrumentationTools()
 //        pluginVerifier()
 //        zipSigner()
-//        testFramework(TestFrameworkType.Platform)
+        testFramework(TestFrameworkType.Platform)
 
         if (project.hasProperty("StudioCompilePath")) {
             local(property("StudioCompilePath").toString())
@@ -101,6 +102,12 @@ intellijPlatform {
                         .ifEmpty { "default" }
                 )
             }
+    }
+
+    pluginVerification {
+        ides {
+            recommended()
+        }
     }
 }
 
