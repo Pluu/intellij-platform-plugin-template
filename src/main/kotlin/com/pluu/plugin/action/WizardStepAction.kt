@@ -59,7 +59,7 @@ class AehdInstallInfoStep(
 
     override fun onWizardFinished() {
         super.onWizardFinished()
-        notify("[OK] Result : ${isChecked}")
+        notify("[OK] Result : $isChecked")
     }
 
     private fun notify(message: String) {
