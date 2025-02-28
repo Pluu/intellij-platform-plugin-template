@@ -69,6 +69,11 @@
             <add-to-group group-id="ToolsMenu" anchor="first"/>
             <add-to-group group-id="NewGroup" relative-to-action="NewDir" anchor="after"/>
 
+            <action class="com.pluu.plugin.action.NonWizardAction"
+                    id="com.pluu.plugin.action.NonWizardAction" />
+            <action class="com.pluu.plugin.action.WizardStepAction"
+                    id="com.pluu.plugin.action.WizardStepAction" />
+            <separator/>
             <action id="com.pluu.plugin.wizard.action.feature"
                     class="com.pluu.plugin.action.FeatureModuleCreateWizardAction"/>
             <action id="com.pluu.plugin.wizard.action.feature.sample"
