@@ -14,6 +14,10 @@
     ]]>
     </description>
 
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <supportsKotlinPluginMode supportsK2="true" />
+    </extensions>
+
     <extensions defaultExtensionNs="com.android">
         <tools.idea.wizard.template.wizardTemplateProvider
                 implementation="com.pluu.plugin.wizard.WizardTemplateProviderImpl"/>
