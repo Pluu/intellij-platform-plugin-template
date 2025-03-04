@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.google.gson.Strictness
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -93,7 +94,7 @@ object DesignSystemManager {
 
         action(jsonObject)
 
-        val gson = GsonBuilder().setLenient().setPrettyPrinting()
+        val gson = GsonBuilder().setStrictness(Strictness.LENIENT).setPrettyPrinting()
             .create()
 
         WriteCommandAction.runWriteCommandAction(project, "Write Json", null, {

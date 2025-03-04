@@ -91,9 +91,7 @@ class ConfigComponent(
                                 configProjectSettings.defaultSampleRootDirectory
                             }
                             addBrowseFolderListener(
-                                null,
-                                null,
-                                null,
+                                project,
                                 FileChooserDescriptor(false, true, false, false, false, false)
                             )
                         }.component

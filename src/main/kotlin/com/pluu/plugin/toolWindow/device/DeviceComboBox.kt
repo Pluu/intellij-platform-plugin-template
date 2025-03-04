@@ -11,6 +11,7 @@ import com.intellij.ui.CollectionComboBoxModel
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_CAR
+import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_HEADSET
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_PHONE
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_TV
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_WEAR
@@ -22,7 +23,8 @@ private val EMULATOR_ICONS =
         VIRTUAL_DEVICE_PHONE,
         VIRTUAL_DEVICE_WEAR,
         VIRTUAL_DEVICE_TV,
-        VIRTUAL_DEVICE_CAR
+        VIRTUAL_DEVICE_CAR,
+        VIRTUAL_DEVICE_HEADSET
     )
 
 internal class DeviceComboBox : ComboBox<Device>() {
