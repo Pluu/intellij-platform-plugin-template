@@ -69,22 +69,26 @@
             <add-to-group group-id="ToolsMenu" anchor="first"/>
             <add-to-group group-id="NewGroup" relative-to-action="NewDir" anchor="after"/>
 
-            <action class="com.pluu.plugin.action.NonWizardAction"
-                    id="com.pluu.plugin.action.NonWizardAction" />
-            <action class="com.pluu.plugin.action.WizardStepAction"
-                    id="com.pluu.plugin.action.WizardStepAction" />
-            <separator/>
             <action id="com.pluu.plugin.wizard.action.feature"
                     class="com.pluu.plugin.action.FeatureModuleCreateWizardAction"/>
             <action id="com.pluu.plugin.wizard.action.feature.sample"
                     class="com.pluu.plugin.action.FeatureSampleModuleCreateWizardAction"/>
+
             <separator/>
+
             <action id="com.pluu.plugin.action.viewmodel"
                     class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"/>
             <action id="com.pluu.plugin.wizard.action.activity"
                     class="com.pluu.plugin.action.ActivityCreateWizardAction"/>
             <action id="com.pluu.plugin.wizard.action.fragment"
                     class="com.pluu.plugin.action.FragmentCreateWizardAction"/>
+
+            <separator/>
+
+            <action class="com.pluu.plugin.action.NonWizardAction"
+                    id="com.pluu.plugin.action.NonWizardAction" />
+            <action class="com.pluu.plugin.action.WizardStepAction"
+                    id="com.pluu.plugin.action.WizardStepAction" />
         </group>
 
         <group id="com.pluu.plugin.test">
