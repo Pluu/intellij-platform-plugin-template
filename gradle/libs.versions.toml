@@ -6,7 +6,7 @@ junit = "4.13.2"
 changelog = "2.2.1"
 # https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html
 # https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
-intelliJPlatform = "2.3.0"
+intelliJPlatform = "2.4.0"
 # Kotlin Support
 # https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#adding-kotlin-support
 kotlin = "2.0.21"
