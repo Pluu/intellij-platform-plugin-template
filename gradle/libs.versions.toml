@@ -8,7 +8,7 @@ changelog = "2.2.1"
 # https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
 intelliJPlatform = "2.4.0"
 # Kotlin Support
-# https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#adding-kotlin-support
+# https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#stdlib-miscellaneous
 kotlin = "2.0.21"
 
 [libraries]
