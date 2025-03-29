@@ -4,6 +4,32 @@
 
 ## [Unreleased]
 
+## [2.1.0] - 2025-03-28
+
+### Added
+
+- Example code – `ProjectActivity`
+- Added `opentest4j` test dependency, see: [Missing opentest4j dependency in Test Framework](https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#missing-opentest4j-dependency-in-test-framework)
+
+### Removed
+
+- Example code – `MyApplicationActivationListener`
+- Remove redundant IntelliJ Platform dependency helpers: `instrumentationTools()`, `pluginVerifier()`, `zipSigner()`
+- GitHub Actions: Remove `gradle/actions/wrapper-validation` because validation is performed by default in `gradle/actions/setup-gradle@v4`
+
+### Changed
+
+- Change JVM version to `21`
+- Upgrade Gradle Wrapper to `8.13`
+- Update `platformVersion` to `2024.2.5`
+- Change since/until build to `242-252.*` (2024.2-2025.2.*)
+- Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.5.0`
+- Dependencies - upgrade `org.jetbrains.kotlin.jvm` to `2.1.20`
+- Dependencies - upgrade `org.jetbrains.qodana` to `2024.3.4`
+- Dependencies - upgrade `org.jetbrains.kotlinx.kover` to `0.9.1`
+- Dependencies (GitHub Actions) - upgrade `gradle/actions/wrapper-validation` to `v4`
+- Dependencies (GitHub Actions) - upgrade `codecov/codecov-action` to `v5`
+
 ## [2.0.2] - 2024-10-07
 
 ### Changed
@@ -771,7 +797,8 @@
 - GitHub Actions to automate testing and deployment
 - Kotlin support
 
-[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v1.14.2...v2.0.0
