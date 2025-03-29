@@ -126,4 +126,8 @@ object ModuleUtils {
         val buildFileText = VfsUtil.loadText(buildFile)
         return buildFileText.contains(PluuPlugin.Convension.LIBRARY)
     }
+
+    fun baseModuleName(module: Module): String {
+        return module.name.split(".").drop(1).joinToString(separator = ":")
+    }
 }

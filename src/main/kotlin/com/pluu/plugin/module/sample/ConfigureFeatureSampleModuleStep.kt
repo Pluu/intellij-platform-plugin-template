@@ -23,6 +23,7 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.module.feature.NewFeatureModuleModel
+import com.pluu.plugin.utils.ModuleUtils
 import com.pluu.plugin.utils.contextLabel
 import org.jetbrains.android.util.AndroidBundle
 import javax.swing.JCheckBox
@@ -75,6 +76,7 @@ class ConfigureFeatureSampleModuleStep(
     init {
         AndroidProjectInfo.getInstance(model.project)
             .getAllModulesOfProjectType(AndroidProjectTypes.PROJECT_TYPE_LIBRARY)
+            .sortedBy { ModuleUtils.baseModuleName(it) }
             .forEach { module -> baseModule.addItem(module) }
         val baseModule: OptionalProperty<Module> = model.baseModule
         bindings.bind(baseModule, SelectedItemProperty(this.baseModule))
@@ -84,7 +86,7 @@ class ConfigureFeatureSampleModuleStep(
             model.moduleName.set(
                 buildList {
                     add(model.moduleParent)
-                    addAll(value.get().name.split(".").drop(1))
+                    add(ModuleUtils.baseModuleName(value.get()))
                 }.joinToString(":")
             )
         }
