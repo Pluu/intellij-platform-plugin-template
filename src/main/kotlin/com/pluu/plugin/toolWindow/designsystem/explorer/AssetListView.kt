@@ -12,6 +12,7 @@ import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.widget.AssetView
+import com.pluu.plugin.toolWindow.designsystem.widget.GridAssetView
 import com.pluu.plugin.toolWindow.designsystem.widget.RowAssetView
 import java.awt.event.MouseEvent
 import javax.swing.JList
@@ -24,6 +25,8 @@ private fun FilterImageSize.thumbnailWidth(): Int = when (this) {
     FilterImageSize.L -> JBUI.scale(150)
 }
 
+private const val DEFAULT_GRID_MODE = true
+
 /**
  * [JList] to display [DesignAssetSet] and handle switching
  * between grid and list mode.
@@ -33,7 +36,20 @@ class AssetListView(
     speedSearch: SpeedSearch? = null,
     sampleImageSize: FilterImageSize = FilterImageSize.M
 ) : JBList<DesignAssetSet>() {
-    var assetView: AssetView
+
+    var isGridMode: Boolean by Delegates.observable(DEFAULT_GRID_MODE) { _, _, isGridMode ->
+        if (isGridMode) {
+            layoutOrientation = HORIZONTAL_WRAP
+            assetView = GridAssetView(sampleImageSize)
+        }
+        else {
+            layoutOrientation = VERTICAL
+            assetView = RowAssetView(sampleImageSize)
+        }
+        updateCellSize()
+    }
+
+    lateinit var assetView: AssetView
         private set
 
     /**
@@ -50,11 +66,8 @@ class AssetListView(
     init {
         isOpaque = false
         visibleRowCount = 0
-
-        // Row Layout
-        layoutOrientation = JList.VERTICAL
-        assetView = RowAssetView(sampleImageSize)
-        setExpandableItemsEnabled(false)
+        isGridMode = DEFAULT_GRID_MODE
+        setExpandableItemsEnabled(true)
         updateCellSize()
 
         val collectionListModel = CollectionListModel(assets)

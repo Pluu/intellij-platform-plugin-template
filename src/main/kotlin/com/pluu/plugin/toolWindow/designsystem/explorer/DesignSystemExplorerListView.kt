@@ -7,6 +7,7 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 import com.android.tools.idea.ui.resourcemanager.widget.LinkLabelSearchView
 import com.intellij.concurrency.JobScheduler
 import com.intellij.icons.AllIcons
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -15,9 +16,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
@@ -40,6 +43,7 @@ import com.pluu.plugin.toolWindow.designsystem.model.RESOURCE_DESIGN_ASSETS_KEY
 import com.pluu.plugin.toolWindow.designsystem.widget.Section
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionList
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionListModel
+import icons.StudioIcons
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Container
@@ -61,6 +65,9 @@ import javax.swing.JScrollPane
 import javax.swing.JSeparator
 import javax.swing.LayoutFocusTraversalPolicy
 import javax.swing.ListSelectionModel
+import kotlin.properties.Delegates
+
+private const val GRID_MODE = "designSystemExplorer.gridMode"
 
 private val SECTION_HEADER_SECONDARY_COLOR get() = JBColor.border()
 
@@ -93,7 +100,7 @@ private val UNIT_DELAY_BEFORE_LOADING_STATE = TimeUnit.MILLISECONDS
 
 class DesignSystemExplorerListView(
     private val viewModel: DesignSystemExplorerListViewModel,
-    val project: Project,
+    private val project: Project,
     withMultiModuleSearch: Boolean = true,
 ) : JPanel(BorderLayout()), Disposable, DataProvider {
 
@@ -110,6 +117,14 @@ class DesignSystemExplorerListView(
 
     private val sectionListModel: SectionListModel = SectionListModel()
     private val dragHandler = resourceDragHandler()
+
+    private var gridMode: Boolean by Delegates.observable(PropertiesComponent.getInstance().getBoolean(GRID_MODE)) { _, _, newValue ->
+        PropertiesComponent.getInstance().setValue(GRID_MODE, newValue)
+
+        sectionList.getLists().forEach {
+            (it as AssetListView).isGridMode = newValue
+        }
+    }
 
     private val sectionList: SectionList = SectionList(sectionListModel).apply {
         border = SECTION_LIST_BORDER
@@ -129,7 +144,7 @@ class DesignSystemExplorerListView(
         backgroundColor = LIST_MODE_BACKGROUND
     } else null
 
-    private val contentPanel = JPanel().apply {
+    private val centerPanel = JPanel().apply {
         layout = BoxLayout(this@apply, BoxLayout.Y_AXIS)
         background = LIST_MODE_BACKGROUND
         add(sectionList)
@@ -138,6 +153,23 @@ class DesignSystemExplorerListView(
             add(moduleSearchView)
         }
     }
+
+    private val footerPanel = JPanel(BorderLayout()).apply {
+        border = JBUI.Borders.customLine(JBColor.border(), 1, 0, 0, 0)
+
+        add(
+            ActionManager.getInstance().createActionToolbar(
+                "designSystemExplorer",
+                createBottomActions(), true
+            ).component, BorderLayout.EAST
+        )
+    }
+
+    private val contentPanel: JPanel =
+        JPanel(BorderLayout()).apply {
+            add(centerPanel)
+            add(footerPanel, BorderLayout.SOUTH)
+        }
 
     /**
      * Mouse listener to invoke the popup menu.
@@ -493,6 +525,49 @@ class DesignSystemExplorerListView(
         populateResourcesFuture?.cancel(true)
         searchFuture?.cancel(true)
         showLoadingFuture?.cancel(true)
+    }
+
+    private fun createBottomActions(): DefaultActionGroup {
+        return DefaultActionGroup(
+            ListModeButton(),
+            GridModeButton()
+        )
+    }
+
+    /**
+     * Button to enable the list view
+     */
+    private inner class ListModeButton : ToggleAction(
+        "List mode",
+        "Switch to list mode",
+        StudioIcons.Common.LIST_VIEW
+    ), DumbAware {
+
+        override fun isSelected(e: AnActionEvent) = !gridMode
+
+        override fun setSelected(e: AnActionEvent, state: Boolean) {
+            if (state) {
+                gridMode = false
+            }
+        }
+    }
+
+    /**
+     * Button to enable the grid view
+     */
+    private inner class GridModeButton : ToggleAction(
+        "Grid mode",
+        "Switch to grid mode",
+        StudioIcons.Common.GRID_VIEW
+    ), DumbAware {
+
+        override fun isSelected(e: AnActionEvent) = gridMode
+
+        override fun setSelected(e: AnActionEvent, state: Boolean) {
+            if (state) {
+                gridMode = true
+            }
+        }
     }
 
     private class EditComponentAction(

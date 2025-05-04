@@ -7,6 +7,7 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.IconType
 
 @State(
     name = "ConfigSettings",
@@ -34,7 +35,7 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
     override fun initializeComponent() {
         initialized = true
         if (state.types.isEmpty()) {
-            state.types.addAll(defaultDesignSystemType)
+            state.types.addAll(defaultTypes.map { it.name })
         }
     }
 
@@ -46,8 +47,15 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
         }
     }
 
-    fun getTypes(): List<DesignSystemType> = state.types
-        .map { DesignSystemType(it) }
+    fun getTypes(): List<DesignSystemType> {
+        val mapType = defaultTypes.associateBy { it.name }
+        return state.types
+            .map { name ->
+                mapType.getOrElse(name) {
+                    DesignSystemType.default(name)
+                }
+            }
+    }
 
     private fun notifyListeners(action: ConfigSettingsListener.() -> Unit) {
         // Notify listeners if this is the main ConfigSettings instance, and it has been already initialized.
@@ -59,8 +67,13 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
     }
 
     companion object {
-        private val defaultDesignSystemType: List<String> by lazy {
-            listOf("Input", "Button", "Toast", "Chips")
+        private val defaultTypes: List<DesignSystemType> by lazy {
+            listOf(
+                DesignSystemType("Input", IconType.Text),
+                DesignSystemType("Button", IconType.Button),
+                DesignSystemType("Toast", IconType.Toast),
+                DesignSystemType("Chips", IconType.Control),
+            )
         }
 
         fun getInstance(): ConfigSettings =

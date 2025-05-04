@@ -26,8 +26,7 @@ data class DesignSystemItem(
         get() = AssetKey(name, type, null)
 
     fun isValidate(): Boolean {
-        return type.isSelectable &&
-                name.isNotEmpty() &&
+        return name.isNotEmpty() &&
                 file != null &&
                 applicableFileType.isSelectable() &&
                 !sampleCode.isNullOrEmpty()
