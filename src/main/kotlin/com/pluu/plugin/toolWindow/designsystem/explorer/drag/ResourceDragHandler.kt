@@ -4,6 +4,7 @@ package com.pluu.plugin.toolWindow.designsystem.explorer.drag
 // Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/explorer/ResourceDragHandler.kt
 ///////////////////////////////////////////////////////////////////////////
 
+import com.pluu.plugin.toolWindow.designsystem.explorer.AssetListView
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import java.awt.Cursor
 import java.awt.GraphicsEnvironment
@@ -79,24 +80,31 @@ internal class ResourceDragHandlerImpl : ResourceDragHandler {
 }
 
 private fun createDragPreview(draggedAssets: JList<DesignAssetSet>): BufferedImage {
-    val component = draggedAssets.cellRenderer.getListCellRendererComponent(
-        draggedAssets,
+    val listView = draggedAssets as AssetListView
+    val component = listView.cellRenderer.getListCellRendererComponent(
+        listView,
         draggedAssets.selectedValue, // 프리뷰로 노출할 아이템
         draggedAssets.selectedIndex,
         false,
         false
     )
 
-    // Drag시 Preview 크기 : JList의 넓이 x Component의 높이
-    component.setSize(draggedAssets.width, component.preferredSize.height)
+    val componentWidth = if (listView.isGridMode) {
+        component.preferredSize.width
+    } else {
+        // Drag시 Preview 크기 : JList의 넓이 x Component의 높이
+        listView.width
+    }
+
+    component.setSize(componentWidth, component.preferredSize.height)
     component.validate()
 
     // Dimensions for BufferedImage are pre-scaled.
     @Suppress("UndesirableClassUsage")
-    val image = BufferedImage(draggedAssets.width, component.height, BufferedImage.TYPE_INT_ARGB)
+    val image = BufferedImage(component.width, component.height, BufferedImage.TYPE_INT_ARGB)
     with(image.createGraphics()) {
-        color = draggedAssets.background
-        fillRect(0, 0, draggedAssets.width, component.height)
+        color = listView.background
+        fillRect(0, 0, component.width, component.height)
         component.paint(this)
         dispose()
     }
