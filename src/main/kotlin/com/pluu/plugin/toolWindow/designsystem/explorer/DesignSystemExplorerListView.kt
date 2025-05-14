@@ -483,7 +483,7 @@ class DesignSystemExplorerListView(
 //                (sectionList.selectedValue as? ResourceAssetSet)?.let { viewModel.updateSelectedAssetSet(it) }
 //                updateSummaryPreview()
 //            }
-
+            isGridMode = this@DesignSystemExplorerListView.gridMode
         }
         return AssetSection(section.name, assetList.getFilteredSize(), assetList)
     }
