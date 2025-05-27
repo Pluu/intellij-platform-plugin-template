@@ -7,7 +7,6 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
-import com.pluu.plugin.toolWindow.designsystem.model.IconType
 
 @State(
     name = "ConfigSettings",
@@ -35,7 +34,7 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
     override fun initializeComponent() {
         initialized = true
         if (state.types.isEmpty()) {
-            state.types.addAll(defaultTypes.map { it.name })
+            state.types.addAll(DesignSystemType.defaultTypes.map { it.name })
         }
     }
 
@@ -48,7 +47,7 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
     }
 
     fun getTypes(): List<DesignSystemType> {
-        val mapType = defaultTypes.associateBy { it.name }
+        val mapType = DesignSystemType.defaultTypes.associateBy { it.name }
         return state.types
             .map { name ->
                 mapType.getOrElse(name) {
@@ -67,15 +66,6 @@ class ConfigSettings : SimplePersistentStateComponent<ConfigSettings.State>(Stat
     }
 
     companion object {
-        private val defaultTypes: List<DesignSystemType> by lazy {
-            listOf(
-                DesignSystemType("Input", IconType.Text),
-                DesignSystemType("Button", IconType.Button),
-                DesignSystemType("Toast", IconType.Toast),
-                DesignSystemType("Chips", IconType.Control),
-            )
-        }
-
         fun getInstance(): ConfigSettings =
             ApplicationManager.getApplication().service<ConfigSettings>()
     }

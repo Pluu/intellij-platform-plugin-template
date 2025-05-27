@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.settings.ConfigProjectSettings
 import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
+import com.pluu.plugin.toolWindow.designsystem.model.CategoryType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
@@ -32,12 +33,12 @@ object DesignSystemManager {
     @Slow
     fun getDesignSystemResources(
         project: Project,
-        type: DesignSystemType?
+        type: CategoryType?
     ): List<DesignSystemItem> {
         val types = if (type != null) {
             listOf(type)
         } else {
-            ConfigSettings.getInstance().getTypes()
+            CategoryType.entries
         }
         return findDesignKit(project, types)
     }
@@ -125,12 +126,16 @@ object DesignSystemManager {
     }
 
     @WorkerThread
-    fun findDesignKit(project: Project, types: List<DesignSystemType>): List<DesignSystemItem> {
+    fun findDesignKit(project: Project, categoryType: List<CategoryType>): List<DesignSystemItem> {
         val rootPath = sampleRootDirectory(project) ?: return emptyList()
         LocalFileSystem.getInstance().refreshFiles(listOf(rootPath))
 
         val jsonObject = loadJsonFromSampleFile(project, false)
 
+        val types = ConfigSettings.getInstance().getTypes()
+            .filter {
+                categoryType.contains(it.category)
+            }
         return types.flatMap { type ->
             jsonObject.getAsJsonArray(type.jsonKey)
                 ?.map { it.asJsonObject }

@@ -23,7 +23,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.layout.selected
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
-import com.pluu.plugin.toolWindow.designsystem.model.IconType
 import com.pluu.plugin.toolWindow.designsystem.utils.DesignSystemTypeNameValidator
 import java.awt.Color
 import javax.swing.JComponent
@@ -129,7 +128,7 @@ class ConfigComponent(
         val dialog = InputComponentDialog(typeListModel.toList())
         if (dialog.showAndGet()) {
             val text = dialog.newComponentName()
-            typeListModel.add(DesignSystemType(name = text, icon = IconType.Etc))
+            typeListModel.add(DesignSystemType.default(text))
             val selectedIndex = typeList.lastVisibleIndex
             typeList.selectedIndex = selectedIndex
             typeList.ensureIndexIsVisible(selectedIndex)

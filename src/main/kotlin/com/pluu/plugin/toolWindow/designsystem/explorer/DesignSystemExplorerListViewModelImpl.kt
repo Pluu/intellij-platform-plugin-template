@@ -79,12 +79,12 @@ class DesignSystemExplorerListViewModelImpl(
     }
 
     private fun getResourceSections(project: Project): List<DesignSection> {
-        val designSystemType = currentTab.filterType
+        val categoryType = currentTab.filterType
         val designSections = mutableListOf<DesignSection>()
         designSections.add(
             DesignSection(
                 name = currentTab.name,
-                assetSets = DesignSystemManager.getDesignSystemResources(project, designSystemType)
+                assetSets = DesignSystemManager.getDesignSystemResources(project, categoryType)
                     .sortedBy { it.name }
                     .map {
                         DesignAssetSet(it.name, it)

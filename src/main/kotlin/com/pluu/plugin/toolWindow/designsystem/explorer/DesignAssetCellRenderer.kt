@@ -6,11 +6,8 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 
 import com.android.tools.idea.ui.resourcemanager.rendering.AssetIconProvider
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
-import com.pluu.plugin.toolWindow.designsystem.model.IconType
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
-import icons.PluuIcons
 import java.awt.Component
-import javax.swing.Icon
 import javax.swing.JList
 import javax.swing.ListCellRenderer
 
@@ -35,7 +32,7 @@ class DesignAssetCellRenderer(
         val designSystemItem = value.asset
 
         if (assetListView.isGridMode) {
-            assetView.thumbnail = designSystemIcon(designSystemItem.type.icon)
+            assetView.thumbnail = designSystemItem.type.icon
             assetView.withChessboard = false
         } else {
             if (assetView.sampleImageSize.isVisible()) {
@@ -60,13 +57,5 @@ class DesignAssetCellRenderer(
         assetView.aliasName = designSystemItem.aliasNames?.joinToString(", ") ?: "-"
         assetView.typeName = designSystemItem.type.name.takeIf { isVisibleComponentName }.orEmpty()
         return assetView
-    }
-
-    private fun designSystemIcon(assetSet: IconType): Icon  = when (assetSet) {
-        IconType.Text -> PluuIcons.iconText
-        IconType.Control -> PluuIcons.iconSlider
-        IconType.Toast -> PluuIcons.iconToast
-        IconType.Button -> PluuIcons.iconButton
-        IconType.Etc -> PluuIcons.iconNone
     }
 }
