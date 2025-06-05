@@ -22,7 +22,8 @@ data class DesignSystemType(
                 DesignSystemType("CheckBox", CategoryType.Button, DesignSystemIcon.CheckBox),
                 DesignSystemType("Chip", CategoryType.Control, DesignSystemIcon.Chip),
                 DesignSystemType("Etc", CategoryType.Etc, DesignSystemIcon.None),
-                DesignSystemType("Input", CategoryType.Text, DesignSystemIcon.None),
+                DesignSystemType("Image", CategoryType.Image, DesignSystemIcon.Image),
+                DesignSystemType("Input", CategoryType.Text, DesignSystemIcon.Text),
                 DesignSystemType("RadioButton", CategoryType.Button, DesignSystemIcon.RadioButton),
                 DesignSystemType("Scaffold", CategoryType.Layout, DesignSystemIcon.Scaffold),
                 DesignSystemType("Slider", CategoryType.Control, DesignSystemIcon.Slider),
@@ -40,21 +41,23 @@ enum class CategoryType {
     Badge,
     Card,
     Control,
-    Etc,
+    Image,
     Layout,
     Toast,
+    Etc,
 }
 
 object DesignSystemIcon {
-    val AppBar = PluuIcons.load("/icons/icon_button.svg")
+    val AppBar = PluuIcons.load("/icons/icon_app_bar.svg")
     val Badge = PluuIcons.load("/icons/icon_button.svg")
     val Button = PluuIcons.load("/icons/icon_button.svg")
     val Card = PluuIcons.load("/icons/icon_card")
     val CheckBox = PluuIcons.load("/icons/icon_check_box.svg")
     val Chip = PluuIcons.load("/icons/icon_chip.svg")
+    val Image = PluuIcons.load("/icons/icon_image.svg")
     val None = PluuIcons.load("/icons/icon_none.svg")
     val RadioButton = PluuIcons.load("/icons/icon_radio_button.svg")
-    val Scaffold = PluuIcons.load("/icons/icon_button.svg")
+    val Scaffold = PluuIcons.load("/icons/icon_app_bar.svg")
     val Slider = PluuIcons.load("/icons/icon_slider.svg")
     val Switch = PluuIcons.load("/icons/icon_toggle.svg")
     val Text = PluuIcons.load("/icons/icon_text.svg")
