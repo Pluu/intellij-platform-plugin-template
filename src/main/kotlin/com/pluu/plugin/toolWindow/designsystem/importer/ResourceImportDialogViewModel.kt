@@ -12,8 +12,8 @@ import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
-import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import java.awt.Image
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import javax.swing.JTextField
 
@@ -38,6 +38,15 @@ class ResourceImportDialogViewModel(
         .take(MAX_IMPORT_FILES)
         .groupIntoDesignAssetSet()
         .toIdentitySet()
+
+    private fun <T> Collection<T>.toIdentitySet(): MutableSet<T> {
+        val result = Collections.newSetFromMap(IdentityHashMap<T, Boolean>())
+        for (element in this) {
+            result.add(element)
+        }
+
+        return result
+    }
 
     val assetSets: Set<DesignAssetSet> get() = assetSetsToImport
 
