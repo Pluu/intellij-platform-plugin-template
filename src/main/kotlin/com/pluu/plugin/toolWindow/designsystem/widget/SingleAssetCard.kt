@@ -274,25 +274,29 @@ class GridAssetView(
             cell(componentNameLabel)
                 .align(AlignX.CENTER)
                 .applyToComponent {
+                    font = font.deriveFont(JBUI.scaleFontSize(12f).toFloat())
                     border = JBUI.Borders.empty(0, 8)
                 }
         }
-    }.withBackground(secondaryPanelBackground)
+    }
 
     init {
         isOpaque = false
         border = LARGE_MAIN_CELL_BORDER
-        withChessboard = false
-
-        preferredSize = Dimension(75, 85)
 
         if (sampleImageSize.isVisible()) {
-            add(contentWrapper, BorderLayout.NORTH)
+            preferredSize = Dimension(65, 80)
+        }
+
+        if (sampleImageSize.isVisible()) {
+            add(contentWrapper, BorderLayout.CENTER)
         }
         add(bottomPanel, BorderLayout.SOUTH)
+
+        thumbnailWidth = 50
     }
 
-    override fun computeThumbnailSize(width: Int) = Dimension(50, 50)
+    override fun computeThumbnailSize(width: Int) = Dimension(width, width)
 
     override fun setIconLayout() {}
 
