@@ -32,7 +32,7 @@ class ResourceImporter {
             name = file.nameWithoutExtension,
             aliasNames = null,
             file = file,
-            applicableFileType = ApplicableFileType.NONE,
+            applicableFileType = ApplicableFileType.None,
             sampleCode = null
         )
     }

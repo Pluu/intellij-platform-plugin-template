@@ -5,7 +5,7 @@ import javax.swing.Icon
 
 // Icon format : https://plugins.jetbrains.com/docs/intellij/icons.html#icon-formats
 object PluuIcons {
-    private fun load(path: String): Icon {
+    fun load(path: String): Icon {
         return IconLoader.getIcon(path, javaClass)
     }
 

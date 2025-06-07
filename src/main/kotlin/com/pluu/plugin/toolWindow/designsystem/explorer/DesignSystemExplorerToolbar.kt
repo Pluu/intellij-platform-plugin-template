@@ -117,7 +117,7 @@ private class RefreshAction(
     val viewModel: DesignSystemExplorerToolbarViewModel
 ) : AnAction(
     "Refresh Previews",
-    "Refresh previews for ${viewModel.resourceType?.name ?: "ALL item"}s",
+    "Refresh previews for ${viewModel.categoryType?.name ?: "ALL item"}s",
     AllIcons.Actions.Refresh
 ) {
     override fun actionPerformed(e: AnActionEvent) {

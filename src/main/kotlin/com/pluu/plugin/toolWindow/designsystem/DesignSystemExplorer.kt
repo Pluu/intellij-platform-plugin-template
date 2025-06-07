@@ -12,7 +12,7 @@ import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerTool
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerToolbarViewModel
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerView
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerViewModel
-import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.CategoryType
 import org.jetbrains.android.facet.AndroidFacet
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -56,8 +56,8 @@ class DesignSystemExplorer private constructor(
         toolbarViewModel.facet = facet
     }
 
-    private fun updateResourceType(resourceType: DesignSystemType?) {
-        toolbarViewModel.resourceType = resourceType
+    private fun updateResourceType(categoryType: CategoryType?) {
+        toolbarViewModel.categoryType = categoryType
     }
 
     override fun dispose() {}

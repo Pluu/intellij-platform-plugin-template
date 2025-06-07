@@ -27,20 +27,27 @@ class DesignAssetCellRenderer(
         isSelected: Boolean,
         cellHasFocus: Boolean
     ): Component {
-        val assetView = (list as AssetListView).assetView
+        val assetListView = list as AssetListView
+        val assetView = assetListView.assetView
         val designSystemItem = value.asset
 
-        if (assetView.sampleImageSize.isVisible()) {
-            val thumbnailSize = assetView.thumbnailSize
-            val iconProvider = assetPreviewManager.getPreviewProvider()
-            val icon = iconProvider.getIcon(designSystemItem,
-                thumbnailSize.width,
-                thumbnailSize.height,
-                list,
-                { list.getCellBounds(index, index)?.let(list::repaint) },
-                { index in list.firstVisibleIndex..list.lastVisibleIndex })
-            assetView.thumbnail = icon
-            assetView.withChessboard = iconProvider.supportsTransparency
+        if (assetListView.isGridMode) {
+            assetView.thumbnail = designSystemItem.type.icon
+            assetView.withChessboard = false
+        } else {
+            if (assetView.sampleImageSize.isVisible()) {
+                val thumbnailSize = assetView.thumbnailSize
+                val iconProvider = assetPreviewManager.getPreviewProvider()
+                val icon = iconProvider.getIcon(
+                    designSystemItem,
+                    thumbnailSize.width,
+                    thumbnailSize.height,
+                    list,
+                    { list.getCellBounds(index, index)?.let(list::repaint) },
+                    { index in list.firstVisibleIndex..list.lastVisibleIndex })
+                assetView.thumbnail = icon
+                assetView.withChessboard = iconProvider.supportsTransparency
+            }
         }
         assetView.selected = isSelected
         assetView.focused = cellHasFocus

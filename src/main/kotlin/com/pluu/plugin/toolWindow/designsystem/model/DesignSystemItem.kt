@@ -26,8 +26,7 @@ data class DesignSystemItem(
         get() = AssetKey(name, type, null)
 
     fun isValidate(): Boolean {
-        return type.isSelectable &&
-                name.isNotEmpty() &&
+        return name.isNotEmpty() &&
                 file != null &&
                 applicableFileType.isSelectable() &&
                 !sampleCode.isNullOrEmpty()
@@ -52,9 +51,9 @@ data class AssetKey(
 )
 
 enum class ApplicableFileType {
-    NONE, XML, KOTLIN;
+    None, Compose, Xml, Kotlin;
 
-    fun isSelectable(): Boolean = this != NONE
+    fun isSelectable(): Boolean = this != None
 
     companion object {
         fun selectableTypes(): Array<ApplicableFileType> = ApplicableFileType.entries
@@ -66,6 +65,6 @@ enum class ApplicableFileType {
                 .firstOrNull { it.name == name } ?: defaultType
         }
 
-        val defaultType: ApplicableFileType = XML
+        val defaultType: ApplicableFileType = Xml
     }
 }

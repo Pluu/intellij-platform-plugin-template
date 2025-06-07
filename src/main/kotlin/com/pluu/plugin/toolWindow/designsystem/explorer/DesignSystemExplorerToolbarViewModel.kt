@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
-import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
+import com.pluu.plugin.toolWindow.designsystem.model.CategoryType
 import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.model.FilterOptions
 import com.pluu.plugin.toolWindow.designsystem.model.TypeFiltersModel
@@ -17,7 +17,7 @@ import kotlin.properties.Delegates
 
 class DesignSystemExplorerToolbarViewModel(
     facet: AndroidFacet,
-    initialDesignSystemType: DesignSystemType?,
+    initialDesignSystemType: CategoryType?,
     private val filterOptions: FilterOptions
 ) : DataProvider {
 
@@ -38,7 +38,7 @@ class DesignSystemExplorerToolbarViewModel(
 
     var requestSearch = {}
 
-    var resourceType: DesignSystemType? by Delegates.observable(initialDesignSystemType) { _, oldValue, newValue ->
+    var categoryType: CategoryType? by Delegates.observable(initialDesignSystemType) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             updateUICallback()
         }

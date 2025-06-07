@@ -39,13 +39,13 @@ import kotlin.properties.Delegates
 private val LARGE_MAIN_CELL_BORDER_SELECTED
     get() = BorderFactory.createCompoundBorder(
         JBUI.Borders.empty(2),
-        RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(2), JBUI.scale(1))
+        RoundedLineBorder(UIUtil.getTreeSelectionBackground(true), JBUI.scale(2), JBUI.scale(2))
     )
 
 private val LARGE_MAIN_CELL_BORDER_UNFOCUSED
     get() = BorderFactory.createCompoundBorder(
         JBUI.Borders.empty(2),
-        RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(2), JBUI.scale(1))
+        RoundedLineBorder(UIUtil.getTreeSelectionBackground(false), JBUI.scale(2), JBUI.scale(2))
     )
 
 private var PREVIEW_BORDER_COLOR: Color = border
@@ -53,7 +53,7 @@ private var PREVIEW_BORDER_COLOR: Color = border
 private val LARGE_MAIN_CELL_BORDER
     get() = BorderFactory.createCompoundBorder(
         JBUI.Borders.empty(2),
-        RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(2), JBUI.scale(1))
+        RoundedLineBorder(PREVIEW_BORDER_COLOR, JBUI.scale(2), JBUI.scale(2))
     )
 
 private val SECONDARY_FONT_SIZE get() = JBUI.scaleFontSize(12f).toFloat()
@@ -148,9 +148,13 @@ abstract class AssetView(
         isVisible = false
     }
 
-    abstract var selected: Boolean
+    var selected: Boolean by Delegates.observable(false) { _, _, selected ->
+        border = getBorder(selected, focused)
+    }
 
-    abstract var focused: Boolean
+    var focused: Boolean by Delegates.observable(false) { _, _, focused ->
+        border = getBorder(selected, focused)
+    }
 
     protected var contentWrapper = ChessBoardPanel().apply {
         showChessboard = withChessboard
@@ -195,7 +199,11 @@ abstract class AssetView(
      */
     protected abstract fun computeThumbnailSize(width: Int): Dimension
 
-    protected abstract fun getBorder(selected: Boolean, focused: Boolean): Border
+    protected fun getBorder(selected: Boolean, focused: Boolean): Border = when {
+        selected && focused -> LARGE_MAIN_CELL_BORDER_SELECTED
+        selected && !focused -> LARGE_MAIN_CELL_BORDER_UNFOCUSED
+        else -> LARGE_MAIN_CELL_BORDER
+    }
 
     /** Adjust layout when there is no icon to preview. */
     protected abstract fun setNonIconLayout()
@@ -211,14 +219,6 @@ abstract class AssetView(
 class RowAssetView(
     sampleImageSize: FilterImageSize
 ) : AssetView(sampleImageSize) {
-
-    override var selected by Delegates.observable(false) { _, _, selected ->
-        border = getBorder(selected, focused)
-    }
-
-    override var focused: Boolean by Delegates.observable(false) { _, _, focused ->
-        border = getBorder(selected, focused)
-    }
 
     private val bottomPanel = panel {
         customizeSpacingConfiguration(EmptySpacingConfiguration()) {
@@ -257,15 +257,7 @@ class RowAssetView(
 
     override fun computeThumbnailSize(width: Int) = Dimension(width, (width * 0.75f).toInt())
 
-    override fun getBorder(selected: Boolean, focused: Boolean): Border = when {
-        selected && focused -> LARGE_MAIN_CELL_BORDER_SELECTED
-        selected && !focused -> LARGE_MAIN_CELL_BORDER_UNFOCUSED
-        else -> LARGE_MAIN_CELL_BORDER
-    }
-
-    override fun setIconLayout() {
-        // No need to do anything.
-    }
+    override fun setIconLayout() {}
 
     override fun setNonIconLayout() {
         contentWrapper.removeAll()
@@ -273,3 +265,43 @@ class RowAssetView(
     }
 }
 
+class GridAssetView(
+    sampleImageSize: FilterImageSize
+) : AssetView(FilterImageSize.None) {
+
+    private val bottomPanel = panel {
+        row {
+            cell(componentNameLabel)
+                .align(AlignX.CENTER)
+                .applyToComponent {
+                    font = font.deriveFont(JBUI.scaleFontSize(12f).toFloat())
+                    border = JBUI.Borders.empty(0, 8)
+                }
+        }
+    }
+
+    init {
+        isOpaque = false
+        border = LARGE_MAIN_CELL_BORDER
+
+        if (sampleImageSize.isVisible()) {
+            preferredSize = Dimension(90, 80)
+        }
+
+        if (sampleImageSize.isVisible()) {
+            add(contentWrapper, BorderLayout.CENTER)
+        }
+        add(bottomPanel, BorderLayout.SOUTH)
+
+        thumbnailWidth = 50
+    }
+
+    override fun computeThumbnailSize(width: Int) = Dimension(width, width)
+
+    override fun setIconLayout() {}
+
+    override fun setNonIconLayout() {
+        contentWrapper.removeAll()
+    }
+
+}

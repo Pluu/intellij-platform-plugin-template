@@ -10,9 +10,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.concurrency.EdtExecutorService
 import com.intellij.util.ui.update.MergingUpdateQueue
-import com.pluu.plugin.settings.ConfigSettings
 import com.pluu.plugin.toolWindow.designsystem.DESIGN_RES_MANAGER_PREF_KEY
 import com.pluu.plugin.toolWindow.designsystem.explorer.DesignSystemExplorerListViewModel.UpdateUiReason
+import com.pluu.plugin.toolWindow.designsystem.model.CategoryType
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemTab
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemType
@@ -26,7 +26,7 @@ import kotlin.properties.Delegates
 
 internal class DesignSystemExplorerViewModel(
     defaultFacet: AndroidFacet,
-    supportedTypes: List<DesignSystemType>,
+    supportedTypes: List<CategoryType>,
     private val modelState: ViewModelState,
     private val selectAssetAction: ((asset: DesignSystemItem) -> Unit)? = null,
 ) : Disposable {
@@ -34,9 +34,10 @@ internal class DesignSystemExplorerViewModel(
     val tabs: List<DesignSystemTab> = buildList {
         add(DesignSystemTab("ALL", null))
 
-        supportedTypes.forEach { item ->
-            add(DesignSystemTab(item.name, item))
-        }
+        supportedTypes
+            .forEach { item ->
+                add(DesignSystemTab(item.name, item))
+            }
     }
 
     private var listViewModel: DesignSystemExplorerListViewModel? = null
@@ -79,7 +80,7 @@ internal class DesignSystemExplorerViewModel(
     var facetUpdaterCallback: ((facet: AndroidFacet) -> Unit) = {}
 
     /** Callback called when the current [DesignSystemType] has changed. */
-    var designSystemTypeUpdaterCallback: ((resourceType: DesignSystemType?) -> Unit) = {}
+    var designSystemTypeUpdaterCallback: ((resourceType: CategoryType?) -> Unit) = {}
 
     var facet: AndroidFacet by Delegates.observable(defaultFacet) { _, oldFacet, newFacet ->
         if (newFacet != oldFacet) {
@@ -177,7 +178,7 @@ internal class DesignSystemExplorerViewModel(
 
     companion object {
         fun createViewModel(facet: AndroidFacet): DesignSystemExplorerViewModel {
-            val selectableTypes = ConfigSettings.getInstance().getTypes()
+            val selectableTypes = CategoryType.entries
             return DesignSystemExplorerViewModel(
                 facet,
                 selectableTypes,

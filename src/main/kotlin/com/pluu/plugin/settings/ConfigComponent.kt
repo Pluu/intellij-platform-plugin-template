@@ -128,7 +128,7 @@ class ConfigComponent(
         val dialog = InputComponentDialog(typeListModel.toList())
         if (dialog.showAndGet()) {
             val text = dialog.newComponentName()
-            typeListModel.add(DesignSystemType(text))
+            typeListModel.add(DesignSystemType.default(text))
             val selectedIndex = typeList.lastVisibleIndex
             typeList.selectedIndex = selectedIndex
             typeList.ensureIndexIsVisible(selectedIndex)
@@ -170,7 +170,7 @@ class ConfigComponent(
         values: List<DesignSystemType>
     ) : DialogWrapper(true) {
 
-        private val names = values.map { it.name }
+        private val types = values
 
         private lateinit var nameTextField: JTextField
 
@@ -203,7 +203,7 @@ class ConfigComponent(
                                     val errorText = DesignSystemTypeNameValidator.getErrorTextForFileResource(text)
                                     val validationInfo = if (errorText != null) {
                                         ValidationInfo(errorText, this@applyToComponent)
-                                    } else if (names.contains(text.lowercase())) {
+                                    } else if (types.any { it.name.contains(text.lowercase()) }) {
                                         ValidationInfo("Type already exists.", this@applyToComponent)
                                     } else {
                                         null

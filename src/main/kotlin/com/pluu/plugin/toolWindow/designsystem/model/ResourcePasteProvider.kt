@@ -84,8 +84,9 @@ class ResourcePasteProvider : PasteProvider {
 
     private fun isPastSupport(sourceFileType: FileType, sampleCodeType: ApplicableFileType): Boolean {
         return when (sampleCodeType) {
-            ApplicableFileType.XML -> sourceFileType == XmlFileType.INSTANCE
-            ApplicableFileType.KOTLIN -> sourceFileType == KotlinFileType.INSTANCE
+            ApplicableFileType.Xml -> sourceFileType == XmlFileType.INSTANCE
+            ApplicableFileType.Compose,
+            ApplicableFileType.Kotlin, -> sourceFileType == KotlinFileType.INSTANCE
             else -> false
         }
     }
