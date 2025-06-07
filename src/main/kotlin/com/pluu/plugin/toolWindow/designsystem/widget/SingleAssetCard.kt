@@ -285,18 +285,14 @@ class GridAssetView(
         border = LARGE_MAIN_CELL_BORDER
 
         if (sampleImageSize.isVisible()) {
-            preferredSize = Dimension(90, 80)
-        }
-
-        if (sampleImageSize.isVisible()) {
             add(contentWrapper, BorderLayout.CENTER)
         }
         add(bottomPanel, BorderLayout.SOUTH)
-
-        thumbnailWidth = 50
     }
 
-    override fun computeThumbnailSize(width: Int) = Dimension(width, width)
+    override fun computeThumbnailSize(width: Int): Dimension {
+        return Dimension(width, width)
+    }
 
     override fun setIconLayout() {}
 

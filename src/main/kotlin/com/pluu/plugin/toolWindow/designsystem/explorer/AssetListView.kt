@@ -41,8 +41,7 @@ class AssetListView(
         if (isGridMode) {
             layoutOrientation = HORIZONTAL_WRAP
             assetView = GridAssetView(sampleImageSize)
-        }
-        else {
+        } else {
             layoutOrientation = VERTICAL
             assetView = RowAssetView(sampleImageSize)
         }
@@ -67,12 +66,9 @@ class AssetListView(
         isOpaque = false
         visibleRowCount = 0
         isGridMode = DEFAULT_GRID_MODE
+        setExpandableItemsEnabled(false)
 
         // Row Layout
-        layoutOrientation = VERTICAL
-        setExpandableItemsEnabled(false)
-        updateCellSize()
-
         val collectionListModel = CollectionListModel(assets)
         if (speedSearch != null) {
             speedSearch.setEnabled(true)
@@ -97,6 +93,8 @@ class AssetListView(
 
     private fun updateCellSize() {
         assetView.thumbnailWidth = thumbnailWidth
+        fixedCellWidth = assetView.preferredSize.width
+        fixedCellHeight = assetView.preferredSize.height
         revalidate()
         repaint()
     }

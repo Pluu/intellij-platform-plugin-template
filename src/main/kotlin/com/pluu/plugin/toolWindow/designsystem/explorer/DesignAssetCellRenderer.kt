@@ -5,9 +5,12 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 ///////////////////////////////////////////////////////////////////////////
 
 import com.android.tools.idea.ui.resourcemanager.rendering.AssetIconProvider
+import com.intellij.util.IconUtil
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import java.awt.Component
+import java.awt.Image
+import javax.swing.ImageIcon
 import javax.swing.JList
 import javax.swing.ListCellRenderer
 
@@ -30,13 +33,15 @@ class DesignAssetCellRenderer(
         val assetListView = list as AssetListView
         val assetView = assetListView.assetView
         val designSystemItem = value.asset
+        val thumbnailSize = assetView.thumbnailSize
 
         if (assetListView.isGridMode) {
-            assetView.thumbnail = designSystemItem.type.icon
+            val image = IconUtil.toBufferedImage(designSystemItem.type.icon)
+                .getScaledInstance(thumbnailSize.width, thumbnailSize.height, Image.SCALE_SMOOTH)
+            assetView.thumbnail = ImageIcon(image)
             assetView.withChessboard = false
         } else {
             if (assetView.sampleImageSize.isVisible()) {
-                val thumbnailSize = assetView.thumbnailSize
                 val iconProvider = assetPreviewManager.getPreviewProvider()
                 val icon = iconProvider.getIcon(
                     designSystemItem,
