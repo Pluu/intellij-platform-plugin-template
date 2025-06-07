@@ -271,11 +271,14 @@ class DesignSystemExplorerListView(
         }
         populateResourcesLists()
         viewModel.speedSearch.addChangeListener {
-            sectionList.getLists().filterIsInstance<AssetListView>()
+            sectionList.getLists()
+                .filterIsInstance<AssetListView>()
                 .forEach { assetListView -> assetListView.refilter() }
-            sectionList.getSections().filterIsInstance<AssetSection<AssetListView>>().forEach { section ->
-                section.updateHeaderName((section.list as? AssetListView)?.getFilteredSize())
-            }
+            sectionList.getSections()
+                .filterIsInstance<AssetSection<AssetListView>>()
+                .forEach { section ->
+                    section.updateHeaderName((section.list as? AssetListView)?.getFilteredSize())
+                }
             contentPanel.validate()
             contentPanel.repaint()
         }
@@ -529,7 +532,7 @@ class DesignSystemExplorerListView(
 
         private fun buildName(size: Int?): String {
             val itemNumber = size?.let { " ($it)" } ?: ""
-            return "Result$itemNumber"
+            return "${this@AssetSection.name}$itemNumber"
         }
     }
 
