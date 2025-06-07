@@ -67,7 +67,10 @@ class AssetListView(
         isOpaque = false
         visibleRowCount = 0
         isGridMode = DEFAULT_GRID_MODE
-        setExpandableItemsEnabled(true)
+
+        // Row Layout
+        layoutOrientation = VERTICAL
+        setExpandableItemsEnabled(false)
         updateCellSize()
 
         val collectionListModel = CollectionListModel(assets)

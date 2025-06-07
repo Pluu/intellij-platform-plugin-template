@@ -92,7 +92,7 @@ class SectionList(private val model: SectionListModel) : JBScrollPane() {
             }
         }
 
-        verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS
+        verticalScrollBarPolicy = VERTICAL_SCROLLBAR_ALWAYS
         addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(p0: MouseEvent?) {
                 focusInnerList()

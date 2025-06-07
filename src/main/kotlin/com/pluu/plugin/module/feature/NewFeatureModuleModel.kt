@@ -20,7 +20,6 @@ import com.android.tools.idea.wizard.template.FormFactor
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.Recipe
 import com.android.tools.idea.wizard.template.TemplateData
-import com.google.wireless.android.sdk.stats.AndroidStudioEvent
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext.NEW_MODULE
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -50,7 +49,7 @@ class NewFeatureModuleModel(
     override val category: ObjectProperty<Category> =
         ObjectValueProperty(Category.Activity)
 
-    override val loggingEvent: AndroidStudioEvent.TemplateRenderer
+    override val loggingEvent: TemplateRenderer
         get() = RenderLoggingEvent.ANDROID_MODULE
 
     override val renderer = object : ModuleTemplateRenderer() {

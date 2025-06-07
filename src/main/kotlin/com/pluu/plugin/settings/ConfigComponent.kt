@@ -118,7 +118,7 @@ class ConfigComponent(
             }
         })
         if (textField is JBTextField) {
-            textField.emptyText.setText(defaultText)
+            textField.emptyText.text = defaultText
         }
     }
 

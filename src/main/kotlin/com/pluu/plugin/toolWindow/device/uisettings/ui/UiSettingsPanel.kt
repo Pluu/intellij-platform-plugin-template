@@ -109,7 +109,7 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                     adbTextFiled = textField()
                         .align(AlignX.FILL)
                         .applyToComponent {
-                            emptyText.setText("Input app scheme")
+                            emptyText.text = "Input app scheme"
                         }
                         .whenTextChangedFromUi {
                             isEnableAppSchemeCommand.set(it.isNotEmpty())
