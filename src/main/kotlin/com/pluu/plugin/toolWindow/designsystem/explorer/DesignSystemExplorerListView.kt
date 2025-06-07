@@ -559,6 +559,8 @@ class DesignSystemExplorerListView(
         StudioIcons.Common.LIST_VIEW
     ), DumbAware {
 
+        override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
         override fun isSelected(e: AnActionEvent) = !gridMode
 
         override fun setSelected(e: AnActionEvent, state: Boolean) {
@@ -576,6 +578,8 @@ class DesignSystemExplorerListView(
         "Switch to grid mode",
         StudioIcons.Common.GRID_VIEW
     ), DumbAware {
+
+        override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
         override fun isSelected(e: AnActionEvent) = gridMode
 
