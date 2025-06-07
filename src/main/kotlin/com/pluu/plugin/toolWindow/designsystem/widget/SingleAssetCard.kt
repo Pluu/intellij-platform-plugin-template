@@ -158,7 +158,7 @@ abstract class AssetView(
 
     var isNew: Boolean by Delegates.observable(false) { _, _, new -> newLabel.isVisible = new }
 
-    protected val newLabel = object : JBLabel(" NEW ", SwingConstants.CENTER) {
+    protected val newLabel = object : JBLabel(" NEW ", CENTER) {
 
         init {
             font = JBUI.Fonts.label(8f)

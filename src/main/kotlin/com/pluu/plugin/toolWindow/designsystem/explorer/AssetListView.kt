@@ -52,7 +52,7 @@ class AssetListView(
         visibleRowCount = 0
 
         // Row Layout
-        layoutOrientation = JList.VERTICAL
+        layoutOrientation = VERTICAL
         assetView = RowAssetView(sampleImageSize)
         setExpandableItemsEnabled(false)
         updateCellSize()
