@@ -85,7 +85,6 @@ class DesignSystemExplorerListViewModelImpl(
             DesignSection(
                 name = currentTab.name,
                 assetSets = DesignSystemManager.getDesignSystemResources(project, categoryType)
-                    .sortedBy { it.name }
                     .map {
                         DesignAssetSet(it.name, it)
                     },

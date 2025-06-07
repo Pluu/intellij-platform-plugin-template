@@ -285,7 +285,7 @@ class GridAssetView(
         border = LARGE_MAIN_CELL_BORDER
 
         if (sampleImageSize.isVisible()) {
-            preferredSize = Dimension(65, 80)
+            preferredSize = Dimension(90, 80)
         }
 
         if (sampleImageSize.isVisible()) {

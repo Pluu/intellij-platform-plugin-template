@@ -118,7 +118,9 @@ class DesignSystemExplorerListView(
     private val sectionListModel: SectionListModel = SectionListModel()
     private val dragHandler = resourceDragHandler()
 
-    private var gridMode: Boolean by Delegates.observable(PropertiesComponent.getInstance().getBoolean(GRID_MODE)) { _, _, newValue ->
+    private var gridMode: Boolean by Delegates.observable(
+        PropertiesComponent.getInstance().getBoolean(GRID_MODE)
+    ) { _, _, newValue ->
         PropertiesComponent.getInstance().setValue(GRID_MODE, newValue)
 
         sectionList.getLists().forEach {
@@ -348,8 +350,22 @@ class DesignSystemExplorerListView(
 
     private fun displayResources(resourceLists: List<DesignSection>) {
         sectionListModel.clear()
+
+        val sortLambda: (DesignAssetSet, DesignAssetSet) -> Int = { a, b ->
+            if (viewModel.currentTab.filterType != null) {
+                a.name.compareTo(b.name)
+            } else {
+                if (a.asset.type.category == b.asset.type.category) {
+                    a.name.compareTo(b.name)
+                } else {
+                    a.asset.type.category.compareTo(b.asset.type.category)
+                }
+            }
+        }
+
         val sections = resourceLists
             .filterNot { it.assetSets.isEmpty() }
+            .map { it.copy(assetSets = it.assetSets.sortedWith { a, b -> sortLambda(a, b) }) }
             .map(this::createSection)
             .toList()
         if (sections.isNotEmpty()) {
