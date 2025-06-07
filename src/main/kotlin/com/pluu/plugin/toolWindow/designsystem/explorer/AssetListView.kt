@@ -10,7 +10,6 @@ import com.intellij.ui.speedSearch.FilteringListModel
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.ui.JBUI
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
-import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.widget.AssetView
 import com.pluu.plugin.toolWindow.designsystem.widget.GridAssetView
 import com.pluu.plugin.toolWindow.designsystem.widget.RowAssetView
@@ -18,12 +17,7 @@ import java.awt.event.MouseEvent
 import javax.swing.JList
 import kotlin.properties.Delegates
 
-private fun FilterImageSize.thumbnailWidth(): Int = when (this) {
-    FilterImageSize.None -> JBUI.scale(0)
-    FilterImageSize.S -> JBUI.scale(50)
-    FilterImageSize.M -> JBUI.scale(100)
-    FilterImageSize.L -> JBUI.scale(150)
-}
+private val DEFAULT_PREVIEW_SIZE = JBUI.scale(50)
 
 private const val DEFAULT_GRID_MODE = true
 
@@ -34,16 +28,16 @@ private const val DEFAULT_GRID_MODE = true
 class AssetListView(
     assets: List<DesignAssetSet>,
     speedSearch: SpeedSearch? = null,
-    sampleImageSize: FilterImageSize = FilterImageSize.M
+    isVisibleThumbnail: Boolean = true,
 ) : JBList<DesignAssetSet>() {
 
     var isGridMode: Boolean by Delegates.observable(DEFAULT_GRID_MODE) { _, _, isGridMode ->
         if (isGridMode) {
             layoutOrientation = HORIZONTAL_WRAP
-            assetView = GridAssetView(sampleImageSize)
+            assetView = GridAssetView(isVisibleThumbnail)
         } else {
             layoutOrientation = VERTICAL
-            assetView = RowAssetView(sampleImageSize)
+            assetView = RowAssetView(isVisibleThumbnail)
         }
         updateCellSize()
     }
@@ -54,7 +48,7 @@ class AssetListView(
     /**
      * Width of the [AssetView] thumbnail container
      */
-    var thumbnailWidth: Int by Delegates.observable(sampleImageSize.thumbnailWidth()) { _, oldWidth, newWidth ->
+    var thumbnailWidth: Int by Delegates.observable(DEFAULT_PREVIEW_SIZE) { _, oldWidth, newWidth ->
         if (oldWidth != newWidth) {
             updateCellSize()
         }
@@ -93,8 +87,13 @@ class AssetListView(
 
     private fun updateCellSize() {
         assetView.thumbnailWidth = thumbnailWidth
-        fixedCellWidth = assetView.preferredSize.width
-        fixedCellHeight = assetView.preferredSize.height
+        if (isGridMode) {
+            fixedCellWidth = assetView.preferredSize.width
+            fixedCellHeight = assetView.preferredSize.height
+        } else {
+            fixedCellWidth = -1
+            fixedCellHeight = -1
+        }
         revalidate()
         repaint()
     }

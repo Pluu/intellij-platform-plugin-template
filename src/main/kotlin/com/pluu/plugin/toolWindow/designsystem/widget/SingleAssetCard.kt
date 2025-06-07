@@ -18,7 +18,6 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.NamedColorUtil
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.designsystem.model.ApplicableFileType
-import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
@@ -71,7 +70,7 @@ private const val DEFAULT_WIDTH = 120
  * This allows to set
  */
 abstract class AssetView(
-    val sampleImageSize: FilterImageSize
+    val isVisibleThumbnail: Boolean
 ) : JPanel(BorderLayout()) {
 
     /**
@@ -99,7 +98,7 @@ abstract class AssetView(
     /**
      * Set the [JComponent] acting as the thumbnail of the object represented (e.g an image or a color)
      */
-    private val thumbnailLabel = JLabel().apply { horizontalAlignment = JLabel.CENTER }
+    protected val thumbnailLabel = JLabel().apply { horizontalAlignment = JLabel.CENTER }
 
     /**
      * The size of the [thumbnailLabel] container that should be used to compute the size of the thumbnail component
@@ -217,8 +216,8 @@ abstract class AssetView(
  * and some textual info below.
  */
 class RowAssetView(
-    sampleImageSize: FilterImageSize
-) : AssetView(sampleImageSize) {
+    isVisibleThumbnail: Boolean
+) : AssetView(isVisibleThumbnail) {
 
     private val bottomPanel = panel {
         customizeSpacingConfiguration(EmptySpacingConfiguration()) {
@@ -243,12 +242,12 @@ class RowAssetView(
         isOpaque = false
         border = LARGE_MAIN_CELL_BORDER
 
-        if (sampleImageSize.isVisible()) {
+        if (isVisibleThumbnail) {
             add(contentWrapper, BorderLayout.NORTH)
         }
         add(bottomPanel, BorderLayout.SOUTH)
 
-        thumbnailWidth = if (sampleImageSize.isVisible()) {
+        thumbnailWidth = if (isVisibleThumbnail) {
             DEFAULT_WIDTH
         } else {
             (DEFAULT_WIDTH / 2f).toInt()
@@ -266,8 +265,8 @@ class RowAssetView(
 }
 
 class GridAssetView(
-    sampleImageSize: FilterImageSize
-) : AssetView(FilterImageSize.None) {
+    isVisibleThumbnail: Boolean
+) : AssetView(isVisibleThumbnail) {
 
     private val bottomPanel = panel {
         row {
@@ -284,7 +283,7 @@ class GridAssetView(
         isOpaque = false
         border = LARGE_MAIN_CELL_BORDER
 
-        if (sampleImageSize.isVisible()) {
+        if (isVisibleThumbnail) {
             add(contentWrapper, BorderLayout.CENTER)
         }
         add(bottomPanel, BorderLayout.SOUTH)

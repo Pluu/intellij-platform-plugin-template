@@ -39,6 +39,7 @@ import com.pluu.plugin.toolWindow.designsystem.importer.ResourceImportDialogView
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
+import com.pluu.plugin.toolWindow.designsystem.model.FilterImageSize
 import com.pluu.plugin.toolWindow.designsystem.model.RESOURCE_DESIGN_ASSETS_KEY
 import com.pluu.plugin.toolWindow.designsystem.widget.Section
 import com.pluu.plugin.toolWindow.designsystem.widget.SectionList
@@ -67,7 +68,14 @@ import javax.swing.LayoutFocusTraversalPolicy
 import javax.swing.ListSelectionModel
 import kotlin.properties.Delegates
 
+private val DEFAULT_LIST_MODE_WIDTH get() = JBUI.scale(60)
+private val MAX_CELL_WIDTH get() = JBUI.scale(300)
+private val LIST_CELL_SIZE get() = JBUI.scale(60)
+private val MIN_CELL_WIDTH get() = JBUI.scale(150)
+private val DEFAULT_CELL_WIDTH get() = LIST_CELL_SIZE
+
 private const val GRID_MODE = "designSystemExplorer.gridMode"
+private const val PREVIEW_SIZE = "designSystemExplorer.previewSize"
 
 private val SECTION_HEADER_SECONDARY_COLOR get() = JBColor.border()
 
@@ -115,6 +123,17 @@ class DesignSystemExplorerListView(
     private var fileToSelect: VirtualFile? = null
     private var resourceToSelect: String? = null
 
+    private var previewSize = PropertiesComponent.getInstance().getInt(PREVIEW_SIZE, DEFAULT_CELL_WIDTH)
+        set(value) {
+            if (value != field) {
+                PropertiesComponent.getInstance().setValue(PREVIEW_SIZE, value, DEFAULT_CELL_WIDTH)
+                field = value
+                sectionList.getLists().forEach {
+                    (it as AssetListView).thumbnailWidth = previewSize
+                }
+            }
+        }
+
     private val sectionListModel: SectionListModel = SectionListModel()
     private val dragHandler = resourceDragHandler()
 
@@ -122,6 +141,8 @@ class DesignSystemExplorerListView(
         PropertiesComponent.getInstance().getBoolean(GRID_MODE)
     ) { _, _, newValue ->
         PropertiesComponent.getInstance().setValue(GRID_MODE, newValue)
+
+        previewSize = calculateCellWidth()
 
         sectionList.getLists().forEach {
             (it as AssetListView).isGridMode = newValue
@@ -326,6 +347,8 @@ class DesignSystemExplorerListView(
         populateResourcesFuture = viewModel.getDesignSections()
             .whenCompleteAsync({ resourceLists, _ ->
                 updatePending = false
+
+                previewSize = calculateCellWidth()
                 displayResources(resourceLists)
                 if (keepScrollPosition) setScrollPosition(scrollPosition)
                 selectIndicesIfNeeded(selectedValue, selectedIndices)
@@ -487,7 +510,7 @@ class DesignSystemExplorerListView(
         val assetList = AssetListView(
             section.assetSets,
             viewModel.speedSearch,
-            viewModel.filterOptions.sampleImageSize
+            viewModel.filterOptions.sampleImageSize.isVisible()
         ).apply {
             cellRenderer = DesignAssetCellRenderer(viewModel.assetPreviewManager, section.isVisibleTypeName)
             dragHandler.registerSource(this)
@@ -502,6 +525,7 @@ class DesignSystemExplorerListView(
 //                (sectionList.selectedValue as? ResourceAssetSet)?.let { viewModel.updateSelectedAssetSet(it) }
 //                updateSummaryPreview()
 //            }
+            thumbnailWidth = this@DesignSystemExplorerListView.previewSize
             isGridMode = this@DesignSystemExplorerListView.gridMode
         }
         return AssetSection(section.name, assetList.getFilteredSize(), assetList)
@@ -551,6 +575,25 @@ class DesignSystemExplorerListView(
             ListModeButton(),
             GridModeButton()
         )
+    }
+
+    private fun calculateCellWidth(): Int {
+        val imageSize = viewModel.filterOptions.sampleImageSize
+        return if (gridMode) {
+            when (imageSize) {
+                FilterImageSize.None -> JBUI.scale(0)
+                FilterImageSize.S -> JBUI.scale(50)
+                FilterImageSize.M -> JBUI.scale(70)
+                FilterImageSize.L -> JBUI.scale(90)
+            }
+        } else {
+            when (imageSize) {
+                FilterImageSize.None -> JBUI.scale(0)
+                FilterImageSize.S -> JBUI.scale(50)
+                FilterImageSize.M -> JBUI.scale(100)
+                FilterImageSize.L -> JBUI.scale(150)
+            }
+        }
     }
 
     /**

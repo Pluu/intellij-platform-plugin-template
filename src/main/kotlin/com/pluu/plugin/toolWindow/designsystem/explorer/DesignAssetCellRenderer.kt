@@ -37,11 +37,11 @@ class DesignAssetCellRenderer(
 
         if (assetListView.isGridMode) {
             val image = IconUtil.toBufferedImage(designSystemItem.type.icon)
-                .getScaledInstance(thumbnailSize.width, thumbnailSize.height, Image.SCALE_SMOOTH)
+                .getScaledInstance((thumbnailSize.width * 0.75f).toInt(), (thumbnailSize.height * 0.75f).toInt(), Image.SCALE_SMOOTH)
             assetView.thumbnail = ImageIcon(image)
             assetView.withChessboard = false
         } else {
-            if (assetView.sampleImageSize.isVisible()) {
+            if (assetView.isVisibleThumbnail) {
                 val iconProvider = assetPreviewManager.getPreviewProvider()
                 val icon = iconProvider.getIcon(
                     designSystemItem,
