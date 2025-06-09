@@ -87,12 +87,10 @@ class AssetListView(
 
     private fun updateCellSize() {
         assetView.thumbnailWidth = thumbnailWidth
-        if (isGridMode) {
-            fixedCellWidth = assetView.preferredSize.width
-            fixedCellHeight = assetView.preferredSize.height
+        fixedCellHeight = if (isGridMode && thumbnailWidth > 0) {
+            assetView.preferredSize.height
         } else {
-            fixedCellWidth = -1
-            fixedCellHeight = -1
+            -1
         }
         revalidate()
         repaint()

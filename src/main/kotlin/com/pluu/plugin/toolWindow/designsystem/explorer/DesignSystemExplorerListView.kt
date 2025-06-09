@@ -582,9 +582,9 @@ class DesignSystemExplorerListView(
         return if (gridMode) {
             when (imageSize) {
                 FilterImageSize.None -> JBUI.scale(0)
-                FilterImageSize.S -> JBUI.scale(50)
-                FilterImageSize.M -> JBUI.scale(70)
-                FilterImageSize.L -> JBUI.scale(90)
+                FilterImageSize.S -> JBUI.scale(40)
+                FilterImageSize.M -> JBUI.scale(50)
+                FilterImageSize.L -> JBUI.scale(60)
             }
         } else {
             when (imageSize) {

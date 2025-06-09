@@ -9,10 +9,12 @@ import com.intellij.util.IconUtil
 import com.pluu.plugin.toolWindow.designsystem.model.DesignAssetSet
 import com.pluu.plugin.toolWindow.designsystem.rendering.DesignAssetPreviewManager
 import java.awt.Component
+import java.awt.Dimension
 import java.awt.Image
 import javax.swing.ImageIcon
 import javax.swing.JList
 import javax.swing.ListCellRenderer
+import kotlin.math.min
 
 /**
  * [ListCellRenderer] to render [DesignAssetSet] using an [AssetIconProvider]
@@ -36,9 +38,22 @@ class DesignAssetCellRenderer(
         val thumbnailSize = assetView.thumbnailSize
 
         if (assetListView.isGridMode) {
-            val image = IconUtil.toBufferedImage(designSystemItem.type.icon)
-                .getScaledInstance((thumbnailSize.width * 0.75f).toInt(), (thumbnailSize.height * 0.75f).toInt(), Image.SCALE_SMOOTH)
-            assetView.thumbnail = ImageIcon(image)
+            assetView.thumbnail = if (thumbnailSize.width > 0 && thumbnailSize.height > 0) {
+                val iconSize = Dimension(designSystemItem.type.icon.iconWidth, designSystemItem.type.icon.iconHeight)
+                val scale = getScale(
+                    Dimension((thumbnailSize.width ).toInt(), (thumbnailSize.height).toInt()),
+                    iconSize
+                )
+                val image = IconUtil.toBufferedImage(designSystemItem.type.icon)
+                    .getScaledInstance(
+                        (iconSize.width * scale).toInt(),
+                        (iconSize.height * scale).toInt(),
+                        Image.SCALE_SMOOTH
+                    )
+                ImageIcon(image)
+            } else {
+                null
+            }
             assetView.withChessboard = false
         } else {
             if (assetView.isVisibleThumbnail) {
@@ -62,5 +77,14 @@ class DesignAssetCellRenderer(
         assetView.aliasName = designSystemItem.aliasNames?.joinToString(", ") ?: "-"
         assetView.typeName = designSystemItem.type.name.takeIf { isVisibleComponentName }.orEmpty()
         return assetView
+    }
+
+    /**
+     * Get the scaling factor from [source] to [target].
+     */
+    private fun getScale(target: Dimension, source: Dimension): Double {
+        val xScale = target.width / source.getWidth()
+        val yScale = target.height / source.getHeight()
+        return min(xScale, yScale)
     }
 }
