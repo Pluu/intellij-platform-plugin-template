@@ -45,14 +45,14 @@ fun RecipeExecutor.generateFeatureModule(
         )
     } else {
         buildGradle(
-            agpVersion,
+            agpVersion = agpVersion,
             isKts = useKts,
             isLibraryProject = isLibraryProject,
             isDynamicFeature = data.isDynamic,
             applicationId = data.namespace,
-            buildApiString = apis.buildApi.apiString,
-            minApi = minApi.apiString,
-            targetApi = apis.targetApi.apiString,
+            buildApi = apis.buildApi,
+            minApi = minApi,
+            targetApi = apis.targetApi,
             useAndroidX = useAndroidX,
             formFactorNames = projectData.includedFormFactorNames,
             hasTests = data.useGenericLocalTests,
@@ -76,7 +76,7 @@ fun RecipeExecutor.generateFeatureModule(
         }
     }
     if (!useConventionPlugins) {
-        addKotlinIfNeeded(projectData, targetApi = apis.targetApi.api, noKtx = true)
+        addKotlinIfNeeded(projectData, targetApi = apis.targetApi.apiLevel, noKtx = true)
         setJavaKotlinCompileOptions(data.projectTemplateData.language == Language.Kotlin)
     }
 

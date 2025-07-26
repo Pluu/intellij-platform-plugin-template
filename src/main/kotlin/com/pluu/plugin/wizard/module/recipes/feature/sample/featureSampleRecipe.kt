@@ -47,9 +47,9 @@ fun RecipeExecutor.generateFeatureSampleModule(
         buildFeatureSampleDefaultGradle(
             agpVersion = agpVersion,
             applicationId = namespace,
-            buildApiString = apis.buildApi.apiString,
-            minApi = minApi.apiString,
-            targetApi = apis.targetApi.apiString,
+            buildApi = apis.buildApi,
+            minApi = minApi,
+            targetApi = apis.targetApi,
             useAndroidX = useAndroidX,
             baseFeature = baseFeature,
             hasTests = false,
@@ -69,7 +69,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
         applyPlugin(PluuPlugin.Android.APPLICATION, null)
     }
     if (!useConventionPlugins) {
-        addKotlinIfNeeded(projectData, targetApi = apis.targetApi.api, noKtx = true)
+        addKotlinIfNeeded(projectData, targetApi = apis.targetApi.apiLevel, noKtx = true)
         setJavaKotlinCompileOptions(language == Language.Kotlin)
     }
     addMaterialDependency(useAndroidX)

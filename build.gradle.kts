@@ -153,7 +153,11 @@ intellijPlatformTesting {
 
 tasks.named<RunIdeTask>("runIde") {
     jvmArgumentProviders += CommandLineArgumentProvider {
-        listOf("-Didea.kotlin.plugin.use.k2=true")
+        listOf(
+            "-Didea.kotlin.plugin.use.k2=true",
+            // https://youtrack.jetbrains.com/issue/IJPL-176801/nio-fs.jar-missing-on-DevKits-classpath-with-IDEA-2025.1-EAP-3
+            "-Xbootclasspath/a:/Users/pluu/Applications/Android Studio Narwhal Feature Drop.app/Contents/lib/nio-fs.jar"
+        )
     }
 }
 
