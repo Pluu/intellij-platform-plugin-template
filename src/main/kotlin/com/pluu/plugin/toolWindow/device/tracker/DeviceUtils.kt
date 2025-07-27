@@ -6,15 +6,14 @@ package com.pluu.plugin.toolWindow.device.tracker
 
 import com.android.adblib.serialNumber
 import com.android.sdklib.AndroidVersion
-import com.android.sdklib.SdkVersionInfo
+import com.android.sdklib.SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
 import com.android.sdklib.deviceprovisioner.DeviceState
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.sdklib.deviceprovisioner.LocalEmulatorProperties
-import com.android.tools.idea.stats.AnonymizerUtil
-import com.google.wireless.android.sdk.stats.DeviceInfo
 import com.pluu.plugin.toolWindow.device.Device
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsModel
 import java.awt.Dimension
+import kotlin.io.path.pathString
 
 /** Convert a [DeviceState] to a [Device] */
 internal fun DeviceState.toDevice(): Device? {
@@ -22,50 +21,44 @@ internal fun DeviceState.toDevice(): Device? {
     val properties = this.properties
 
     val release = properties.androidRelease ?: "Unknown"
-    val sdk = properties.androidVersion?.apiLevel ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
-    val featureLevel = properties.androidVersion?.featureLevel ?: sdk
     val manufacturer = properties.manufacturer ?: "Unknown"
     val model = properties.model ?: "Unknown"
+    val androidVersion = properties.androidVersion ?: AndroidVersion(HIGHEST_KNOWN_STABLE_API, 0)
 
     val screenSize = properties.resolution?.let { Dimension(it.width, it.height) } ?: return null
     val density = properties.density ?: return null
 
     val uiSettingsModel = UiSettingsModel(
-        screenSize, density, sdk, properties.deviceType ?: DeviceType.HANDHELD
+        screenSize,
+        density,
+        androidVersion.androidApiLevel.majorVersion,
+        properties.deviceType ?: DeviceType.HANDHELD
     )
 
     return when (properties) {
-        is LocalEmulatorProperties ->
+        is LocalEmulatorProperties -> {
             Device.createEmulator(
                 serialNumber,
                 true,
                 release,
-                sdk,
-                properties.avdName,
-                featureLevel,
+                androidVersion,
+                properties.displayName,
+                properties.avdPath.pathString,
                 properties.deviceType,
-                uiSettingsModel,
-                DeviceInfo.newBuilder()
-                    .setDeviceType(DeviceInfo.DeviceType.LOCAL_EMULATOR)
-                    .setAnonymizedSerialNumber(AnonymizerUtil.anonymizeUtf8(serialNumber))
-                    .setBuildApiLevelFull(AndroidVersion(sdk, null).apiStringWithExtension)
-                    .build(),
-                this
+                uiSettingsModel
             )
+        }
 
         else ->
             Device.createPhysical(
                 serialNumber,
                 true,
                 release,
-                sdk,
+                androidVersion,
                 manufacturer,
                 model,
-                featureLevel,
                 properties.deviceType,
-                uiSettingsModel,
-                properties.deviceInfoProto,
-                this
+                uiSettingsModel
             )
     }
 }

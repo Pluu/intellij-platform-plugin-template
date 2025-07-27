@@ -4,62 +4,131 @@
 
 package com.pluu.plugin.toolWindow.device
 
-import com.android.sdklib.deviceprovisioner.DeviceState
+import com.android.sdklib.AndroidApiLevel
+import com.android.sdklib.AndroidVersion
 import com.android.sdklib.deviceprovisioner.DeviceType
-import com.google.wireless.android.sdk.stats.DeviceInfo
+import com.android.tools.idea.ui.screenshot.ScreenshotParameters
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsModel
+import java.nio.file.Path
 
 /** A representation of a device used by [DeviceComboBox]. */
-@Suppress("DataClassPrivateConstructor") // Exposed via copy which we use in tests
-internal data class Device
-private constructor(
-    val deviceId: String,
-    val name: String,
-    val serialNumber: String,
-    val isOnline: Boolean,
-    val release: String,
-    val sdk: Int,
-    val featureLevel: Int,
-    val model: String,
-    val type: DeviceType?,
-    val uiSettingsModel: UiSettingsModel,
-    val deviceInfo: DeviceInfo,
-    private val deviceStatus: DeviceState,
-) {
+internal sealed class Device() {
+    abstract val deviceId: String
+    abstract val name: String
+    abstract val serialNumber: String
+    abstract val isOnline: Boolean
+    abstract val release: String
+    abstract val apiLevel: AndroidApiLevel
+    abstract val featureLevel: Int
+    abstract val type: DeviceType?
+    abstract val uiSettingsModel: UiSettingsModel
 
-    val isEmulator: Boolean = serialNumber.startsWith("emulator-")
+    val sdk: Int
+        get() = apiLevel.majorVersion
 
-    val isDeviceOnline: Boolean
-        get() = deviceStatus.isOnline()
+    abstract val isEmulator: Boolean
+
+    abstract fun getScreenshotParameters(): ScreenshotParameters
+
+    abstract fun copy(
+        isOnline: Boolean = this.isOnline,
+        apiLevel: AndroidApiLevel = this.apiLevel,
+    ): Device
+
+    data class PhysicalDevice(
+        override val serialNumber: String,
+        override val isOnline: Boolean,
+        override val release: String,
+        override val apiLevel: AndroidApiLevel,
+        override val featureLevel: Int,
+        val manufacturer: String,
+        val model: String,
+        override val type: DeviceType,
+        override val uiSettingsModel: UiSettingsModel
+    ) : Device() {
+        override val deviceId: String
+            get() = serialNumber
+
+        override val name: String
+            get() = if (model.startsWith(manufacturer)) model else "$manufacturer $model"
+
+        override val isEmulator
+            get() = false
+
+        override fun getScreenshotParameters() = ScreenshotParameters(serialNumber, type, model)
+
+        override fun copy(isOnline: Boolean, apiLevel: AndroidApiLevel) =
+            PhysicalDevice(
+                serialNumber,
+                isOnline,
+                release,
+                apiLevel,
+                featureLevel,
+                manufacturer,
+                model,
+                type,
+                uiSettingsModel
+            )
+    }
+
+    data class EmulatorDevice(
+        override val serialNumber: String,
+        override val isOnline: Boolean,
+        override val release: String,
+        override val apiLevel: AndroidApiLevel,
+        override val featureLevel: Int,
+        val avdName: String,
+        val avdPath: String,
+        override val type: DeviceType,
+        override val uiSettingsModel: UiSettingsModel
+    ) : Device() {
+        override val isEmulator
+            get() = true
+
+        override val deviceId: String
+            get() = avdPath
+
+        override val name: String
+            get() = avdName
+
+        override fun getScreenshotParameters() =
+            ScreenshotParameters(serialNumber, type, Path.of(avdPath))
+
+        override fun copy(isOnline: Boolean, apiLevel: AndroidApiLevel) =
+            EmulatorDevice(
+                serialNumber,
+                isOnline,
+                release,
+                apiLevel,
+                featureLevel,
+                avdName,
+                avdPath,
+                type,
+                uiSettingsModel
+            )
+    }
 
     companion object {
         fun createPhysical(
             serialNumber: String,
             isOnline: Boolean,
             release: String,
-            sdk: Int,
+            androidVersion: AndroidVersion,
             manufacturer: String,
             model: String,
-            featureLevel: Int = sdk,
             type: DeviceType? = null,
-            uiSettingsModel: UiSettingsModel,
-            deviceInfo: DeviceInfo,
-            deviceStatus: DeviceState
+            uiSettingsModel: UiSettingsModel
         ): Device {
-            val deviceName = if (model.startsWith(manufacturer)) model else "$manufacturer $model"
-            return Device(
-                deviceId = serialNumber,
-                name = deviceName,
+            return PhysicalDevice(
                 serialNumber,
                 isOnline,
                 release.normalizeVersion(),
-                sdk,
-                featureLevel,
+                androidVersion.androidApiLevel,
+                androidVersion.featureLevel,
+                manufacturer,
                 model,
-                type,
-                uiSettingsModel,
-                deviceInfo,
-                deviceStatus
+                type ?: DeviceType.HANDHELD,
+                uiSettingsModel
             )
         }
 
@@ -67,27 +136,22 @@ private constructor(
             serialNumber: String,
             isOnline: Boolean,
             release: String,
-            sdk: Int,
+            androidVersion: AndroidVersion,
             avdName: String,
-            featureLevel: Int = sdk,
+            avdPath: String,
             type: DeviceType? = null,
-            uiSettingsModel: UiSettingsModel,
-            deviceInfo: DeviceInfo,
-            deviceStatus: DeviceState
+            uiSettingsModel: UiSettingsModel
         ): Device {
-            return Device(
-                deviceId = avdName,
-                name = avdName.replace('_', ' '),
+            return EmulatorDevice(
                 serialNumber,
                 isOnline,
                 release.normalizeVersion(),
-                sdk,
-                featureLevel,
-                model = "",
-                type,
-                uiSettingsModel,
-                deviceInfo,
-                deviceStatus
+                androidVersion.androidApiLevel,
+                androidVersion.featureLevel,
+                avdName,
+                avdPath,
+                type ?: DeviceType.HANDHELD,
+                uiSettingsModel
             )
         }
     }

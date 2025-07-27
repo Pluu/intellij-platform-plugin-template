@@ -80,12 +80,11 @@ class DeviceManagerExplorer(
 
     private fun updatePanel(item: Device) {
         settingsPanel.bind(
-            item.takeIf { it.isDeviceOnline }
-                ?.uiSettingsModel
+            item.takeIf { it.isOnline }?.uiSettingsModel
         )
 
         val newEmulators = emulators.filter {
-            it.key.isDeviceOnline
+            it.key.isOnline
         }
         emulators.clear()
         emulators.putAll(newEmulators)
@@ -114,7 +113,7 @@ class DeviceManagerExplorer(
                 when (it) {
                     is Added -> deviceAdded(it.device)
                     is StateChanged -> {
-                        if (it.device.isDeviceOnline) {
+                        if (it.device.isOnline) {
                             deviceStateChanged(it.device)
                         } else {
                             deviceRemove(it.device)
