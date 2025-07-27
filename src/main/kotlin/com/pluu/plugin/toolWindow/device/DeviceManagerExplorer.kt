@@ -1,8 +1,7 @@
 package com.pluu.plugin.toolWindow.device
 
 import com.android.sdklib.deviceprovisioner.DeviceProvisioner
-import com.android.tools.idea.concurrency.AndroidCoroutineScope
-import com.android.tools.idea.concurrency.AndroidDispatchers.workerThread
+import com.android.tools.idea.concurrency.createCoroutineScope
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
@@ -14,6 +13,7 @@ import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.Added
 import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.StateChanged
 import com.pluu.plugin.toolWindow.device.tracker.IDeviceComboBoxDeviceTracker
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsPanel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -34,7 +34,7 @@ class DeviceManagerExplorer(
     private val deviceTracker: IDeviceComboBoxDeviceTracker =
         DeviceComboBoxDeviceTracker(deviceProvisioner)
 
-    private val coroutineScope = AndroidCoroutineScope(this)
+    private val coroutineScope = createCoroutineScope()
     private val emulators = mutableMapOf<Device, EmulatorUiSettingsController>()
     private var latestDevice: Device? = null
 
@@ -69,7 +69,7 @@ class DeviceManagerExplorer(
             }
         )
 
-        coroutineScope.launch(workerThread) {
+        coroutineScope.launch(Dispatchers.Main) {
             trackSelected().collect { item ->
                 if (latestDevice == item) return@collect
                 latestDevice = item
@@ -98,7 +98,7 @@ class DeviceManagerExplorer(
             )
         }
 
-        AndroidCoroutineScope(this).launch {
+        coroutineScope.launch(Dispatchers.Main) {
             controller.populateModel()
         }
     }
