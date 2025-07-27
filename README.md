@@ -112,7 +112,6 @@ The project-specific configuration file [`gradle.properties`][file:gradle.proper
 | `pluginRepositoryUrl`    | Repository URL used for generating URLs by the [Gradle Changelog Plugin][gh:gradle-changelog-plugin] |
 | `pluginVersion`          | The current version of the plugin in [SemVer][semver] format.                                        |
 | `pluginSinceBuild`       | The `since-build` attribute of the `<idea-version>` tag.                                             |
-| `pluginUntilBuild`       | The `until-build` attribute of the `<idea-version>` tag.                                             |
 | `platformType`           | The type of IDE distribution.                                                                        |
 | `platformVersion`        | The version of the IntelliJ Platform IDE will be used to build the plugin.                           |
 | `platformPlugins`        | Comma-separated list of dependencies to the plugins from the Plugin Repositories.                    |
@@ -342,6 +341,10 @@ Within the default project structure, there is a `.run` directory provided conta
 
 Continuous integration depends on [GitHub Actions][gh:actions], a set of workflows that make it possible to automate your testing and release process.
 Thanks to such automation, you can delegate the testing and verification phases to the Continuous Integration (CI) and instead focus on development (and writing more tests).
+
+> [!NOTE]
+> To ensure the "Create Pull Request" step functions correctly in the "Publish Plugin" job, make sure to enable "Read and write permissions" for actions by navigating to `⚙️ Settings > Actions > General > Workflow permissions`.
+
 
 In the `.github/workflows` directory, you can find definitions for the following GitHub Actions workflows:
 
