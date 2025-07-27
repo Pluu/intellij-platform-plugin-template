@@ -25,12 +25,9 @@ internal fun DeviceState.toDevice(): Device? {
     val model = properties.model ?: "Unknown"
     val androidVersion = properties.androidVersion ?: AndroidVersion(HIGHEST_KNOWN_STABLE_API, 0)
 
-    val screenSize = properties.resolution?.let { Dimension(it.width, it.height) } ?: return null
-    val density = properties.density ?: return null
-
     val uiSettingsModel = UiSettingsModel(
-        screenSize,
-        density,
+        properties.resolution?.let { Dimension(it.width, it.height) } ?: return null,
+        properties.density ?: return null,
         androidVersion.androidApiLevel.majorVersion,
         properties.deviceType ?: DeviceType.HANDHELD
     )

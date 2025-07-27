@@ -9,13 +9,18 @@ import com.android.sdklib.deviceprovisioner.DeviceProvisioner
 import com.android.sdklib.deviceprovisioner.DeviceState
 import com.android.sdklib.deviceprovisioner.mapStateNotNull
 import com.pluu.plugin.toolWindow.device.Device
+import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.Added
+import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.StateChanged
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import org.jetbrains.annotations.VisibleForTesting
 
 /** An implementation of IDeviceComboBoxDeviceTracker that uses an [AdbSession] */
-internal class DeviceComboBoxDeviceTracker(
+internal class DeviceComboBoxDeviceTracker
+@VisibleForTesting
+constructor(
     private val deviceProvisioner: DeviceProvisioner
 ) : IDeviceComboBoxDeviceTracker {
 
@@ -32,7 +37,7 @@ internal class DeviceComboBoxDeviceTracker(
                 .forEach { device ->
                     onlineDevicesBySerial[device.serialNumber] = device
                     allDevicesById[device.deviceId] = device
-                    emit(DeviceEvent.Added(device))
+                    emit(Added(device))
                 }
 
             // Track devices changes:
@@ -48,9 +53,9 @@ internal class DeviceComboBoxDeviceTracker(
                         val device = state.toDevice() ?: return@forEach
                         if (!onlineDevicesBySerial.containsKey(device.serialNumber)) {
                             if (allDevicesById.containsKey(device.deviceId)) {
-                                emit(DeviceEvent.StateChanged(device))
+                                emit(StateChanged(device))
                             } else {
-                                emit(DeviceEvent.Added(device))
+                                emit(Added(device))
                             }
                             onlineDevicesBySerial[device.serialNumber] = device
                             allDevicesById[device.deviceId] = device
@@ -63,7 +68,7 @@ internal class DeviceComboBoxDeviceTracker(
                         .forEach {
                             val device = onlineDevicesBySerial[it] ?: return@forEach
                             val deviceOffline = device.copy(isOnline = false)
-                            emit(DeviceEvent.StateChanged(deviceOffline))
+                            emit(StateChanged(deviceOffline))
                             onlineDevicesBySerial.remove(it)
                             allDevicesById[device.deviceId] = deviceOffline
                         }

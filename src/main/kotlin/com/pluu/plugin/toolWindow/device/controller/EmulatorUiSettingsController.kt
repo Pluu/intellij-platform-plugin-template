@@ -9,7 +9,7 @@ import com.android.adblib.ShellCommandOutputElement
 import com.android.adblib.shellAsLines
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.tools.idea.adblib.AdbLibService
-import com.android.tools.idea.concurrency.AndroidCoroutineScope
+import com.android.tools.idea.concurrency.createCoroutineScope
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.pluu.plugin.toolWindow.device.uisettings.ui.FontScale
@@ -54,25 +54,25 @@ private const val SYSPROPS_TRANSACTION = 1599295570 // from frameworks/base/core
 
 internal const val POPULATE_COMMAND =
     "echo $DARK_MODE_DIVIDER; " +
-    "cmd uimode night; " +
-    "echo $GESTURES_DIVIDER; " +
-    "cmd overlay list android | grep $GESTURES_OVERLAY\$; " +
-    "echo $LIST_PACKAGES_DIVIDER; " +
-    "pm list packages | grep package:$TALKBACK_PACKAGE_NAME\$; " +
-    "echo $ACCESSIBILITY_SERVICES_DIVIDER; " +
-    "settings get secure $ENABLED_ACCESSIBILITY_SERVICES; " +
-    "echo $ACCESSIBILITY_BUTTON_TARGETS_DIVIDER; " +
-    "settings get secure $ACCESSIBILITY_BUTTON_TARGETS; " +
-    "echo $FONT_SCALE_DIVIDER; " +
-    "settings get system font_scale; " +
-    "echo $DENSITY_DIVIDER; " +
-    "wm density; " +
-    "echo $DEBUG_LAYOUT_DIVIDER; " +
-    "getprop debug.layout; " +
-    "echo $FOREGROUND_APPLICATION_DIVIDER; " +
-    "dumpsys activity activities | grep mFocusedApp=ActivityRecord; " +
-    "echo $DONT_KEEP_ACTIVITIES_DIVIDER; " +
-    "settings get global always_finish_activities; "
+            "cmd uimode night; " +
+            "echo $GESTURES_DIVIDER; " +
+            "cmd overlay list android | grep $GESTURES_OVERLAY\$; " +
+            "echo $LIST_PACKAGES_DIVIDER; " +
+            "pm list packages | grep package:$TALKBACK_PACKAGE_NAME\$; " +
+            "echo $ACCESSIBILITY_SERVICES_DIVIDER; " +
+            "settings get secure $ENABLED_ACCESSIBILITY_SERVICES; " +
+            "echo $ACCESSIBILITY_BUTTON_TARGETS_DIVIDER; " +
+            "settings get secure $ACCESSIBILITY_BUTTON_TARGETS; " +
+            "echo $FONT_SCALE_DIVIDER; " +
+            "settings get system font_scale; " +
+            "echo $DENSITY_DIVIDER; " +
+            "wm density; " +
+            "echo $DEBUG_LAYOUT_DIVIDER; " +
+            "getprop debug.layout; " +
+            "echo $FOREGROUND_APPLICATION_DIVIDER; " +
+            "dumpsys activity activities | grep mFocusedApp=ActivityRecord; " +
+            "echo $DONT_KEEP_ACTIVITIES_DIVIDER; " +
+            "settings get global always_finish_activities; "
 
 internal const val POPULATE_LANGUAGE_COMMAND =
     "echo $APP_LANGUAGE_DIVIDER; " +
@@ -123,7 +123,7 @@ internal class EmulatorUiSettingsController(
     model: UiSettingsModel,
     parentDisposable: Disposable,
 ) : UiSettingsController(model) {
-    private val scope = AndroidCoroutineScope(parentDisposable)
+    private val scope = parentDisposable.createCoroutineScope()
     private val decimalFormat = DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ROOT))
     private var readApplicationId = ""
     private var readPhysicalDensity = 160
@@ -381,7 +381,8 @@ internal class EmulatorUiSettingsController(
     }
 
     private fun updateResetButton() {
-        var isDefault = lastLocaleTag.isEmpty() && !lastTalkBack && lastFontScale == FontScale.NORMAL.percent
+        var isDefault = lastLocaleTag.isEmpty() && !lastTalkBack &&
+                lastFontScale == FontScale.NORMAL.percent && !lastDebugLayout
         val extraChecks = when (deviceType) {
             DeviceType.WEAR -> true
             DeviceType.TV,
@@ -389,7 +390,8 @@ internal class EmulatorUiSettingsController(
 
             else -> !lastDarkMode &&
                     !lastSelectToSpeak &&
-                    lastDensity == readPhysicalDensity
+                    lastDensity == readPhysicalDensity &&
+                    lastGestureNavigation
         }
         isDefault = isDefault && extraChecks
         isDefault = isDefault && !lastDebugLayout
