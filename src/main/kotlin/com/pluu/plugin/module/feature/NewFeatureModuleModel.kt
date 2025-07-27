@@ -9,7 +9,6 @@ import com.android.tools.idea.npw.model.ProjectModelData
 import com.android.tools.idea.npw.model.ProjectSyncInvoker
 import com.android.tools.idea.npw.module.ModuleModel
 import com.android.tools.idea.npw.project.GradleAndroidModuleTemplate.createDefaultModuleTemplate
-import com.android.tools.idea.observable.core.BoolValueProperty
 import com.android.tools.idea.observable.core.ObjectProperty
 import com.android.tools.idea.observable.core.ObjectValueProperty
 import com.android.tools.idea.observable.core.OptionalProperty
@@ -59,14 +58,11 @@ class NewFeatureModuleModel(
                 if (isFeatureSample) {
                     generateFeatureSampleModule(
                         moduleData = td as ModuleTemplateData,
-                        appTitle = applicationName.get(),
-                        useConventionPlugins = conventionPlugin.get()
+                        appTitle = applicationName.get()
                     )
                 } else {
                     generateFeatureModule(
-                        data = td as ModuleTemplateData,
-                        useVersionCatalog = true,
-                        useConventionPlugins = conventionPlugin.get()
+                        data = td as ModuleTemplateData
                     )
                 }
             }
@@ -81,7 +77,6 @@ class NewFeatureModuleModel(
 
     val baseModule = OptionalValueProperty<Module>()
     val bytecodeLevel: OptionalProperty<BytecodeLevel> = OptionalValueProperty(getInitialBytecodeLevel())
-    val conventionPlugin: BoolValueProperty = BoolValueProperty(true)
 
     init {
         if (applicationName.isEmpty.get()) {

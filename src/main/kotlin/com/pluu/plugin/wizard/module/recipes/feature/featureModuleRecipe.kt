@@ -3,10 +3,8 @@ package com.pluu.plugin.wizard.module.recipes.feature
 import com.android.SdkConstants.FN_ANDROID_MANIFEST_XML
 import com.android.SdkConstants.FN_BUILD_GRADLE
 import com.android.tools.idea.npw.module.recipes.addInstrumentedTests
-import com.android.tools.idea.npw.module.recipes.addKotlinIfNeeded
 import com.android.tools.idea.npw.module.recipes.addLocalTests
 import com.android.tools.idea.npw.module.recipes.addTestDependencies
-import com.android.tools.idea.npw.module.recipes.androidModule.buildGradle
 import com.android.tools.idea.npw.module.recipes.generateManifest
 import com.android.tools.idea.npw.module.recipes.gitignore
 import com.android.tools.idea.npw.module.recipes.proguardRecipe
@@ -21,44 +19,20 @@ import com.pluu.plugin.PluuPlugin
 
 fun RecipeExecutor.generateFeatureModule(
     data: ModuleTemplateData,
-    useKts: Boolean = false,
-    addLintOptions: Boolean = false,
-    useVersionCatalog: Boolean = false,
-    useConventionPlugins: Boolean = false
 ) {
     val (projectData, srcOut, _, manifestOut, instrumentedTestOut, localTestOut, _, moduleOut) = data
-    val (useAndroidX, agpVersion) = projectData
+    val (useAndroidX, _) = projectData
     val language = projectData.language
     val isLibraryProject = data.isLibrary
     val packageName = data.packageName
-    val apis = data.apis
-    val minApi = apis.minApi
 
     createDirectory(srcOut)
     addIncludeToSettings(data.name)
 
-    val gradleFile: String = if (useConventionPlugins) {
-        buildFeatureGradle(
-            isLibraryProject = isLibraryProject,
-            applicationId = data.namespace
-        )
-    } else {
-        buildGradle(
-            agpVersion = agpVersion,
-            isKts = useKts,
-            isLibraryProject = isLibraryProject,
-            isDynamicFeature = data.isDynamic,
-            applicationId = data.namespace,
-            buildApi = apis.buildApi,
-            minApi = minApi,
-            targetApi = apis.targetApi,
-            useAndroidX = useAndroidX,
-            formFactorNames = projectData.includedFormFactorNames,
-            hasTests = data.useGenericLocalTests,
-            addLintOptions = addLintOptions,
-            useVersionCatalog = useVersionCatalog
-        )
-    }
+    val gradleFile = buildFeatureGradle(
+        isLibraryProject = isLibraryProject,
+        applicationId = data.namespace
+    )
 
     save(
         gradleFile,
@@ -66,17 +40,9 @@ fun RecipeExecutor.generateFeatureModule(
     )
 
     if (isLibraryProject) {
-        if (useConventionPlugins) {
-            // build-logic
-            applyPlugin(PluuPlugin.Convension.LIBRARY, null)
-            applyPlugin(PluuPlugin.Convension.HILT, null)
-        } else {
-            applyPlugin(PluuPlugin.Android.LIBRARY, null)
-        }
-    }
-    if (!useConventionPlugins) {
-        addKotlinIfNeeded(projectData, targetApi = apis.targetApi.apiLevel, noKtx = true)
-        setJavaKotlinCompileOptions(true)
+        // build-logic
+        applyPlugin(PluuPlugin.Convension.LIBRARY, null)
+        applyPlugin(PluuPlugin.Convension.HILT, null)
     }
 
     if (data.useGenericLocalTests) {

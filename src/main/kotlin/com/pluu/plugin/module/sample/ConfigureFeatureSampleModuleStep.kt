@@ -10,13 +10,11 @@ import com.android.tools.idea.npw.toWizardFormFactor
 import com.android.tools.idea.npw.validator.ModuleSelectedValidator
 import com.android.tools.idea.observable.core.OptionalProperty
 import com.android.tools.idea.observable.ui.SelectedItemProperty
-import com.android.tools.idea.observable.ui.SelectedProperty
 import com.android.tools.idea.observable.ui.TextProperty
 import com.android.tools.idea.project.AndroidProjectInfo
 import com.android.tools.idea.wizard.template.BytecodeLevel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
@@ -26,7 +24,6 @@ import com.pluu.plugin.module.feature.NewFeatureModuleModel
 import com.pluu.plugin.utils.ModuleUtils
 import com.pluu.plugin.utils.contextLabel
 import org.jetbrains.android.util.AndroidBundle
-import javax.swing.JCheckBox
 import javax.swing.JComboBox
 import javax.swing.JTextField
 
@@ -45,7 +42,6 @@ class ConfigureFeatureSampleModuleStep(
 
     private val appName: JTextField = JBTextField(model.applicationName.get())
     private val bytecodeCombo: JComboBox<BytecodeLevel> = BytecodeLevelComboProvider().createComponent()
-    private val conventionPluginCheckbox: JCheckBox = JBCheckBox("Use Gradle convention plugin")
 
     override fun createMainPanel(): DialogPanel = panel {
         row("Base Module") {
@@ -62,10 +58,6 @@ class ConfigureFeatureSampleModuleStep(
 
         row("Minimum SDK") {
             cell(apiLevelCombo).align(AlignX.FILL)
-        }
-
-        row {
-            cell(conventionPluginCheckbox).align(AlignX.FILL)
         }
     }.withBorder(JBUI.Borders.empty(6))
 
@@ -90,7 +82,6 @@ class ConfigureFeatureSampleModuleStep(
 
         bindings.bindTwoWay(TextProperty(appName), model.applicationName)
         bindings.bindTwoWay(SelectedItemProperty(bytecodeCombo), model.bytecodeLevel)
-        bindings.bindTwoWay(SelectedProperty(conventionPluginCheckbox), model.conventionPlugin)
     }
 
     override fun getPreferredFocusComponent() = if (appName.isVisible) appName else moduleName

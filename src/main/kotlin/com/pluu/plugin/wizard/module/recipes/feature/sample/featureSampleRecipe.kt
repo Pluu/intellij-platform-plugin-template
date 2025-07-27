@@ -1,7 +1,8 @@
 package com.pluu.plugin.wizard.module.recipes.feature.sample
 
-import com.android.SdkConstants
-import com.android.tools.idea.npw.module.recipes.addKotlinIfNeeded
+import com.android.SdkConstants.FD_RES_VALUES
+import com.android.SdkConstants.FN_ANDROID_MANIFEST_XML
+import com.android.SdkConstants.FN_BUILD_GRADLE
 import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androidModuleColors
 import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androidModuleStrings
 import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androidModuleThemes
@@ -18,60 +19,32 @@ import com.pluu.plugin.PluuPlugin
 fun RecipeExecutor.generateFeatureSampleModule(
     moduleData: ModuleTemplateData,
     appTitle: String?, // may be null only for libraries
-    useGradleKts: Boolean = false,
-    useConventionPlugins: Boolean = false
+    useGradleKts: Boolean = false
 ) {
-    val (projectData, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
+    val (_, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
     val appCompatVersion = moduleData.apis.appCompatVersion
-    val (useAndroidX, agpVersion) = projectData
-    val language = projectData.language
     val isLibraryProject = moduleData.isLibrary
-    val apis = moduleData.apis
-    val minApi = apis.minApi
     val baseFeature = moduleData.baseFeature!!
     val namespace = moduleData.namespace
 
     createDirectory(srcOut)
     addIncludeToSettings(moduleData.name)
 
-    val buildFile = if (useGradleKts) SdkConstants.FN_BUILD_GRADLE_KTS else SdkConstants.FN_BUILD_GRADLE
-
-    val gradleFile: String = if (useConventionPlugins) {
-        buildFeatureSampleGradle(
-            isLibraryProject = isLibraryProject,
-            applicationId = namespace,
-            baseFeature = baseFeature
-        )
-    } else {
-        buildFeatureSampleDefaultGradle(
-            agpVersion = agpVersion,
-            applicationId = namespace,
-            buildApi = apis.buildApi,
-            minApi = minApi,
-            targetApi = apis.targetApi,
-            useAndroidX = useAndroidX,
-            baseFeature = baseFeature,
-            hasTests = false,
-            addLintOptions = false
-        )
-    }
+    val gradleFile = buildFeatureSampleGradle(
+        isLibraryProject = isLibraryProject,
+        applicationId = namespace,
+        baseFeature = baseFeature
+    )
     save(
         gradleFile,
-        moduleOut.resolve(buildFile)
+        moduleOut.resolve(FN_BUILD_GRADLE)
     )
 
-    if (useConventionPlugins) {
-        // build-logic
-        applyPlugin(PluuPlugin.Convension.APPLICATION, null)
-        applyPlugin(PluuPlugin.Convension.HILT, null)
-    } else {
-        applyPlugin(PluuPlugin.Android.APPLICATION, null)
-    }
-    if (!useConventionPlugins) {
-        addKotlinIfNeeded(projectData, targetApi = apis.targetApi.apiLevel, noKtx = true)
-        setJavaKotlinCompileOptions(true)
-    }
-    addMaterialDependency(useAndroidX)
+    // build-logic
+    applyPlugin(PluuPlugin.Convension.APPLICATION, null)
+    applyPlugin(PluuPlugin.Convension.HILT, null)
+
+    addMaterialDependency(true)
     addDependency("com.android.support:appcompat-v7:$appCompatVersion.+")
     addDependency("com.android.support.constraint:constraint-layout:+")
 
@@ -81,18 +54,18 @@ fun RecipeExecutor.generateFeatureSampleModule(
         theme = "@style/${moduleData.themesData.main.name}",
         addBackupRules = false
     )
-    save(manifestXml, manifestOut.resolve(SdkConstants.FN_ANDROID_MANIFEST_XML))
+    save(manifestXml, manifestOut.resolve(FN_ANDROID_MANIFEST_XML))
     save(gitignore(), moduleOut.resolve(".gitignore"))
     proguardRecipe(moduleOut, isLibraryProject)
 
-    val themesXml = androidModuleThemes(useAndroidX, moduleData.apis.minApi, moduleData.themesData.main.name)
+    val themesXml = androidModuleThemes(true, moduleData.apis.minApi, moduleData.themesData.main.name)
     val colorsXml = androidModuleColors()
 
     if (!isLibraryProject) {
         // Icon
         copyMipmapFolder(resOut)
 
-        with(resOut.resolve(SdkConstants.FD_RES_VALUES)) {
+        with(resOut.resolve(FD_RES_VALUES)) {
             save(androidModuleStrings(appTitle!!), resolve("strings.xml"))
             // Common themes.xml isn't needed for Compose because theme is created in Composable.
             if (moduleData.category != Category.Compose) {
