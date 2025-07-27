@@ -34,7 +34,7 @@ private const val EMULATOR_DISCOVERY_INTERVAL_MILLIS = 1000L
 
 @Suppress("IncorrectServiceRetrieving")
 @UiThread
-internal class DeviceToolWindowManager(
+internal class StreamingToolWindowManager(
     private val toolWindow: ToolWindow,
 ) : RunningEmulatorCatalog.Listener, DumbAware, Disposable {
 

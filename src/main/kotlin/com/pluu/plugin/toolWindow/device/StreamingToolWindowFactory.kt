@@ -25,7 +25,7 @@ class StreamingToolWindowFactory : ToolWindowFactory, DumbAware {
     override fun init(toolWindow: ToolWindow) {
         toolWindow.component.putClientProperty(ToolWindowContentUi.ALLOW_DND_FOR_TABS, true)
         toolWindow.component.putClientProperty(ToolWindowContentUi.DONT_HIDE_TOOLBAR_IN_HEADER, true)
-        DeviceToolWindowManager(toolWindow as ToolWindowEx)
+        StreamingToolWindowManager(toolWindow as ToolWindowEx)
     }
 
     private class MoveToWindowAction(private val toolWindow: ToolWindow) : ToolWindowWindowAction() {
