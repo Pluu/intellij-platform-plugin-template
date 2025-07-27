@@ -53,7 +53,7 @@
                 anchor="right"
                 icon="PluuIcons.Konata"
                 librarySearchClass="com.android.tools.idea.sdk.AndroidEnvironmentChecker"
-                factoryClass="com.pluu.plugin.toolWindow.device.DeviceManagerToolWindowFactory"/>
+                factoryClass="com.pluu.plugin.toolWindow.device.StreamingToolWindowFactory"/>
 
         <projectConfigurable
                 instance="com.pluu.plugin.settings.ConfigConfigurable"/>

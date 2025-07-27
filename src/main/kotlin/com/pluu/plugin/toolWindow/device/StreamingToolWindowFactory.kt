@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 
-class DeviceManagerToolWindowFactory : ToolWindowFactory, DumbAware {
+class StreamingToolWindowFactory : ToolWindowFactory, DumbAware {
     override fun init(toolWindow: ToolWindow) {
         DeviceToolWindowManager(toolWindow)
     }
