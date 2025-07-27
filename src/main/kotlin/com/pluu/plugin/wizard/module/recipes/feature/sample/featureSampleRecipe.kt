@@ -10,7 +10,6 @@ import com.android.tools.idea.npw.module.recipes.generateManifest
 import com.android.tools.idea.npw.module.recipes.gitignore
 import com.android.tools.idea.npw.module.recipes.proguardRecipe
 import com.android.tools.idea.wizard.template.Category
-import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
 import com.android.tools.idea.wizard.template.impl.activities.common.addMaterialDependency
@@ -70,7 +69,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
     }
     if (!useConventionPlugins) {
         addKotlinIfNeeded(projectData, targetApi = apis.targetApi.apiLevel, noKtx = true)
-        setJavaKotlinCompileOptions(language == Language.Kotlin)
+        setJavaKotlinCompileOptions(true)
     }
     addMaterialDependency(useAndroidX)
     addDependency("com.android.support:appcompat-v7:$appCompatVersion.+")

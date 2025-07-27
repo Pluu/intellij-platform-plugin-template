@@ -1,6 +1,5 @@
 package com.pluu.plugin.wizard.common.viewmodel
 
-import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.escapeKotlinIdentifier
 import com.android.tools.idea.wizard.template.getMaterialComponentName
 import com.android.tools.idea.wizard.template.renderIf
@@ -20,20 +19,18 @@ class $viewModelClass : ViewModel() {
 """
 
 fun importActivityViewModel(
-    isViewModelSupported: Boolean,
-    language: Language
+    isViewModelSupported: Boolean
 ) = renderIf(isViewModelSupported) {
-    "import androidx.activity.viewModels${renderIf(language == Language.Java) { ";" }}"
+    "import androidx.activity.viewModels"
 }
 
 fun importFragmentViewModel(
     isViewModelSupported: Boolean,
-    isUsedSharedViewModel:Boolean,
-    language: Language
+    isUsedSharedViewModel:Boolean
 ) = renderIf(isViewModelSupported) {
     if (!isUsedSharedViewModel) {
-        "import androidx.fragment.app.viewModels${renderIf(language == Language.Java) { ";" }}"
+        "import androidx.fragment.app.viewModels"
     } else {
-        "import androidx.fragment.app.activityViewModels${renderIf(language == Language.Java) { ";" }}"
+        "import androidx.fragment.app.activityViewModels"
     }
 }

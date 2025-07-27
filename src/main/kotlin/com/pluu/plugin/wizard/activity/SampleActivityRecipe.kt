@@ -1,6 +1,5 @@
 package com.pluu.plugin.wizard.activity
 
-import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
 import com.android.tools.idea.wizard.template.impl.activities.common.addAllKotlinDependencies
@@ -34,7 +33,6 @@ fun RecipeExecutor.sampleActivitySetup(
     val appCompatVersion = moduleData.apis.appCompatVersion
     val useAndroidX = moduleData.projectTemplateData.androidXSupport
     val ktOrJavaExt = projectData.language.extension
-    val generateKotlin = projectData.language == Language.Kotlin
     val useConventionPlugin = ModuleUtils.useConventionPlugin(moduleData.rootDir)
 
     // Add, Dependencies
@@ -98,7 +96,7 @@ fun RecipeExecutor.sampleActivitySetup(
         setBuildFeature("dataBinding", true)
     }
 
-    if (!useConventionPlugin && generateKotlin) {
+    if (!useConventionPlugin) {
         setJavaKotlinCompileOptions(true)
     }
 }

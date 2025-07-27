@@ -10,7 +10,6 @@ import com.android.tools.idea.npw.module.recipes.androidModule.buildGradle
 import com.android.tools.idea.npw.module.recipes.generateManifest
 import com.android.tools.idea.npw.module.recipes.gitignore
 import com.android.tools.idea.npw.module.recipes.proguardRecipe
-import com.android.tools.idea.wizard.template.Language
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
 import com.pluu.plugin.PluuPlugin
@@ -77,7 +76,7 @@ fun RecipeExecutor.generateFeatureModule(
     }
     if (!useConventionPlugins) {
         addKotlinIfNeeded(projectData, targetApi = apis.targetApi.apiLevel, noKtx = true)
-        setJavaKotlinCompileOptions(data.projectTemplateData.language == Language.Kotlin)
+        setJavaKotlinCompileOptions(true)
     }
 
     if (data.useGenericLocalTests) {

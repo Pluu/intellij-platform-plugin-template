@@ -54,7 +54,7 @@ fun basicFragmentKt(
 package ${escapeKotlinIdentifier(packageName)}
 
 import android.os.Bundle
-${importFragmentViewModel(isUsedViewModel, isUsedSharedViewModel, Language.Kotlin)}
+${importFragmentViewModel(isUsedViewModel, isUsedSharedViewModel)}
 import ${getMaterialComponentName("android.support.v4.app.Fragment", useAndroidX)}
 ${importViewBindingClass(viewBindingType.isUseBinding, packageName, applicationPackage, layoutName, Language.Kotlin)}
 import android.view.LayoutInflater

@@ -46,9 +46,9 @@ fun basicActivityKt(
 package ${escapeKotlinIdentifier(packageName)}
 
 import android.os.Bundle
-${importActivityViewModel(isUsedViewModel, Language.Kotlin)}
+${importActivityViewModel(isUsedViewModel)}
 import ${getMaterialComponentName("android.support.v7.app.AppCompatActivity", useAndroidX)}
-${importDataBinding(viewBindingType.isDataBinding, Language.Kotlin)}
+${importDataBinding(viewBindingType.isDataBinding)}
 $applicationPackageBlock
 ${importViewBindingClass(viewBindingType.isUseBinding, packageName, applicationPackage, layoutName, Language.Kotlin)}
 

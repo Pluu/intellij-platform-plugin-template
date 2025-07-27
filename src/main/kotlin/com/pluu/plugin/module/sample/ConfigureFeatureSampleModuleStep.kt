@@ -60,10 +60,6 @@ class ConfigureFeatureSampleModuleStep(
             cell(packageName).align(AlignX.FILL)
         }
 
-        row("Language") {
-            cell(languageCombo).align(AlignX.FILL)
-        }
-
         row("Minimum SDK") {
             cell(apiLevelCombo).align(AlignX.FILL)
         }
