@@ -4,7 +4,7 @@ junit = "4.13.2"
 opentest4j = "1.3.0"
 
 # plugins
-changelog = "2.3.0"
+changelog = "2.4.0"
 # https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html
 # https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
 intelliJPlatform = "2.7.0"
