@@ -6,7 +6,6 @@ package com.pluu.plugin.toolWindow.device
 
 import com.android.annotations.concurrency.AnyThread
 import com.android.annotations.concurrency.UiThread
-import com.android.sdklib.deviceprovisioner.DeviceProvisioner
 import com.android.tools.idea.avdmanager.AvdLaunchListener
 import com.android.tools.idea.deviceprovisioner.DeviceProvisionerService
 import com.android.tools.idea.streaming.emulator.EmulatorController
@@ -18,8 +17,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType.ActivateToolWindow
@@ -34,14 +33,15 @@ private const val EMULATOR_DISCOVERY_INTERVAL_MILLIS = 1000L
 
 @Suppress("IncorrectServiceRetrieving")
 @UiThread
-internal class StreamingToolWindowManager(
-    private val toolWindow: ToolWindow,
+internal class StreamingToolWindowManager @AnyThread constructor(
+    private val toolWindow: ToolWindowEx,
 ) : RunningEmulatorCatalog.Listener, DumbAware, Disposable {
 
     private val project
         @AnyThread get() = toolWindow.project
 
-    private val deviceProvisioner: DeviceProvisioner = project.service<DeviceProvisionerService>().deviceProvisioner
+    private val deviceProvisioner
+        @AnyThread get() = project.service<DeviceProvisionerService>().deviceProvisioner
 
     private var initialized = false
     private var contentShown = false
@@ -96,12 +96,19 @@ internal class StreamingToolWindowManager(
             }
         })
 
-        messageBusConnection.subscribe(AvdLaunchListener.TOPIC,
+        messageBusConnection.subscribe(
+            AvdLaunchListener.TOPIC,
             AvdLaunchListener { _, commandLine, _, project ->
                 if (project == toolWindow.project && isEmbeddedEmulator(commandLine)) {
                     RunningEmulatorCatalog.getInstance().updateNow()
                 }
-            })
+            }
+        )
+    }
+
+    override fun dispose() {
+        onToolWindowHidden()
+        RunningEmulatorCatalog.getInstance().removeListener(this)
     }
 
     private fun onToolWindowShown() {
@@ -118,7 +125,7 @@ internal class StreamingToolWindowManager(
         emulatorCatalog.updateNow()
         emulatorCatalog.addListener(this, EMULATOR_DISCOVERY_INTERVAL_MILLIS)
         assert(emulators.isEmpty())
-        emulators.addAll(emulatorCatalog.emulators.filter { it.emulatorId.isEmbedded })
+        emulators.addAll(emulatorCatalog.emulators.filter { it.emulatorId.isEmbedded }) // Ignore standalone emulators.
 
         addPanel(DeviceManagerExplorer(project, deviceProvisioner))
     }
@@ -138,7 +145,7 @@ internal class StreamingToolWindowManager(
     }
 
     override fun emulatorAdded(emulator: EmulatorController) {
-        if (emulator.emulatorId.isEmbedded) {
+        if (emulator.emulatorId.isEmbedded && emulator.emulatorConfig.isValid) {
             EventQueue.invokeLater { // This is safe because this code doesn't touch PSI or VFS.
                 if (contentShown && emulators.add(emulator)) {
                     addEmulatorPanel(emulator)
@@ -150,16 +157,10 @@ internal class StreamingToolWindowManager(
     override fun emulatorRemoved(emulator: EmulatorController) {
         if (emulator.emulatorId.isEmbedded) {
             EventQueue.invokeLater { // This is safe because this code doesn't touch PSI or VFS.
-                if (removeEmulatorPanel(emulator)) {
-                    emulators.remove(emulator)
-                }
+                emulators.remove(emulator)
+                removeEmulatorPanel(emulator)
             }
         }
-    }
-
-    override fun dispose() {
-        onToolWindowHidden()
-        RunningEmulatorCatalog.getInstance().removeListener(this)
     }
 
     private fun addPanel(panel: DeviceManagerExplorer) {
