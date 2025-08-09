@@ -42,9 +42,10 @@ private const val APP_SCHEME_TITLE = "Run App scheme"
 private const val TITLE = "Device Settings Shortcuts"
 internal const val DARK_THEME_TITLE = "Dark Theme:"
 internal const val GESTURE_NAVIGATION_TITLE = "Navigation Mode:"
+internal const val TALKBACK_TITLE = "TalkBack:"
 internal const val FONT_SCALE_TITLE = "Font Size:"
 internal const val DENSITY_TITLE = "Display Size:"
-internal const val DEBUG_LAYOUT_TITLE = "Debug Layout:"
+internal const val DEBUG_LAYOUT_TITLE = "Show Layout Bounds:"
 internal const val DONT_KEEP_ACTIVITIES_TITLE = "Don't Keep Activities:"
 internal const val RESET_TITLE = "Reset"
 internal const val PERMISSION_HINT_LINE1 =
@@ -142,21 +143,31 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
 
             indent {
                 if (deviceType != DeviceType.WEAR) {
-                    row {
-                        checkBox(DARK_THEME_TITLE)
+                    row(JBLabel(DARK_THEME_TITLE)) {
+                        checkBox("")
                             .bind(model.inDarkMode)
+                            .apply { component.name = DARK_THEME_TITLE }
                     }
                 }
 
-                row {
-                    checkBox(DEBUG_LAYOUT_TITLE)
+                row(JBLabel(DEBUG_LAYOUT_TITLE)) {
+                    checkBox("")
                         .bind(model.debugLayout)
+                        .apply { component.name = DEBUG_LAYOUT_TITLE }
                 }
 
-                row {
-                    checkBox(DONT_KEEP_ACTIVITIES_TITLE)
+                row(JBLabel(DONT_KEEP_ACTIVITIES_TITLE)) {
+                    checkBox("")
                         .bind(model.dontKeepActivities)
+                        .apply { component.name = DONT_KEEP_ACTIVITIES_TITLE }
                 }
+
+                row(JBLabel(TALKBACK_TITLE)) {
+                    checkBox("")
+                        .accessibleName(TALKBACK_TITLE)
+                        .bind(model.talkBackOn)
+                        .apply { component.name = TALKBACK_TITLE }
+                }.visibleIf(model.talkBackInstalled.and(model.permissionMonitoringDisabled))
 
                 if (deviceType == DeviceType.HANDHELD) {
                     row(JBLabel(GESTURE_NAVIGATION_TITLE)) {
@@ -183,7 +194,7 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                         .apply { component.name = FONT_SCALE_TITLE }
                 }.visibleIf(model.permissionMonitoringDisabled)
 
-                if (deviceType == DeviceType.HANDHELD) {
+                if (deviceType == DeviceType.HANDHELD || deviceType == DeviceType.DESKTOP) {
                     row(JBLabel(DENSITY_TITLE)) {
                         slider(0, model.screenDensityIndex.value, 1, 1)
                             .accessibleName(DENSITY_TITLE)
