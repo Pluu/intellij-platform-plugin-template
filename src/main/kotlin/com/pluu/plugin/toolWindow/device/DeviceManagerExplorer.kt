@@ -8,19 +8,10 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.UIUtil
 import com.pluu.plugin.toolWindow.device.controller.EmulatorUiSettingsController
-import com.pluu.plugin.toolWindow.device.tracker.DeviceComboBoxDeviceTracker
-import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.Added
-import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.StateChanged
-import com.pluu.plugin.toolWindow.device.tracker.IDeviceComboBoxDeviceTracker
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsPanel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import java.awt.Dimension
-import java.awt.event.ActionListener
 import javax.swing.BorderFactory
 import javax.swing.BoxLayout
 import javax.swing.JPanel
@@ -31,14 +22,11 @@ class DeviceManagerExplorer(
     deviceProvisioner: DeviceProvisioner
 ) : JPanel(), Disposable {
 
-    private val deviceTracker: IDeviceComboBoxDeviceTracker =
-        DeviceComboBoxDeviceTracker(deviceProvisioner)
-
     private val coroutineScope = createCoroutineScope()
     private val emulators = mutableMapOf<Device, EmulatorUiSettingsController>()
     private var latestDevice: Device? = null
 
-    private val deviceComboBox = DeviceComboBox()
+    private val deviceComboBox = DeviceComboBox(deviceProvisioner)
     private val settingsPanel = UiSettingsPanel()
 
     init {
@@ -69,8 +57,8 @@ class DeviceManagerExplorer(
             }
         )
 
-        coroutineScope.launch(Dispatchers.Main) {
-            trackSelected().collect { item ->
+        coroutineScope.launch(Dispatchers.Default) {
+            deviceComboBox.trackSelected().collect { item ->
                 if (latestDevice == item) return@collect
                 latestDevice = item
                 updatePanel(item)
@@ -100,62 +88,6 @@ class DeviceManagerExplorer(
 
         coroutineScope.launch(Dispatchers.Main) {
             controller.populateModel()
-        }
-    }
-
-    private fun trackSelected(): Flow<Device> = callbackFlow {
-        // If an item is already selected, the listener will not send it, so we send it now
-        (deviceComboBox.selectedItem as? Device)?.let { trySendBlocking(it) }
-        val listener = ActionListener { deviceComboBox.item?.let { trySendBlocking(it) } }
-        deviceComboBox.addActionListener(listener)
-        launch {
-            deviceTracker.trackDevices().collect {
-                when (it) {
-                    is Added -> deviceAdded(it.device)
-                    is StateChanged -> {
-                        if (it.device.isOnline) {
-                            deviceStateChanged(it.device)
-                        } else {
-                            deviceRemove(it.device)
-                            settingsPanel.bind(null)
-                        }
-                    }
-                }
-            }
-            this@callbackFlow.close()
-        }
-        awaitClose { deviceComboBox.removeActionListener(listener) }
-    }
-
-    private fun deviceAdded(device: Device) {
-        if (deviceComboBox.containsDevice(device)) {
-            deviceStateChanged(device)
-        } else {
-            val item = deviceComboBox.addDevice(device)
-            when {
-                deviceComboBox.selectedItem != null -> return
-                else -> selectItem(item)
-            }
-        }
-    }
-
-    private fun deviceRemove(device: Device) {
-        deviceComboBox.removeDevice(device)
-    }
-
-    private fun selectItem(item: Device?) {
-        deviceComboBox.selectedItem = item
-    }
-
-    private fun deviceStateChanged(device: Device) {
-        when (deviceComboBox.containsDevice(device)) {
-            true ->
-                deviceComboBox.replaceDevice(
-                    device,
-                    device.deviceId == deviceComboBox.item.deviceId,
-                )
-
-            false -> deviceAdded(device) // Device was removed manually so we re-add it
         }
     }
 
