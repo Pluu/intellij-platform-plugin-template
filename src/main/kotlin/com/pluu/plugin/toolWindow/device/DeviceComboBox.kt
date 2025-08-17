@@ -20,6 +20,7 @@ import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.Added
 import com.pluu.plugin.toolWindow.device.tracker.DeviceEvent.StateChanged
 import com.pluu.plugin.toolWindow.device.tracker.IDeviceComboBoxDeviceTracker
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_CAR
+import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_GLASS
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_HEADSET
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_PHONE
 import icons.StudioIcons.DeviceExplorer.VIRTUAL_DEVICE_TV
@@ -39,7 +40,8 @@ private val EMULATOR_ICONS =
         VIRTUAL_DEVICE_WEAR,
         VIRTUAL_DEVICE_TV,
         VIRTUAL_DEVICE_CAR,
-        VIRTUAL_DEVICE_HEADSET
+        VIRTUAL_DEVICE_HEADSET,
+        VIRTUAL_DEVICE_GLASS,
     )
 
 internal class DeviceComboBox(
