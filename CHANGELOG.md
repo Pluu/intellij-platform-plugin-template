@@ -6,6 +6,20 @@
 
 ### Added
 
+- Add `platformBundledModules` to `gradle.properties` along with `bundledModules()` helper to the Gradle build file
+
+### Changed
+
+- Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.7.1`
+
+### Fixed
+
+- GitHub: Fixed the missing `$RELEASE_NOTE ` parent directory in the Release workflow
+
+## [2.3.0] - 2025-08-09
+
+### Added
+
 - Added `.DS_Store` directory to `.gitignore`
 
 ### Changed
@@ -834,7 +848,8 @@
 - GitHub Actions to automate testing and deployment
 - Kotlin support
 
-[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/JetBrains/intellij-platform-plugin-template/compare/v2.0.1...v2.0.2
