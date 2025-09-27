@@ -69,10 +69,7 @@ import javax.swing.LayoutFocusTraversalPolicy
 import javax.swing.ListSelectionModel
 import kotlin.properties.Delegates
 
-private val DEFAULT_LIST_MODE_WIDTH get() = JBUI.scale(60)
-private val MAX_CELL_WIDTH get() = JBUI.scale(300)
 private val LIST_CELL_SIZE get() = JBUI.scale(60)
-private val MIN_CELL_WIDTH get() = JBUI.scale(150)
 private val DEFAULT_CELL_WIDTH get() = LIST_CELL_SIZE
 
 private const val GRID_MODE = "designSystemExplorer.gridMode"

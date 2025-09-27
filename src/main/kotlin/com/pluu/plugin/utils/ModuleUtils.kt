@@ -1,8 +1,6 @@
 package com.pluu.plugin.utils
 
-import com.android.AndroidProjectTypes
 import com.android.tools.idea.gradle.util.GradleProjectSystemUtil.findGradleBuildFile
-import com.android.tools.idea.project.AndroidProjectInfo
 import com.android.tools.idea.projectsystem.gradle.getAndroidTestModule
 import com.android.tools.idea.projectsystem.gradle.getUnitTestModule
 import com.intellij.ide.actions.CreateDirectoryOrPackageAction
@@ -11,7 +9,6 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -111,12 +108,6 @@ object ModuleUtils {
             ?.path ?: return null
 
         return VfsUtil.createDirectories(path)
-    }
-
-    private fun Project.findAppModule(): Module? {
-        return AndroidProjectInfo.getInstance(this)
-            .getAllModulesOfProjectType(AndroidProjectTypes.PROJECT_TYPE_APP)
-            .firstOrNull()
     }
 
     fun useConventionPlugin(moduleRootDir: File): Boolean {

@@ -48,7 +48,7 @@ abstract class AbstractTestCreatorAction() : AnAction() {
             JavaCodeStyleManagerImpl(project).optimizeImports(testFile)
             val createdFile: PsiElement = try {
                 testDirectory.add(testFile)
-            } catch (e: IncorrectOperationException) {
+            } catch (_: IncorrectOperationException) {
                 return@runWriteAction
             }
 
