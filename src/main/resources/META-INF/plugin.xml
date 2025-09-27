@@ -15,7 +15,7 @@
     </description>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <supportsKotlinPluginMode supportsK2="true" />
+        <supportsKotlinPluginMode supportsK2="true"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.android">
@@ -70,35 +70,52 @@
             <add-to-group group-id="NewGroup" relative-to-action="NewDir" anchor="after"/>
 
             <action id="com.pluu.plugin.wizard.action.feature"
+                    text="[Pluu] Feature Module"
+                    icon="PluuIcons.Konata"
                     class="com.pluu.plugin.action.FeatureModuleCreateWizardAction"/>
             <action id="com.pluu.plugin.wizard.action.feature.sample"
+                    text="[Pluu] Feature Sample Module"
+                    icon="PluuIcons.Konata"
                     class="com.pluu.plugin.action.FeatureSampleModuleCreateWizardAction"/>
 
             <separator/>
 
             <action id="com.pluu.plugin.action.viewmodel"
+                    text="Create ViewModel"
+                    icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
                     class="com.pluu.plugin.action.ViewModelCreateFileFromTemplateAction"/>
             <action id="com.pluu.plugin.wizard.action.activity"
+                    text="Create Activity"
+                    icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
                     class="com.pluu.plugin.action.ActivityCreateWizardAction"/>
             <action id="com.pluu.plugin.wizard.action.fragment"
+                    text="Create Fragment"
+                    icon="StudioIcons.Shell.Filetree.ANDROID_FILE"
                     class="com.pluu.plugin.action.FragmentCreateWizardAction"/>
 
             <separator/>
 
             <action class="com.pluu.plugin.action.NonWizardAction"
-                    id="com.pluu.plugin.action.NonWizardAction" />
+                    text="[NonWizard] Action"
+                    icon="PluuIcons.Konata"
+                    id="com.pluu.plugin.action.NonWizardAction"/>
             <action class="com.pluu.plugin.action.WizardStepAction"
-                    id="com.pluu.plugin.action.WizardStepAction" />
+                    text="[Wizard Step] Action"
+                    icon="PluuIcons.Konata"
+                    id="com.pluu.plugin.action.WizardStepAction"/>
         </group>
 
         <group id="com.pluu.plugin.test">
             <action id="com.pluu.plugin.wizard.action.testcreator.viewmodel"
+                    text="Create ViewModelTest"
                     class="com.pluu.plugin.action.testIntegration.ViewModelTestCreatorAction"
                     icon="PluuIcons.Konata"/>
             <action id="com.pluu.plugin.wizard.action.testcreator.activity"
+                    text="Create ActivityTest"
                     class="com.pluu.plugin.action.testIntegration.ActivityUiTestCreatorAction"
                     icon="PluuIcons.Konata"/>
             <add-to-group group-id="EditorLangPopupMenu" relative-to-action="Generate" anchor="after"/>
         </group>
     </actions>
+    <resource-bundle>messages.PluuBundle</resource-bundle>
 </idea-plugin>

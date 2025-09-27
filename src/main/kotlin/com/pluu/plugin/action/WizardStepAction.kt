@@ -13,14 +13,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.actionListener
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
-import icons.PluuIcons
 import javax.swing.JComponent
 
-class WizardStepAction : AnAction(
-    "[Wizard Step] Action",
-    "[Wizard Step] Action",
-    PluuIcons.Konata
-), DumbAware {
+class WizardStepAction : AnAction(), DumbAware {
+
     override fun actionPerformed(p0: AnActionEvent) {
         val wizard = ModelWizard.Builder()
             .addStep(AehdInstallInfoStep(p0.project))

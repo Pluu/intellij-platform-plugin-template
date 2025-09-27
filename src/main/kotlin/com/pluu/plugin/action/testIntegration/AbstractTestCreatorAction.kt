@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.psi.KtClass
 
-abstract class AbstractTestCreatorAction(actionName: String) : AnAction(actionName) {
+abstract class AbstractTestCreatorAction() : AnAction() {
 
     final override fun actionPerformed(event: AnActionEvent) {
         val editor = event.getData(CommonDataKeys.EDITOR) ?: return

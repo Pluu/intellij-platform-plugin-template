@@ -5,7 +5,6 @@ import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.action.component.UiComponentCreateWizardAction
 
 class FragmentCreateWizardAction : UiComponentCreateWizardAction(
-    text = "Create Fragment",
     wizardUiContext = FRAGMENT_GALLERY,
     templateName = PluuBundle.message("pluu.fragment.and.viewmodel.new.feature.title"),
     dialogTitle = "android.wizard.new.fragment.title",

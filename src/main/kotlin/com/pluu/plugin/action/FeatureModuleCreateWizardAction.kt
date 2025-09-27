@@ -7,18 +7,13 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.util.ui.JBUI
-import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.module.feature.ConfigureFeatureModuleStep
 import com.pluu.plugin.module.feature.NewFeatureModuleModel
 import com.pluu.plugin.utils.ModuleUtils
-import icons.PluuIcons
 import org.jetbrains.android.util.AndroidBundle.message
 
-class FeatureModuleCreateWizardAction : AnAction(
-    PluuBundle.message("pluu.module.new.feature.title"),
-    PluuBundle.message("pluu.module.new.feature.description"),
-    PluuIcons.Konata
-) {
+class FeatureModuleCreateWizardAction : AnAction() {
+
     override fun update(e: AnActionEvent) {
         e.presentation.isVisible = ModuleUtils.isRootPlace(e.dataContext)
     }

@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.utils.ModuleUtils
-import icons.StudioIcons
 import org.jetbrains.android.facet.AndroidFacet
 import java.io.File
 
@@ -33,12 +32,11 @@ import java.io.File
 val CREATED_FILES = DataKey.create<MutableList<File>>("CreatedFiles")
 
 abstract class UiComponentCreateWizardAction(
-    text: String,
     private val wizardUiContext: AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext,
     private val templateName: String,
     private val dialogTitle: String,
     private val stepTitle: String
-) : AnAction(text, null, StudioIcons.Shell.Filetree.ANDROID_FILE) {
+) : AnAction() {
 
     override fun update(e: AnActionEvent) {
         e.presentation.isVisible = ModuleUtils.isAndroidModulePlace(e.dataContext)

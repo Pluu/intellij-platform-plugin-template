@@ -9,14 +9,9 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.pluu.plugin.FileTemplateProviderImpl
 import com.pluu.plugin.utils.ModuleUtils
-import icons.StudioIcons
 import org.jetbrains.kotlin.idea.KotlinIcons
 
-class ViewModelCreateFileFromTemplateAction : CreateFileFromTemplateAction(
-    "Create ViewModel",
-    "create just ViewModel class file",
-    StudioIcons.Shell.Filetree.ANDROID_FILE
-) {
+class ViewModelCreateFileFromTemplateAction : CreateFileFromTemplateAction() {
     override fun update(e: AnActionEvent) {
         e.presentation.isVisible = ModuleUtils.isAndroidModulePlace(e.dataContext)
     }

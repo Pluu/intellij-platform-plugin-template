@@ -6,14 +6,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
-import com.pluu.plugin.PluuBundle
 import com.pluu.plugin.utils.ModuleUtils.getSuggestedTestDirectory
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import java.util.*
 
-class ViewModelTestCreatorAction : AbstractTestCreatorAction(
-    PluuBundle.message("pluu.viewmodel.test.action.name")
-) {
+class ViewModelTestCreatorAction : AbstractTestCreatorAction() {
     override fun isAvailable(fileName: String): Boolean {
         return fileName.endsWith("ViewModel")
     }

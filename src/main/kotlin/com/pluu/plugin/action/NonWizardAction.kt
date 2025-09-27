@@ -10,14 +10,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
-import icons.PluuIcons
 import javax.swing.JComponent
 
-class NonWizardAction : AnAction(
-    "[NonWizard] Action",
-    "[NonWizard] Action",
-    PluuIcons.Konata
-), DumbAware {
+class NonWizardAction : AnAction(), DumbAware {
+
     override fun actionPerformed(p0: AnActionEvent) {
         SampleDialog(p0.project).show()
     }
