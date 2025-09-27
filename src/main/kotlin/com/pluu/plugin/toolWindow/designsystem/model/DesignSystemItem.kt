@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.pluu.plugin.toolWindow.designsystem.rendering.ImageCacheValue
 
 /** [DataKey] to pass an array of [DesignSystemItem]s. */
-val RESOURCE_DESIGN_ASSETS_KEY: DataKey<List<DesignSystemItem>> = DataKey.create("DesignSystem Assets Key")
+val RESOURCE_DESIGN_ASSETS_KEY: DataKey<Array<DesignSystemItem>> = DataKey.create("DesignSystem Assets Key")
 
 data class DesignSystemItem(
     val type: DesignSystemType,

@@ -108,7 +108,7 @@ internal class DesignSystemExplorerViewModel(
         listViewModel = null
         return CompletableFuture.supplyAsync({
             DesignSystemExplorerListViewModelImpl(
-                facet.module.project,
+                facet,
                 listViewImageCache,
                 filterOptions,
                 tabs[supportTypeIndex],

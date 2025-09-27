@@ -8,9 +8,10 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.actionSystem.DataSink
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.openapi.actionSystem.UiDataProvider
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.PresentationFactory
 import com.intellij.openapi.project.DumbAware
@@ -35,7 +36,7 @@ private val GAP_SIZE = JBUI.scale(10)
 
 class DesignSystemExplorerToolbar(
     private val toolbarViewModel: DesignSystemExplorerToolbarViewModel,
-) : JPanel(), DataProvider by toolbarViewModel {
+) : JPanel(), UiDataProvider {
 
     private val searchAction = createSearchField()
     private val refreshAction = action(RefreshAction(toolbarViewModel))
@@ -58,6 +59,10 @@ class DesignSystemExplorerToolbar(
         toolbarViewModel.updateUICallback = this::update
         toolbarViewModel.requestSearch = this::requestSearch
         update() // Update current module right away.
+    }
+
+    override fun uiDataSnapshot(sink: DataSink) {
+        DataSink.uiDataSnapshot(sink, toolbarViewModel)
     }
 
     private fun update() {

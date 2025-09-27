@@ -4,7 +4,7 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 // Origin : https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android/src/com/android/tools/idea/ui/resourcemanager/explorer/ResourceExplorerListViewModel.kt
 ///////////////////////////////////////////////////////////////////////////
 
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.actionSystem.DataSink
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSection
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
@@ -48,7 +48,7 @@ interface DesignSystemExplorerListViewModel {
 
     val assetPreviewManager: DesignAssetPreviewManager
 
-    val project: Project
+    val facet: AndroidFacet
 
     val speedSearch: SpeedSearch
 
@@ -72,12 +72,12 @@ interface DesignSystemExplorerListViewModel {
      * Returns a list of [DesignSection] with one section per namespace, the first section being the
      * one containing the resource of the current module.
      */
-    fun getDesignSections(): CompletableFuture<List<DesignSection>>
+    fun getCurrentModuleResourceLists(): CompletableFuture<List<DesignSection>>
 
     /**
-     * Delegate method to handle calls to [com.intellij.openapi.actionSystem.DataProvider.getData].
+     * Delegate method to handle calls to [UiDataSnapshotProvider.uiDataSnapshot].
      */
-    fun getData(dataId: String?, selectedAssets: List<DesignSystemItem>): Any?
+    fun uiDataSnapshot(sink: DataSink, selectedAssets: List<DesignSystemItem>)
 
     /**
      * Action when selecting an [DesignSystemItem] (double click or select + ENTER key).

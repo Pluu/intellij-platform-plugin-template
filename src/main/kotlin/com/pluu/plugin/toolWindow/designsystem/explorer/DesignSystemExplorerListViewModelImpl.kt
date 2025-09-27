@@ -5,7 +5,7 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 ///////////////////////////////////////////////////////////////////////////
 
 import com.intellij.codeInsight.navigation.openFileWithPsiElement
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.actionSystem.DataSink
 import com.intellij.ui.speedSearch.SpeedSearch
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.EdtExecutorService
@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture.supplyAsync
 import kotlin.properties.Delegates
 
 class DesignSystemExplorerListViewModelImpl(
-    override val project: Project,
+    override val facet: AndroidFacet,
     private val listViewImageCache: ImageCache,
     override val filterOptions: FilterOptions,
     initialDesignSystemTab: DesignSystemTab,
@@ -46,7 +46,7 @@ class DesignSystemExplorerListViewModelImpl(
         }
     }
 
-    private val dataManager = ResourceDataManager(project)
+    private val dataManager = ResourceDataManager(facet)
 
     override val selectedTabName: String get() = currentTab.name
 
@@ -60,7 +60,7 @@ class DesignSystemExplorerListViewModelImpl(
         DesignAssetPreviewManagerImpl(listViewImageCache)
 
     override fun clearCacheForCurrentResources() {
-        getDesignSections().whenCompleteAsync({ lists, throwable ->
+        getCurrentModuleResourceLists().whenCompleteAsync({ lists, throwable ->
             if (throwable == null) {
                 lists.flatMap { section ->
                     section.assetSets.map { it.asset }
@@ -74,17 +74,17 @@ class DesignSystemExplorerListViewModelImpl(
         listViewImageCache.clear(asset)
     }
 
-    override fun getDesignSections() = resourceExplorerSupplyAsync {
-        getResourceSections(project)
+    override fun getCurrentModuleResourceLists(): CompletableFuture<List<DesignSection>> = resourceExplorerSupplyAsync {
+        getResourceSections(facet)
     }
 
-    private fun getResourceSections(project: Project): List<DesignSection> {
+    private fun getResourceSections(forFacet: AndroidFacet): List<DesignSection> {
         val categoryType = currentTab.filterType
         val designSections = mutableListOf<DesignSection>()
         designSections.add(
             DesignSection(
                 name = currentTab.name,
-                assetSets = DesignSystemManager.getDesignSystemResources(project, categoryType)
+                assetSets = DesignSystemManager.getDesignSystemResources(forFacet.module.project, categoryType)
                     .map {
                         DesignAssetSet(it.name, it)
                     },
@@ -94,8 +94,8 @@ class DesignSystemExplorerListViewModelImpl(
         return designSections
     }
 
-    override fun getData(dataId: String?, selectedAssets: List<DesignSystemItem>): Any? {
-        return dataManager.getData(dataId, selectedAssets)
+    override fun uiDataSnapshot(sink: DataSink, selectedAssets: List<DesignSystemItem>) {
+        dataManager.uiDataSnapshot(sink, selectedAssets)
     }
 
     override val doSelectAssetAction: (asset: DesignSystemItem) -> Unit = selectAssetAction ?: { asset ->

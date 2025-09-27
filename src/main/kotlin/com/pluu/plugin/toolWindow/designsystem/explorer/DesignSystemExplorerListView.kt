@@ -13,10 +13,11 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.actionSystem.DataSink
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.openapi.actionSystem.UiDataProvider
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.ide.CopyPasteManager
@@ -110,7 +111,7 @@ class DesignSystemExplorerListView(
     private val viewModel: DesignSystemExplorerListViewModel,
     private val project: Project,
     withMultiModuleSearch: Boolean = true,
-) : JPanel(BorderLayout()), Disposable, DataProvider {
+) : JPanel(BorderLayout()), Disposable, UiDataProvider {
 
     private var updatePending = false
 
@@ -344,7 +345,7 @@ class DesignSystemExplorerListView(
         val scrollPosition = getScrollPosition()
         updatePending = true
         populateResourcesFuture?.cancel(true)
-        populateResourcesFuture = viewModel.getDesignSections()
+        populateResourcesFuture = viewModel.getCurrentModuleResourceLists()
             .whenCompleteAsync({ resourceLists, _ ->
                 updatePending = false
 
@@ -560,8 +561,8 @@ class DesignSystemExplorerListView(
         }
     }
 
-    override fun getData(dataId: String): Any? {
-        return viewModel.getData(dataId, getSelectedAssets())
+    override fun uiDataSnapshot(sink: DataSink) {
+        return viewModel.uiDataSnapshot(sink, getSelectedAssets())
     }
 
     override fun dispose() {
