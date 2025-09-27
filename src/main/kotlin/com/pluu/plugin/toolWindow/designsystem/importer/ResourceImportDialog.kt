@@ -223,7 +223,7 @@ class ResourceImportDialog(
                 }
             })
 
-            ComponentValidator(disposable).withValidator { ->
+            ComponentValidator(disposable).withValidator {
                 dialogViewModel.validateName(assetSet.asset.type, this.text, this).also {
                     updateOkButton()
                 }

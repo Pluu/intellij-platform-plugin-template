@@ -41,7 +41,7 @@ class DesignAssetCellRenderer(
             assetView.thumbnail = if (thumbnailSize.width > 0 && thumbnailSize.height > 0) {
                 val iconSize = Dimension(designSystemItem.type.icon.iconWidth, designSystemItem.type.icon.iconHeight)
                 val scale = getScale(
-                    Dimension((thumbnailSize.width ).toInt(), (thumbnailSize.height).toInt()),
+                    Dimension(thumbnailSize.width , thumbnailSize.height),
                     iconSize
                 )
                 val image = IconUtil.toBufferedImage(designSystemItem.type.icon)

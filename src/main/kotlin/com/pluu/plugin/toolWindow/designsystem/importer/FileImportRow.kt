@@ -64,7 +64,7 @@ class FileImportRow(
             }
         })
 
-        ComponentValidator(this@FileImportRow).withValidator { ->
+        ComponentValidator(this@FileImportRow).withValidator {
             viewModel.validateText(this.text, this)
         }.installOn(this)
             .revalidate()
