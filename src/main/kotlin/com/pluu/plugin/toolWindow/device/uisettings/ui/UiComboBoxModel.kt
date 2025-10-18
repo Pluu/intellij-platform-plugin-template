@@ -14,17 +14,17 @@ import javax.swing.DefaultComboBoxModel
  */
 internal class UiComboBoxModel<T>(initialValue: T): DefaultComboBoxModel<T>() {
 
-  val selection: TwoWayProperty<T> = object : DefaultTwoWayProperty<T>(initialValue) {
-    override fun setFromUi(newValue: T) {
-      super.setFromUi(newValue)
-      this@UiComboBoxModel.selectedItem = newValue
+    val selection: TwoWayProperty<T> = object : DefaultTwoWayProperty<T>(initialValue) {
+        override fun setFromUi(newValue: T) {
+            super.setFromUi(newValue)
+            this@UiComboBoxModel.selectedItem = newValue
+        }
     }
-  }
 
-  fun sizeIsAtLeast(count: Int): ComponentPredicate {
-    return object : ComponentPredicate() {
-      override fun invoke(): Boolean = size >= count
-      override fun addListener(listener: (Boolean) -> Unit) {}
+    fun sizeIsAtLeast(count: Int): ComponentPredicate {
+        return object : ComponentPredicate() {
+            override fun invoke(): Boolean = size >= count
+            override fun addListener(listener: (Boolean) -> Unit) {}
+        }
     }
-  }
 }
