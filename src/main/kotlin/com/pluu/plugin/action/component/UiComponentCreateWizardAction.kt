@@ -10,9 +10,8 @@ import com.android.tools.idea.npw.model.RenderTemplateModel
 import com.android.tools.idea.npw.project.getModuleTemplates
 import com.android.tools.idea.npw.project.getPackageForPath
 import com.android.tools.idea.npw.template.ConfigureTemplateParametersStep
-import com.android.tools.idea.npw.template.TemplateResolver
 import com.android.tools.idea.wizard.model.ModelWizard
-import com.android.tools.idea.wizard.template.WizardUiContext
+import com.android.tools.idea.wizard.template.Template
 import com.android.tools.idea.wizard.ui.SimpleStudioWizardLayout
 import com.android.tools.idea.wizard.ui.StudioWizardDialogBuilder
 import com.google.wireless.android.sdk.stats.AndroidStudioEvent
@@ -33,7 +32,7 @@ val CREATED_FILES = DataKey.create<MutableList<File>>("CreatedFiles")
 
 abstract class UiComponentCreateWizardAction(
     private val wizardUiContext: AndroidStudioEvent.TemplatesUsage.TemplateComponent.WizardUiContext,
-    private val templateName: String,
+    private val templateProvider: () -> Template,
     private val dialogTitle: String,
     private val stepTitle: String
 ) : AnAction() {
@@ -92,11 +91,8 @@ abstract class UiComponentCreateWizardAction(
             true,
             wizardUiContext
         )
-        val newTemplate = TemplateResolver.getAllTemplates()
-            .filter { WizardUiContext.MenuEntry in it.uiContexts }
-            .find { it.name == templateName }
 
-        templateModel.newTemplate = newTemplate!!
+        templateModel.newTemplate = templateProvider()
 
         val templateTypeStep =
             ConfigureTemplateParametersStep(templateModel, stepTitle, moduleTemplates)
