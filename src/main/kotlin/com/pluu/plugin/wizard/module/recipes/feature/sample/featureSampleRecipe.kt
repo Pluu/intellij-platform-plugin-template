@@ -19,7 +19,8 @@ import com.pluu.plugin.PluuPlugin
 fun RecipeExecutor.generateFeatureSampleModule(
     moduleData: ModuleTemplateData,
     appTitle: String?, // may be null only for libraries
-    useGradleKts: Boolean = false
+    useGradleKts: Boolean = false,
+    appTitleResName: String = "app_name",
 ) {
     val (_, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
     val appCompatVersion = moduleData.apis.appCompatVersion
@@ -66,7 +67,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
         copyMipmapFolder(resOut)
 
         with(resOut.resolve(FD_RES_VALUES)) {
-            save(androidModuleStrings(appTitle!!), resolve("strings.xml"))
+            save(androidModuleStrings(appTitleResName, appTitle!!), resolve("strings.xml"))
             // Common themes.xml isn't needed for Compose because theme is created in Composable.
             if (moduleData.category != Category.Compose) {
                 save(themesXml, resolve("themes.xml"))

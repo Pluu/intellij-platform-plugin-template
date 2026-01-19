@@ -49,10 +49,11 @@ dependencies {
 
         testFramework(TestFrameworkType.Platform)
 
-        if (project.hasProperty("StudioCompilePath")) {
-            local(property("StudioCompilePath").toString())
+        val studioCompilePath = providers.gradleProperty("StudioCompilePath")
+        if (studioCompilePath.isPresent) {
+            local(studioCompilePath.get())
         } else {
-            androidStudio(property("platformVersion").toString())
+            androidStudio(providers.gradleProperty("platformVersion"))
         }
     }
 }
