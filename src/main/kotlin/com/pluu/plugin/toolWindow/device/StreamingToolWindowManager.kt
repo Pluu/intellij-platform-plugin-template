@@ -4,7 +4,6 @@
 
 package com.pluu.plugin.toolWindow.device
 
-import ai.grazie.annotation.TestOnly
 import com.android.annotations.concurrency.AnyThread
 import com.android.annotations.concurrency.UiThread
 import com.android.sdklib.deviceprovisioner.DeviceHandle
@@ -38,6 +37,7 @@ import com.intellij.util.concurrency.AppExecutorUtil.createBoundedApplicationPoo
 import com.intellij.util.containers.ContainerUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
+import org.jetbrains.annotations.TestOnly
 import java.awt.EventQueue
 import java.util.function.Supplier
 
