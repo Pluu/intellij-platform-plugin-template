@@ -5,5 +5,6 @@ object PluuPlugin {
         const val APPLICATION = "pluu.android.application"
         const val LIBRARY = "pluu.android.library"
         const val HILT = "pluu.android.hilt"
+        const val KAPT = "com.android.legacy-kapt"
     }
 }

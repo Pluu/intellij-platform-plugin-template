@@ -43,6 +43,9 @@ fun RecipeExecutor.generateFeatureModule(
         // build-logic
         applyPlugin(PluuPlugin.Convension.LIBRARY, null)
         applyPlugin(PluuPlugin.Convension.HILT, null)
+
+//        val version = projectData.agpVersion.toString()
+//        applyPlugin(PluuPlugin.Convension.KAPT, version)
     }
 
     if (data.useGenericLocalTests) {

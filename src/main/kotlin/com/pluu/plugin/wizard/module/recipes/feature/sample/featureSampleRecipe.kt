@@ -22,7 +22,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
     useGradleKts: Boolean = false,
     appTitleResName: String = "app_name",
 ) {
-    val (_, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
+    val (projectData, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
     val appCompatVersion = moduleData.apis.appCompatVersion
     val isLibraryProject = moduleData.isLibrary
     val baseFeature = moduleData.baseFeature!!
@@ -44,6 +44,8 @@ fun RecipeExecutor.generateFeatureSampleModule(
     // build-logic
     applyPlugin(PluuPlugin.Convension.APPLICATION, null)
     applyPlugin(PluuPlugin.Convension.HILT, null)
+    val version = projectData.agpVersion.toString()
+//    applyPlugin(PluuPlugin.Convension.KAPT, version)
 
     addMaterialDependency(true)
     addDependency("com.android.support:appcompat-v7:$appCompatVersion.+")
