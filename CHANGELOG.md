@@ -2,7 +2,7 @@
 
 # IntelliJ Platform Plugin Template Changelog
 
-## [Unreleased]
+## [2.5.0] - 2026-04-17
 
 ### Changed
 
