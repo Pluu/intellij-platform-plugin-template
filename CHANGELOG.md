@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Update Run Plugin configuration to fix sandbox log file path
+
 ## [2.5.0] - 2026-04-17
 
 ### Changed
