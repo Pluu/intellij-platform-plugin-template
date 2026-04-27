@@ -7,6 +7,7 @@
 ### Fixed
 
 - Update Run Plugin configuration to fix sandbox log file path
+- Remove `settings.gradle.kts` for cleanup of unused project configuration.
 
 ## [2.5.0] - 2026-04-17
 
