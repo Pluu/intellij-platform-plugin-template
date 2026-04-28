@@ -9,7 +9,7 @@ import com.android.annotations.concurrency.UiThread
 import com.android.sdklib.deviceprovisioner.DeviceHandle
 import com.android.tools.idea.concurrency.createCoroutineScope
 import com.android.tools.idea.deviceprovisioner.DeviceProvisionerService
-import com.android.tools.idea.streaming.core.DeviceId
+import com.android.tools.idea.streaming.core.StreamingDeviceId
 import com.android.tools.idea.streaming.device.DeviceClient
 import com.android.tools.idea.streaming.emulator.EmulatorController
 import com.android.tools.idea.streaming.emulator.EmulatorController.ConnectionState
@@ -43,7 +43,7 @@ import java.util.function.Supplier
 
 private const val EMULATOR_DISCOVERY_INTERVAL_MILLIS = 1000L
 
-private val CONTENT_DEVICE_ID_KEY = Key.create<DeviceId>("DeviceId")
+private val CONTENT_DEVICE_ID_KEY = Key.create<StreamingDeviceId>("StreamingDeviceId")
 
 @Suppress("IncorrectServiceRetrieving")
 @UiThread
@@ -170,8 +170,9 @@ internal class StreamingToolWindowManager @AnyThread constructor(
         emulators.clear()
     }
 
-    private fun findContentBySerialNumberOfPhysicalDevice(serialNumber: String): Content? =
-        findContent { it.deviceId?.serialNumber == serialNumber }
+    private fun findContentBySerialNumberOfPhysicalDevice(serialNumber: String): Content? = findContent {
+        it.deviceId?.serialNumber == serialNumber
+    }
 
     private fun findContent(predicate: (Content) -> Boolean): Content? {
         for (contentManager in contentManagers) {
@@ -345,6 +346,6 @@ internal class DeviceClientRegistry : Disposable {
     }
 }
 
-private var Content.deviceId: DeviceId?
+private var Content.deviceId: StreamingDeviceId?
     get() = CONTENT_DEVICE_ID_KEY.get(this)
     set(deviceId) = CONTENT_DEVICE_ID_KEY.set(this, deviceId)
