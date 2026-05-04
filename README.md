@@ -101,7 +101,7 @@ For more details regarding Kotlin integration, please see [Kotlin for Plugin Dev
 
 ### Gradle properties
 
-The project-specific configuration file [`gradle.properties`][file:gradle.properties] now contains only the values expected to vary between repositories created from this template:
+The project-specific configuration file [`gradle.properties`][file:gradle.properties] starts with values expected to vary between repositories created from this template:
 
 | Property name         | Description                                                                                          |
 |-----------------------|------------------------------------------------------------------------------------------------------|
@@ -114,7 +114,7 @@ The remaining plugin metadata lives closer to where it is used:
 - [`build.gradle.kts`][file:build.gradle.kts] declares the target IntelliJ Platform version and project dependencies.
 - [`plugin.xml`][file:plugin.xml] contains the plugin `id`, `name`, `vendor`, `description`, and extension registrations.
 
-In addition, extra behaviors are configured through the [`gradle.properties`][file:gradle.properties] file, such as:
+It also configures Gradle build behavior flags, such as:
 
 | Property name                                    | Value   | Description                                                                                    |
 |--------------------------------------------------|---------|------------------------------------------------------------------------------------------------|
@@ -293,7 +293,7 @@ In the `.github/workflows` directory, you can find definitions for the following
 
 - [Build](.github/workflows/build.yml)
   - Triggered on `push` and `pull_request` events.
-  - Builds the plugin with the `buildPlugin` Gradle task and provides the unpacked plugin artifact for the next jobs in the workflow.
+  - Builds the plugin with the `buildPlugin` Gradle task and uploads the plugin ZIP as a workflow artifact.
   - Runs the `check` Gradle task in a dedicated test job.
   - Runs the `verifyPlugin` Gradle task in a dedicated verification job.
   - Prepares a draft release of the GitHub Releases page for manual verification.
@@ -332,11 +332,12 @@ This template keeps dependency management explicit and local to the Gradle files
 
 Keeping the project in good shape and having all the dependencies up to date requires time and effort, but it is possible to automate that process using [Dependabot][gh:dependabot].
 
-Dependabot is a bot provided by GitHub to check the build configuration files and review any outdated or insecure dependencies of yours – in case if any update is available, it creates a new pull request providing [the proper change][gh:dependabot-pr].
+Dependabot is a bot provided by GitHub that checks build configuration files for outdated or insecure dependencies.
+When an update is available, it creates a new pull request providing [the proper change][gh:dependabot-pr].
 
 > [!NOTE]
-> Dependabot doesn't yet support checking of the Gradle Wrapper.
-> Check the [Gradle Releases][gradle:releases] page and run
+> Dependabot supports [Gradle Wrapper updates][gh:dependabot-supported-ecosystems].
+> To update Gradle manually, check the [Gradle Releases][gradle:releases] page and run
 > ```bash
 > ./gradlew wrapper --gradle-version <version> && ./gradlew wrapper
 > ```
@@ -457,7 +458,7 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 
 ## Useful links
 
-- [IntelliJ Platform SDK Plugin SDK][docs]
+- [IntelliJ Platform Plugin SDK][docs]
 - [IntelliJ Platform Gradle Plugin Documentation][gh:intellij-platform-gradle-plugin-docs]
 - [IntelliJ Platform Explorer][jb:ipe]
 - [JetBrains Marketplace Quality Guidelines][jb:quality-guidelines]
@@ -500,11 +501,12 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 [file:template_cleanup.yml]: ./.github/workflows/template-cleanup.yml
 [file:use-this-template.png]: ./.github/readme/use-this-template.png
 
-[gh:actions]: https://help.github.com/en/actions
+[gh:actions]: https://docs.github.com/actions
 [gh:build]: https://github.com/JetBrains/intellij-platform-plugin-template/actions?query=workflow%3ABuild
 [gh:code-samples]: https://github.com/JetBrains/intellij-sdk-code-samples
-[gh:dependabot]: https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/keeping-your-dependencies-updated-automatically
+[gh:dependabot]: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
 [gh:dependabot-pr]: https://github.com/JetBrains/intellij-platform-plugin-template/pull/73
+[gh:dependabot-supported-ecosystems]: https://docs.github.com/en/code-security/dependabot/ecosystems-supported-by-dependabot/supported-ecosystems-and-repositories#gradle
 [gh:gradle-changelog-plugin]: https://github.com/JetBrains/gradle-changelog-plugin
 [gh:intellij-platform-gradle-plugin]: https://github.com/JetBrains/intellij-platform-gradle-plugin
 [gh:intellij-platform-gradle-plugin-docs]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html
