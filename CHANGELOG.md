@@ -11,6 +11,7 @@
 ### Changed
 
 - Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.16.0`
+- Dependencies - upgrade IntelliJ IDEA to `2025.2.6.2`
 
 ### Removed
 
