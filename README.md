@@ -10,13 +10,11 @@
 > [!NOTE]
 > Click the <kbd>Use this template</kbd> button and clone it in IntelliJ IDEA.
 
-<!-- Plugin description -->
 **IntelliJ Platform Plugin Template** is a repository that provides a pure template to make it easier to create a new plugin project (check the [Creating a repository from a template][gh:template] article).
 
 The main goal of this template is to speed up the setup phase of plugin development for both new and experienced developers by preconfiguring the project scaffold and CI, linking to the proper documentation pages, and keeping everything organized.
 
 [gh:template]: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
-<!-- Plugin description end -->
 
 If you're still not quite sure what this is all about, read our introduction: [What is the IntelliJ Platform?][docs:intro]
 
@@ -114,7 +112,7 @@ The project-specific configuration file [`gradle.properties`][file:gradle.proper
 The remaining plugin metadata lives closer to where it is used:
 - [`settings.gradle.kts`][file:settings.gradle.kts] declares Gradle plugin versions and repository management.
 - [`build.gradle.kts`][file:build.gradle.kts] declares the target IntelliJ Platform version and project dependencies.
-- [`plugin.xml`][file:plugin.xml] contains the plugin `id`, `name`, `vendor`, and extension registrations.
+- [`plugin.xml`][file:plugin.xml] contains the plugin `id`, `name`, `vendor`, `description`, and extension registrations.
 
 In addition, extra behaviors are configured through the [`gradle.properties`][file:gradle.properties] file, such as:
 
@@ -183,12 +181,19 @@ In addition to the configuration files, the most crucial part is the `src` direc
 
 The plugin configuration file is a [plugin.xml][file:plugin.xml] file located in the `src/main/resources/META-INF` directory.
 It provides general information about the plugin, its dependencies, and its extensions.
+Maintain the plugin description directly in this file, using HTML wrapped in CDATA when needed.
+
+> [!NOTE]
+> When using this template for a real plugin, replace the placeholder description with content that describes the final plugin.
 
 ```xml
 <idea-plugin>
   <id>org.jetbrains.plugins.template</id>
   <name>IntelliJ Platform Plugin Template</name>
   <vendor>JetBrains</vendor>
+  <description><![CDATA[
+    <p>Plugin description in HTML.</p>
+  ]]></description>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -254,9 +259,7 @@ In `src/test/kotlin`, you will find a basic `MyPluginTest` test that utilizes `B
 If your plugin provides complex user interfaces, you should consider covering them with tests and the functionality they use.
 
 The template does not wire UI testing into the Gradle build by default anymore.
-If you need UI coverage, add your own UI test source set and Gradle tasks first, then adapt the optional [Run UI Tests](.github/workflows/run-ui-tests.yml) workflow to launch and execute them on macOS, Windows, and Linux.
-
-For a concrete example of UI test tooling, see [IntelliJ UI Test Robot][gh:intellij-ui-test-robot] and the [ui-test-example][gh:ui-test-example] project.
+If you need UI coverage, start with the IntelliJ Platform SDK guides for [Integration Tests][docs:integration-tests] and [Integration Tests: UI Testing][docs:integration-tests-ui], then add your own test source set, Gradle tasks, and CI workflow for the operating systems you support.
 
 
 ## Predefined Run/Debug configurations
@@ -301,10 +304,6 @@ In the `.github/workflows` directory, you can find definitions for the following
   - Publishes the plugin to JetBrains Marketplace using the provided `PUBLISH_TOKEN`.
   - Uploads the built plugin distribution as a GitHub release asset.
   - Creates a pull request with the patched changelog when needed.
-- [Run UI Tests](.github/workflows/run-ui-tests.yml)
-  - Triggered manually.
-  - Provides an example matrix for macOS, Windows, and Linux.
-  - Is intended to be adapted once your plugin defines its own UI test setup.
 - [Template Cleanup](.github/workflows/template-cleanup.yml)
   - Triggered once on the `push` event when a new template-based repository has been created.
   - Overrides the scaffold with files from the `.github/template-cleanup` directory.
@@ -483,6 +482,8 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 [docs:plugin-signing]: https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate
 [docs:project-structure-settings]: https://www.jetbrains.com/help/idea/project-settings-and-structure.html
 [docs:testing-plugins]: https://plugins.jetbrains.com/docs/intellij/testing-plugins.html?from=IJPluginTemplate
+[docs:integration-tests]: https://plugins.jetbrains.com/docs/intellij/integration-tests.html?from=IJPluginTemplate
+[docs:integration-tests-ui]: https://plugins.jetbrains.com/docs/intellij/integration-tests-ui.html?from=IJPluginTemplate
 
 [file:build.gradle.kts]: ./build.gradle.kts
 [file:draft-release.png]: ./.github/readme/draft-release.png
@@ -509,9 +510,7 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 [gh:intellij-platform-gradle-plugin-docs]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html
 [gh:intellij-platform-gradle-plugin-runIde]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-tasks.html#runIde
 [gh:intellij-platform-gradle-plugin-verifyPlugin]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-tasks.html#verifyPlugin
-[gh:intellij-ui-test-robot]: https://github.com/JetBrains/intellij-ui-test-robot
 [gh:releases]: https://github.com/JetBrains/intellij-platform-plugin-template/releases
-[gh:ui-test-example]: https://github.com/JetBrains/intellij-ui-test-robot/tree/master/ui-test-example
 
 [gradle]: https://gradle.org
 [gradle:build-cache]: https://docs.gradle.org/current/userguide/build_cache.html
