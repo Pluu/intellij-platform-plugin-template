@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.16.0`
+
 ### Removed
 
 - Remove changelog configuration from `build.gradle.kts` as it is preconfigured now in the IntelliJ Platform Gradle Plugin
