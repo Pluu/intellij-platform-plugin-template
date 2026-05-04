@@ -93,7 +93,7 @@ The most significant parts of the current configuration are:
 - Repository configuration moved to [`settings.gradle.kts`][file:settings.gradle.kts] using the IntelliJ Platform repositories extension.
 - Configuration written with [Gradle Kotlin DSL][gradle:kotlin-dsl].
 - Support for Kotlin and Java implementation.
-- Plugin and dependency versions are declared directly in the Gradle build files instead of a version catalog.
+- Plugin and dependency versions are declared directly in the Gradle build files.
 - Integration with the [gradle-changelog-plugin][gh:gradle-changelog-plugin], which automatically patches the change notes based on the `CHANGELOG.md` file.
 - [Plugin publishing][docs:publishing] through the `publishPlugin` task and GitHub Actions workflows.
 

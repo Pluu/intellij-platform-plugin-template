@@ -64,7 +64,7 @@ jobs:
           name: plugin-distribution
           path: ./build/distributions/*.zip
 
-  # Run tests and upload a code coverage report
+  # Run tests and upload test reports on failure
   test:
     name: Test
     needs: [ build ]
