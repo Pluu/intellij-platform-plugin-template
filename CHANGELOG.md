@@ -14,6 +14,7 @@
 - Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.16.0`
 - Dependencies - upgrade IntelliJ IDEA to `2025.2.6.2`
 - Dependencies (GitHub Actions) - upgrade `actions/upload-artifact` to `v7`
+- Dependencies (GitHub Actions) - upgrade `gradle/actions/setup-gradle` to `v6`
 - GitHub Actions - simplify plugin artifact upload in GitHub Actions workflow
 
 ### Removed
