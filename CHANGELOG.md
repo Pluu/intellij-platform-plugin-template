@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Removed
+
+- Remove changelog configuration from `build.gradle.kts` as it is preconfigured now in the IntelliJ Platform Gradle Plugin
+
 ### Fixed
 
 - Update Run Plugin configuration to fix sandbox log file path
