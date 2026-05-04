@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add operator function for resource bundle key access in `MyBundle`
+
 ### Changed
 
 - Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.16.0`
