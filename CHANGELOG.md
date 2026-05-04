@@ -17,6 +17,7 @@
 
 - Remove changelog configuration from `build.gradle.kts` as it is preconfigured now in the IntelliJ Platform Gradle Plugin
 - Remove `intellijPlatform.pluginConfiguration.description` default configuration from `build.gradle.kts`.
+- Remove `run-ui-tests.yml` workflow for outdated UI testing setup
 
 ### Fixed
 
