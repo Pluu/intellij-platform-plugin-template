@@ -11,6 +11,7 @@
 ### Removed
 
 - Remove changelog configuration from `build.gradle.kts` as it is preconfigured now in the IntelliJ Platform Gradle Plugin
+- Remove `intellijPlatform.pluginConfiguration.description` default configuration from `build.gradle.kts`.
 
 ### Fixed
 
