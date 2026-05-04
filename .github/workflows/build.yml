@@ -1,13 +1,12 @@
-# GitHub Actions Workflow is created for testing and preparing the plugin release in the following steps:
-# - Validate Gradle Wrapper.
-# - Run 'test' and 'verifyPlugin' tasks.
-# - Run the 'buildPlugin' task and prepare artifact for further tests.
-# - Run the 'runPluginVerifier' task.
-# - Create a draft release.
+# GitHub Actions workflow for building, testing, verifying, and preparing plugin release drafts:
+# - Build the plugin ZIP with the 'buildPlugin' task and upload it as a workflow artifact.
+# - Run the 'check' task and upload test reports on failure.
+# - Run the 'verifyPlugin' task and upload Plugin Verifier reports.
+# - Create a draft GitHub release on non-pull-request runs.
 #
-# The workflow is triggered on push and pull_request events.
+# The workflow is triggered on pushes to the 'main' branch and on pull_request events.
 #
-# GitHub Actions reference: https://help.github.com/en/actions
+# GitHub Actions reference: https://docs.github.com/actions
 #
 ## JBIJPPTPL
 
