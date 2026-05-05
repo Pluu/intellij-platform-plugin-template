@@ -16,9 +16,6 @@ jobs:
     name: Template Verify
     if: github.event.repository.name == 'intellij-platform-plugin-template'
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.properties.outputs.version }}
-      changelog: ${{ steps.properties.outputs.changelog }}
     steps:
 
       # Check out the current repository

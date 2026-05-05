@@ -4,8 +4,29 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add operator function for resource bundle key access in `MyBundle`
+
+### Changed
+
+- Upgrade Gradle Wrapper to `9.5.0`
+- Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.16.0`
+- Dependencies - upgrade IntelliJ IDEA to `2025.2.6.2`
+- Dependencies (GitHub Actions) - upgrade `actions/upload-artifact` to `v7`
+- Dependencies (GitHub Actions) - upgrade `gradle/actions/setup-gradle` to `v6`
+- GitHub Actions - simplify plugin artifact upload in GitHub Actions workflow
+
+### Removed
+
+- Remove changelog configuration from `build.gradle.kts` as it is preconfigured now in the IntelliJ Platform Gradle Plugin
+- Remove `intellijPlatform.pluginConfiguration.description` default configuration from `build.gradle.kts`.
+- Remove `run-ui-tests.yml` workflow for outdated UI testing setup
+
 ### Fixed
 
+- Update Run Plugin configuration to fix sandbox log file path
+- Remove `settings.gradle.kts` for cleanup of unused project configuration.
 - Update Run Plugin configuration to fix sandbox log file path
 
 ## [2.5.0] - 2026-04-17

@@ -10,13 +10,11 @@
 > [!NOTE]
 > Click the <kbd>Use this template</kbd> button and clone it in IntelliJ IDEA.
 
-<!-- Plugin description -->
 **IntelliJ Platform Plugin Template** is a repository that provides a pure template to make it easier to create a new plugin project (check the [Creating a repository from a template][gh:template] article).
 
 The main goal of this template is to speed up the setup phase of plugin development for both new and experienced developers by preconfiguring the project scaffold and CI, linking to the proper documentation pages, and keeping everything organized.
 
 [gh:template]: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
-<!-- Plugin description end -->
 
 If you're still not quite sure what this is all about, read our introduction: [What is the IntelliJ Platform?][docs:intro]
 
@@ -95,7 +93,7 @@ The most significant parts of the current configuration are:
 - Repository configuration moved to [`settings.gradle.kts`][file:settings.gradle.kts] using the IntelliJ Platform repositories extension.
 - Configuration written with [Gradle Kotlin DSL][gradle:kotlin-dsl].
 - Support for Kotlin and Java implementation.
-- Plugin and dependency versions are declared directly in the Gradle build files instead of a version catalog.
+- Plugin and dependency versions are declared directly in the Gradle build files.
 - Integration with the [gradle-changelog-plugin][gh:gradle-changelog-plugin], which automatically patches the change notes based on the `CHANGELOG.md` file.
 - [Plugin publishing][docs:publishing] through the `publishPlugin` task and GitHub Actions workflows.
 
@@ -103,7 +101,7 @@ For more details regarding Kotlin integration, please see [Kotlin for Plugin Dev
 
 ### Gradle properties
 
-The project-specific configuration file [`gradle.properties`][file:gradle.properties] now contains only the values expected to vary between repositories created from this template:
+The project-specific configuration file [`gradle.properties`][file:gradle.properties] starts with values expected to vary between repositories created from this template:
 
 | Property name         | Description                                                                                          |
 |-----------------------|------------------------------------------------------------------------------------------------------|
@@ -114,9 +112,9 @@ The project-specific configuration file [`gradle.properties`][file:gradle.proper
 The remaining plugin metadata lives closer to where it is used:
 - [`settings.gradle.kts`][file:settings.gradle.kts] declares Gradle plugin versions and repository management.
 - [`build.gradle.kts`][file:build.gradle.kts] declares the target IntelliJ Platform version and project dependencies.
-- [`plugin.xml`][file:plugin.xml] contains the plugin `id`, `name`, `vendor`, and extension registrations.
+- [`plugin.xml`][file:plugin.xml] contains the plugin `id`, `name`, `vendor`, `description`, and extension registrations.
 
-In addition, extra behaviors are configured through the [`gradle.properties`][file:gradle.properties] file, such as:
+It also configures Gradle build behavior flags, such as:
 
 | Property name                                    | Value   | Description                                                                                    |
 |--------------------------------------------------|---------|------------------------------------------------------------------------------------------------|
@@ -183,12 +181,19 @@ In addition to the configuration files, the most crucial part is the `src` direc
 
 The plugin configuration file is a [plugin.xml][file:plugin.xml] file located in the `src/main/resources/META-INF` directory.
 It provides general information about the plugin, its dependencies, and its extensions.
+Maintain the plugin description directly in this file, using HTML wrapped in CDATA when needed.
+
+> [!NOTE]
+> When using this template for a real plugin, replace the placeholder description with content that describes the final plugin.
 
 ```xml
 <idea-plugin>
   <id>org.jetbrains.plugins.template</id>
   <name>IntelliJ Platform Plugin Template</name>
   <vendor>JetBrains</vendor>
+  <description><![CDATA[
+    <p>Plugin description in HTML.</p>
+  ]]></description>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -254,9 +259,7 @@ In `src/test/kotlin`, you will find a basic `MyPluginTest` test that utilizes `B
 If your plugin provides complex user interfaces, you should consider covering them with tests and the functionality they use.
 
 The template does not wire UI testing into the Gradle build by default anymore.
-If you need UI coverage, add your own UI test source set and Gradle tasks first, then adapt the optional [Run UI Tests](.github/workflows/run-ui-tests.yml) workflow to launch and execute them on macOS, Windows, and Linux.
-
-For a concrete example of UI test tooling, see [IntelliJ UI Test Robot][gh:intellij-ui-test-robot] and the [ui-test-example][gh:ui-test-example] project.
+If you need UI coverage, start with the IntelliJ Platform SDK guides for [Integration Tests][docs:integration-tests] and [Integration Tests: UI Testing][docs:integration-tests-ui], then add your own test source set, Gradle tasks, and CI workflow for the operating systems you support.
 
 
 ## Predefined Run/Debug configurations
@@ -290,7 +293,7 @@ In the `.github/workflows` directory, you can find definitions for the following
 
 - [Build](.github/workflows/build.yml)
   - Triggered on `push` and `pull_request` events.
-  - Builds the plugin with the `buildPlugin` Gradle task and provides the unpacked plugin artifact for the next jobs in the workflow.
+  - Builds the plugin with the `buildPlugin` Gradle task and uploads the plugin ZIP as a workflow artifact.
   - Runs the `check` Gradle task in a dedicated test job.
   - Runs the `verifyPlugin` Gradle task in a dedicated verification job.
   - Prepares a draft release of the GitHub Releases page for manual verification.
@@ -301,10 +304,6 @@ In the `.github/workflows` directory, you can find definitions for the following
   - Publishes the plugin to JetBrains Marketplace using the provided `PUBLISH_TOKEN`.
   - Uploads the built plugin distribution as a GitHub release asset.
   - Creates a pull request with the patched changelog when needed.
-- [Run UI Tests](.github/workflows/run-ui-tests.yml)
-  - Triggered manually.
-  - Provides an example matrix for macOS, Windows, and Linux.
-  - Is intended to be adapted once your plugin defines its own UI test setup.
 - [Template Cleanup](.github/workflows/template-cleanup.yml)
   - Triggered once on the `push` event when a new template-based repository has been created.
   - Overrides the scaffold with files from the `.github/template-cleanup` directory.
@@ -333,11 +332,12 @@ This template keeps dependency management explicit and local to the Gradle files
 
 Keeping the project in good shape and having all the dependencies up to date requires time and effort, but it is possible to automate that process using [Dependabot][gh:dependabot].
 
-Dependabot is a bot provided by GitHub to check the build configuration files and review any outdated or insecure dependencies of yours – in case if any update is available, it creates a new pull request providing [the proper change][gh:dependabot-pr].
+Dependabot is a bot provided by GitHub that checks build configuration files for outdated or insecure dependencies.
+When an update is available, it creates a new pull request providing [the proper change][gh:dependabot-pr].
 
 > [!NOTE]
-> Dependabot doesn't yet support checking of the Gradle Wrapper.
-> Check the [Gradle Releases][gradle:releases] page and run
+> Dependabot supports [Gradle Wrapper updates][gh:dependabot-supported-ecosystems].
+> To update Gradle manually, check the [Gradle Releases][gradle:releases] page and run
 > ```bash
 > ./gradlew wrapper --gradle-version <version> && ./gradlew wrapper
 > ```
@@ -458,7 +458,7 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 
 ## Useful links
 
-- [IntelliJ Platform SDK Plugin SDK][docs]
+- [IntelliJ Platform Plugin SDK][docs]
 - [IntelliJ Platform Gradle Plugin Documentation][gh:intellij-platform-gradle-plugin-docs]
 - [IntelliJ Platform Explorer][jb:ipe]
 - [JetBrains Marketplace Quality Guidelines][jb:quality-guidelines]
@@ -483,6 +483,8 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 [docs:plugin-signing]: https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate
 [docs:project-structure-settings]: https://www.jetbrains.com/help/idea/project-settings-and-structure.html
 [docs:testing-plugins]: https://plugins.jetbrains.com/docs/intellij/testing-plugins.html?from=IJPluginTemplate
+[docs:integration-tests]: https://plugins.jetbrains.com/docs/intellij/integration-tests.html?from=IJPluginTemplate
+[docs:integration-tests-ui]: https://plugins.jetbrains.com/docs/intellij/integration-tests-ui.html?from=IJPluginTemplate
 
 [file:build.gradle.kts]: ./build.gradle.kts
 [file:draft-release.png]: ./.github/readme/draft-release.png
@@ -499,19 +501,18 @@ That approach gives more possibilities for testing and debugging pre-releases, f
 [file:template_cleanup.yml]: ./.github/workflows/template-cleanup.yml
 [file:use-this-template.png]: ./.github/readme/use-this-template.png
 
-[gh:actions]: https://help.github.com/en/actions
+[gh:actions]: https://docs.github.com/actions
 [gh:build]: https://github.com/JetBrains/intellij-platform-plugin-template/actions?query=workflow%3ABuild
 [gh:code-samples]: https://github.com/JetBrains/intellij-sdk-code-samples
-[gh:dependabot]: https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/keeping-your-dependencies-updated-automatically
+[gh:dependabot]: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
 [gh:dependabot-pr]: https://github.com/JetBrains/intellij-platform-plugin-template/pull/73
+[gh:dependabot-supported-ecosystems]: https://docs.github.com/en/code-security/dependabot/ecosystems-supported-by-dependabot/supported-ecosystems-and-repositories#gradle
 [gh:gradle-changelog-plugin]: https://github.com/JetBrains/gradle-changelog-plugin
 [gh:intellij-platform-gradle-plugin]: https://github.com/JetBrains/intellij-platform-gradle-plugin
 [gh:intellij-platform-gradle-plugin-docs]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html
 [gh:intellij-platform-gradle-plugin-runIde]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-tasks.html#runIde
 [gh:intellij-platform-gradle-plugin-verifyPlugin]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-tasks.html#verifyPlugin
-[gh:intellij-ui-test-robot]: https://github.com/JetBrains/intellij-ui-test-robot
 [gh:releases]: https://github.com/JetBrains/intellij-platform-plugin-template/releases
-[gh:ui-test-example]: https://github.com/JetBrains/intellij-ui-test-robot/tree/master/ui-test-example
 
 [gradle]: https://gradle.org
 [gradle:build-cache]: https://docs.gradle.org/current/userguide/build_cache.html
