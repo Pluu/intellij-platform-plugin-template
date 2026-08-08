@@ -34,10 +34,6 @@
         <fileTemplateGroup implementation="com.pluu.plugin.FileTemplateProviderImpl"/>
         <internalFileTemplate name="ActivityTest"/>
 
-        <codeInsight.template.postfixTemplateProvider
-                language="kotlin"
-                implementationClass="com.pluu.plugin.codeInsight.postfix.PluuPostfixTemplateProvider"/>
-
         <library.toolWindow
                 id="Design System"
                 anchor="left"
