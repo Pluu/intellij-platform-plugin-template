@@ -21,7 +21,7 @@ fun RecipeExecutor.generateFeatureModule(
     data: ModuleTemplateData,
 ) {
     val (projectData, srcOut, _, manifestOut, instrumentedTestOut, localTestOut, _, moduleOut) = data
-    val (useAndroidX, _) = projectData
+    val (useAndroidX, agpVersion) = projectData
     val language = projectData.language
     val isLibraryProject = data.isLibrary
     val packageName = data.packageName
@@ -66,5 +66,5 @@ fun RecipeExecutor.generateFeatureModule(
     )
     save(gitignore(), moduleOut.resolve(".gitignore"))
 
-    proguardRecipe(moduleOut, isLibraryProject)
+    proguardRecipe(moduleOut, agpVersion, isLibraryProject)
 }

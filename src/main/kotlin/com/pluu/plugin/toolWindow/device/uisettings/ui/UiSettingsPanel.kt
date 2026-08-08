@@ -35,7 +35,7 @@ import javax.swing.JTextField
 import javax.swing.LayoutFocusTraversalPolicy
 import javax.swing.ListCellRenderer
 import javax.swing.SwingUtilities
-import javax.swing.plaf.basic.BasicComboBoxEditor
+import javax.swing.plaf.UIResource
 
 private const val APP_SCHEME_TITLE = "Run App scheme"
 
@@ -276,7 +276,7 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
      */
     private fun updateBackground() {
         AdtUiUtils.allComponents(this).forEach {
-            if (it.background is BasicComboBoxEditor.UIResource) {
+            if (it.background is UIResource) {
                 it.background = secondaryPanelBackground
             }
         }

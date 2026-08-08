@@ -23,6 +23,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
     appTitleResName: String = "app_name",
 ) {
     val (projectData, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
+    val (_, agpVersion) = projectData
     val appCompatVersion = moduleData.apis.appCompatVersion
     val isLibraryProject = moduleData.isLibrary
     val baseFeature = moduleData.baseFeature!!
@@ -59,7 +60,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
     )
     save(manifestXml, manifestOut.resolve(FN_ANDROID_MANIFEST_XML))
     save(gitignore(), moduleOut.resolve(".gitignore"))
-    proguardRecipe(moduleOut, isLibraryProject)
+    proguardRecipe(moduleOut, agpVersion, isLibraryProject)
 
     val themesXml = androidModuleThemes(true, moduleData.apis.minApi, moduleData.themesData.main.name)
     val colorsXml = androidModuleColors()
