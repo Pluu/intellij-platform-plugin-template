@@ -3,6 +3,7 @@ package com.pluu.plugin.module.feature
 import com.android.sdklib.SdkVersionInfo
 import com.android.tools.idea.npw.model.NewProjectModel.Companion.getSuggestedProjectPackage
 import com.android.tools.idea.npw.module.ConfigureModuleStep
+import com.android.tools.idea.npw.module.generateBuildConfigurationLanguageRow
 import com.android.tools.idea.npw.template.components.BytecodeLevelComboProvider
 import com.android.tools.idea.npw.toWizardFormFactor
 import com.android.tools.idea.npw.validator.ProjectNameValidator
@@ -46,12 +47,16 @@ class ConfigureFeatureModuleStep(
         row("Minimum SDK") {
             cell(apiLevelCombo).align(AlignX.FILL)
         }
+
+        generateBuildConfigurationLanguageRow(buildConfigurationLanguageCombo)
     }.withBorder(JBUI.Borders.empty(6))
 
     init {
         bindings.bindTwoWay(TextProperty(appName), model.applicationName)
         bindings.bindTwoWay(SelectedItemProperty(bytecodeCombo), model.bytecodeLevel)
         validatorPanel.registerValidator(model.applicationName, ProjectNameValidator())
+
+        buildConfigurationLanguageCombo.isEnabled = false
     }
 
     override fun getPreferredFocusComponent() = if (appName.isVisible) appName else moduleName
