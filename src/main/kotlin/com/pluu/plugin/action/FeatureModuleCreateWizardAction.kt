@@ -33,7 +33,7 @@ class FeatureModuleCreateWizardAction : AnAction() {
         StudioWizardDialogBuilder(modelWizard, message("android.wizard.module.new.module.title"))
             .setProject(project)
             .setMinimumSize(JBUI.size(600, 400))
-            .setPreferredSize(JBUI.size(600, 450))
+            .setPreferredSize(JBUI.size(700, 500))
             .build()
             .show()
     }
