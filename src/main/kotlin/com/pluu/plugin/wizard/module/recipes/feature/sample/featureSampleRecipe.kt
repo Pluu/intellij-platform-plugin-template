@@ -1,8 +1,6 @@
 package com.pluu.plugin.wizard.module.recipes.feature.sample
 
-import com.android.SdkConstants.FD_RES_VALUES
-import com.android.SdkConstants.FN_ANDROID_MANIFEST_XML
-import com.android.SdkConstants.FN_BUILD_GRADLE
+import com.android.SdkConstants
 import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androidModuleColors
 import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androidModuleStrings
 import com.android.tools.idea.npw.module.recipes.androidModule.res.values.androidModuleThemes
@@ -15,11 +13,11 @@ import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
 import com.android.tools.idea.wizard.template.impl.activities.common.addMaterialDependency
 import com.pluu.plugin.PluuPlugin
+import com.pluu.plugin.module.recipes.androidModule.gradleToKtsOrDcl
 
 fun RecipeExecutor.generateFeatureSampleModule(
     moduleData: ModuleTemplateData,
     appTitle: String?, // may be null only for libraries
-    useGradleKts: Boolean = false,
     appTitleResName: String = "app_name",
 ) {
     val (projectData, srcOut, resOut, manifestOut, _, _, _, moduleOut) = moduleData
@@ -28,6 +26,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
     val isLibraryProject = moduleData.isLibrary
     val baseFeature = moduleData.baseFeature!!
     val namespace = moduleData.namespace
+    val isKts = true
 
     createDirectory(srcOut)
     addIncludeToSettings(moduleData.name)
@@ -36,10 +35,13 @@ fun RecipeExecutor.generateFeatureSampleModule(
         isLibraryProject = isLibraryProject,
         applicationId = namespace,
         baseFeature = baseFeature
-    )
+    ).gradleToKtsOrDcl(apply = isKts)
+
+    val buildFile = if (isKts) SdkConstants.FN_BUILD_GRADLE_KTS else SdkConstants.FN_BUILD_GRADLE
+
     save(
         gradleFile,
-        moduleOut.resolve(FN_BUILD_GRADLE)
+        moduleOut.resolve(buildFile)
     )
 
     // build-logic
@@ -58,7 +60,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
         theme = "@style/${moduleData.themesData.main.name}",
         addBackupRules = false
     )
-    save(manifestXml, manifestOut.resolve(FN_ANDROID_MANIFEST_XML))
+    save(manifestXml, manifestOut.resolve(SdkConstants.FN_ANDROID_MANIFEST_XML))
     save(gitignore(), moduleOut.resolve(".gitignore"))
     proguardRecipe(moduleOut, agpVersion, isLibraryProject)
 
@@ -69,7 +71,7 @@ fun RecipeExecutor.generateFeatureSampleModule(
         // Icon
         copyMipmapFolder(resOut)
 
-        with(resOut.resolve(FD_RES_VALUES)) {
+        with(resOut.resolve(SdkConstants.FD_RES_VALUES)) {
             save(androidModuleStrings(appTitleResName, appTitle!!), resolve("strings.xml"))
             // Common themes.xml isn't needed for Compose because theme is created in Composable.
             if (moduleData.category != Category.Compose) {

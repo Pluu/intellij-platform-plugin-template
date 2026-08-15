@@ -1,7 +1,6 @@
 package com.pluu.plugin.wizard.module.recipes.feature
 
-import com.android.SdkConstants.FN_ANDROID_MANIFEST_XML
-import com.android.SdkConstants.FN_BUILD_GRADLE
+import com.android.SdkConstants
 import com.android.tools.idea.npw.module.recipes.addInstrumentedTests
 import com.android.tools.idea.npw.module.recipes.addLocalTests
 import com.android.tools.idea.npw.module.recipes.addTestDependencies
@@ -11,6 +10,7 @@ import com.android.tools.idea.npw.module.recipes.proguardRecipe
 import com.android.tools.idea.wizard.template.ModuleTemplateData
 import com.android.tools.idea.wizard.template.RecipeExecutor
 import com.pluu.plugin.PluuPlugin
+import com.pluu.plugin.module.recipes.androidModule.gradleToKtsOrDcl
 
 ///////////////////////////////////////////////////////////////////////////
 // Origin
@@ -25,6 +25,7 @@ fun RecipeExecutor.generateFeatureModule(
     val language = projectData.language
     val isLibraryProject = data.isLibrary
     val packageName = data.packageName
+    val isKts = true
 
     createDirectory(srcOut)
     addIncludeToSettings(data.name)
@@ -32,11 +33,13 @@ fun RecipeExecutor.generateFeatureModule(
     val gradleFile = buildFeatureGradle(
         isLibraryProject = isLibraryProject,
         applicationId = data.namespace
-    )
+    ).gradleToKtsOrDcl(apply = isKts)
+
+    val buildFile = if (isKts) SdkConstants.FN_BUILD_GRADLE_KTS else SdkConstants.FN_BUILD_GRADLE
 
     save(
         gradleFile,
-        moduleOut.resolve(FN_BUILD_GRADLE)
+        moduleOut.resolve(buildFile)
     )
 
     if (isLibraryProject) {
@@ -62,7 +65,7 @@ fun RecipeExecutor.generateFeatureModule(
             hasApplicationBlock = !isLibraryProject,
             theme = "@style/${data.themesData.main.name}",
         ),
-        manifestOut.resolve(FN_ANDROID_MANIFEST_XML)
+        manifestOut.resolve(SdkConstants.FN_ANDROID_MANIFEST_XML)
     )
     save(gitignore(), moduleOut.resolve(".gitignore"))
 
