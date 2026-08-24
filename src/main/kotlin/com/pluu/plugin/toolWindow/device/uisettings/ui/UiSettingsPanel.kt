@@ -125,6 +125,11 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                     }.enabledIf(isEnableAppSchemeCommand)
                         .align(AlignX.FILL)
                 }
+                row {
+                    button("Take Screenshot") {
+                        model.screenshotAction()
+                    }.align(AlignX.FILL)
+                }
             }
         }
     }

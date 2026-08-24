@@ -80,7 +80,7 @@ class DeviceManagerExplorer(
         val controller = emulators.getOrPut(item) {
             EmulatorUiSettingsController(
                 project,
-                item.serialNumber,
+                item,
                 item.uiSettingsModel,
                 this
             )

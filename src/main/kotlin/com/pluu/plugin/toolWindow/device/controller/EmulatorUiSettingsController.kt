@@ -10,8 +10,16 @@ import com.android.adblib.shellAsLines
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.tools.idea.adblib.AdbLibService
 import com.android.tools.idea.concurrency.createCoroutineScope
+import com.android.tools.idea.ui.screenshot.ScreenshotAction
+import com.android.tools.idea.ui.screenshot.ScreenshotParameters
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.ActionUiKind
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
+import com.pluu.plugin.toolWindow.device.Device
 import com.pluu.plugin.toolWindow.device.uisettings.ui.FontScale
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsController
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsModel
@@ -119,10 +127,11 @@ internal const val RESET_ANIMATOR_SCALE =
  */
 internal class EmulatorUiSettingsController(
     private val project: Project,
-    private val deviceSerialNumber: String,
+    private val device: Device,
     model: UiSettingsModel,
     parentDisposable: Disposable,
 ) : UiSettingsController(model) {
+    private val deviceSerialNumber: String = device.serialNumber
     private val scope = parentDisposable.createCoroutineScope()
     private val decimalFormat = DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ROOT))
     private var readApplicationId = ""
@@ -378,6 +387,21 @@ internal class EmulatorUiSettingsController(
         scope.launch {
             executeShellCommand(command)
         }
+    }
+
+    /**
+     * References:
+     * - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android-adb-ui/src/com/android/tools/idea/ui/screenshot/ScreenshotAction.kt
+     * - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android-adb-ui/src/com/android/tools/idea/ui/screenshot/ScreenshotParameters.kt
+     */
+    override fun takeScreenshot() {
+        val action = ScreenshotAction()
+        val dataContext = SimpleDataContext.builder()
+            .add(CommonDataKeys.PROJECT, project)
+            .add(ScreenshotParameters.DATA_KEY, device.getScreenshotParameters())
+            .build()
+        val event = AnActionEvent.createEvent(action, dataContext, null, ActionPlaces.UNKNOWN, ActionUiKind.NONE, null)
+        action.actionPerformed(event)
     }
 
     private fun updateResetButton() {

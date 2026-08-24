@@ -27,6 +27,7 @@ internal abstract class UiSettingsController(
         model.dontKeepActivities.uiChangeListener = ChangeListener(::setDontKeepActivities)
         model.runAdbCommand = ::runAdbCommand
         model.resetAction = { reset(); }
+        model.screenshotAction = { takeScreenshot() }
     }
 
     /**
@@ -73,6 +74,10 @@ internal abstract class UiSettingsController(
 
     protected abstract fun runAdbCommand(command: String)
 
+    /**
+     * Take a screenshot of the connected device.
+     */
+    protected abstract fun takeScreenshot()
 
     /**
      * Reset UI settings to factory defaults.
