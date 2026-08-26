@@ -7,6 +7,7 @@ package com.pluu.plugin.toolWindow.designsystem.explorer
 import com.android.tools.idea.ui.resourcemanager.widget.OverflowingTabbedPaneWrapper
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.AlignX
@@ -22,7 +23,10 @@ import javax.swing.JTabbedPane
 internal class DesignSystemExplorerView(
     private val viewModel: DesignSystemExplorerViewModel,
     private val project: Project
-) : JPanel(BorderLayout()), Disposable {
+) : JPanel(BorderLayout()), CheckedDisposable {
+
+    private var _isDisposed = false
+    override fun isDisposed(): Boolean = _isDisposed
 
     private val resourcesTabsPanel = OverflowingTabbedPaneWrapper().apply {
         viewModel.tabs.forEach {
@@ -72,7 +76,7 @@ internal class DesignSystemExplorerView(
         listViewJob = viewModel.createResourceListViewModel().whenCompleteAsync({ listViewModel, _ ->
             // TODO: Add a loading screen if this process takes too long.
             listView = createResourcesListView(listViewModel, project).also {
-                if (!Disposer.isDisposed(this)) {
+                if (!isDisposed()) {
                     centerPanel.removeAll()
                     centerPanel.add(it)
                     Disposer.register(this, it)
@@ -84,7 +88,7 @@ internal class DesignSystemExplorerView(
     }
 
     override fun dispose() {
-//        TODO("Not yet implemented")
+        _isDisposed = true
     }
 
     private fun createResourcesListView(

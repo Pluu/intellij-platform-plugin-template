@@ -271,7 +271,11 @@ internal class UiSettingsPanel : BorderLayoutPanel(), UiDataProvider {
     private fun <T> Cell<ComboBox<T>>.bindItem(property: TwoWayProperty<T>): Cell<ComboBox<T>> {
         property.addControllerListener { selected -> component.selectedItem = selected }
         component.selectedItem = property.value
-        component.addActionListener { property.setFromUi(component.selectedItem as T) }
+        @Suppress("UNCHECKED_CAST")
+        component.addActionListener {
+            val item = component.selectedItem as? T ?: return@addActionListener
+            property.setFromUi(item)
+        }
         return this
     }
 

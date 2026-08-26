@@ -18,7 +18,6 @@ import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.JBUI
 import icons.StudioIcons
 import java.awt.BorderLayout
-import java.util.*
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 import javax.swing.event.DocumentEvent
@@ -32,7 +31,7 @@ class FileConfigurationPanel(
     val viewModel: FileConfigurationViewModel
 ) : JPanel(BorderLayout(0, 0)) {
 
-    private val configurationChanged: (Observable, Any?) -> Unit = { _, _ ->
+    private val configurationChanged: () -> Unit = {
         viewModel.applyConfiguration()
         validateAddConfiguration()
     }
@@ -141,7 +140,7 @@ class FileConfigurationPanel(
 
         private fun updateValuePanel(param: AliasConfigParam) {
             assetNameTextField.text = param.paramValue
-            param.addObserver(configurationChanged)
+            param.onParamChanged = configurationChanged
             revalidate()
             repaint()
         }

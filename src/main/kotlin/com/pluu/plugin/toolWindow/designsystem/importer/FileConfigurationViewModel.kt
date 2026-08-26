@@ -5,7 +5,6 @@ package com.pluu.plugin.toolWindow.designsystem.importer
 ///////////////////////////////////////////////////////////////////////////
 
 import com.pluu.plugin.toolWindow.designsystem.model.DesignSystemItem
-import java.util.*
 import kotlin.properties.Delegates
 
 class FileConfigurationViewModel(
@@ -59,11 +58,12 @@ class FileConfigurationViewModel(
 data class AliasConfigParam(
     val index: Int,
     val validator: (String) -> Boolean
-) : Observable() {
+) {
+    var onParamChanged: (() -> Unit)? = null
+
     var paramValue: String? by Delegates.observable(null) { _, old, new ->
         if (new != old) {
-            setChanged()
+            onParamChanged?.invoke()
         }
-        notifyObservers(new)
     }
 }

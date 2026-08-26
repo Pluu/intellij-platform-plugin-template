@@ -89,7 +89,7 @@ class DesignSystemExplorerToolbarViewModel(
      */
     override fun getDirectories(): Array<PsiDirectory> =
         SourceProviderManager.getInstance(facet).mainIdeaSourceProvider?.resDirectories?.mapNotNull {
-            runReadAction {
+            com.intellij.openapi.application.runReadActionBlocking {
                 PsiManager.getInstance(facet.module.project).findDirectory(it)
             }
         }?.toTypedArray() ?: emptyArray()

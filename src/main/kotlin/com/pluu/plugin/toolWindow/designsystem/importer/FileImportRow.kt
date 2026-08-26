@@ -82,7 +82,9 @@ class FileImportRow(
         }
         row {
             label("Sample code:")
-                .applyToComponent { preferredWidth = 150 }
+                .applyToComponent {
+                    preferredSize = java.awt.Dimension(JBUI.scale(150), preferredSize.height)
+                }
             comboBox(
                 viewModel.selectableApplicableFile.toList(),
                 getRenderer("Select a type", ApplicableFileType::name)
