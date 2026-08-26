@@ -7,7 +7,9 @@ package com.pluu.plugin.toolWindow.device
 import com.android.sdklib.AndroidApiLevel
 import com.android.sdklib.AndroidVersion
 import com.android.sdklib.deviceprovisioner.DeviceType
+import com.android.tools.idea.ui.screenrecording.ScreenRecordingParameters
 import com.android.tools.idea.ui.screenshot.ScreenshotParameters
+import com.intellij.openapi.Disposable
 import com.pluu.plugin.toolWindow.device.uisettings.ui.UiSettingsModel
 import java.nio.file.Path
 
@@ -29,6 +31,7 @@ internal sealed class Device() {
     abstract val isEmulator: Boolean
 
     abstract fun getScreenshotParameters(): ScreenshotParameters
+    abstract fun getScreenRecordingParameters(parentDisposable: Disposable): ScreenRecordingParameters
 
     abstract fun copy(
         isOnline: Boolean = this.isOnline,
@@ -56,6 +59,9 @@ internal sealed class Device() {
             get() = false
 
         override fun getScreenshotParameters() = ScreenshotParameters(serialNumber, type, model)
+
+        override fun getScreenRecordingParameters(parentDisposable: Disposable) =
+            ScreenRecordingParameters(serialNumber, name, featureLevel, parentDisposable, null)
 
         override fun copy(isOnline: Boolean, apiLevel: AndroidApiLevel) =
             PhysicalDevice(
@@ -93,6 +99,9 @@ internal sealed class Device() {
 
         override fun getScreenshotParameters() =
             ScreenshotParameters(serialNumber, type, Path.of(avdPath))
+
+        override fun getScreenRecordingParameters(parentDisposable: Disposable) =
+            ScreenRecordingParameters(serialNumber, name, featureLevel, parentDisposable, Path.of(avdPath))
 
         override fun copy(isOnline: Boolean, apiLevel: AndroidApiLevel) =
             EmulatorDevice(

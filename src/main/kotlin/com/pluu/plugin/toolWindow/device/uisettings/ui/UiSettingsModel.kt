@@ -73,6 +73,7 @@ internal class UiSettingsModel(screenSize: Dimension, physicalDensity: Int, api:
     val dontKeepActivities: TwoWayProperty<Boolean> = DefaultTwoWayProperty(false)
     var runAdbCommand: (String) -> Unit = {}
     var screenshotAction: () -> Unit = {}
+    var screenRecordAction: () -> Unit = {}
 
     /***
      * If font scale or density is not settable, we are likely connected to an OEM device that has

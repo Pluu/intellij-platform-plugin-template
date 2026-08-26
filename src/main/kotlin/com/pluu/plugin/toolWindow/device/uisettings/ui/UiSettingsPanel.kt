@@ -130,6 +130,11 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                         model.screenshotAction()
                     }.align(AlignX.FILL)
                 }
+                row {
+                    button("Record Screen") {
+                        model.screenRecordAction()
+                    }.align(AlignX.FILL)
+                }
             }
         }
     }
