@@ -12,7 +12,7 @@ import com.intellij.openapi.actionSystem.DataSink
 import com.intellij.openapi.actionSystem.DataSnapshotProvider
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
-import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.pluu.plugin.toolWindow.designsystem.model.CategoryType
@@ -89,7 +89,7 @@ class DesignSystemExplorerToolbarViewModel(
      */
     override fun getDirectories(): Array<PsiDirectory> =
         SourceProviderManager.getInstance(facet).mainIdeaSourceProvider?.resDirectories?.mapNotNull {
-            com.intellij.openapi.application.runReadActionBlocking {
+            runReadActionBlocking {
                 PsiManager.getInstance(facet.module.project).findDirectory(it)
             }
         }?.toTypedArray() ?: emptyArray()
