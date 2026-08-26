@@ -3,7 +3,8 @@
 ///////////////////////////////////////////////////////////////////////////
 
 package com.pluu.plugin.toolWindow.device.uisettings.ui
-
+ 
+import com.intellij.openapi.actionSystem.DataSink
 import com.pluu.plugin.toolWindow.device.uisettings.binding.ChangeListener
 
 /**
@@ -27,8 +28,7 @@ internal abstract class UiSettingsController(
         model.dontKeepActivities.uiChangeListener = ChangeListener(::setDontKeepActivities)
         model.runAdbCommand = ::runAdbCommand
         model.resetAction = { reset(); }
-        model.screenshotAction = { takeScreenshot() }
-        model.screenRecordAction = { startScreenRecording() }
+        model.uiDataSnapshotCallback = ::uiDataSnapshot
     }
 
     /**
@@ -76,14 +76,9 @@ internal abstract class UiSettingsController(
     protected abstract fun runAdbCommand(command: String)
 
     /**
-     * Take a screenshot of the connected device.
+     * Populate data sink for UI actions.
      */
-    protected abstract fun takeScreenshot()
-
-    /**
-     * Start screen recording on the connected device.
-     */
-    protected abstract fun startScreenRecording()
+    abstract fun uiDataSnapshot(sink: DataSink)
 
     /**
      * Reset UI settings to factory defaults.

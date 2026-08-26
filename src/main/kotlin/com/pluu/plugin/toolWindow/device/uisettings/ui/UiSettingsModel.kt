@@ -6,6 +6,8 @@ package com.pluu.plugin.toolWindow.device.uisettings.ui
 
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.tools.idea.streaming.uisettings.ui.GoogleDensityRange
+import com.intellij.openapi.actionSystem.DataSink
+import com.intellij.openapi.actionSystem.UiDataProvider
 import com.pluu.plugin.toolWindow.device.uisettings.binding.DefaultTwoWayProperty
 import com.pluu.plugin.toolWindow.device.uisettings.binding.ReadOnlyProperty
 import com.pluu.plugin.toolWindow.device.uisettings.binding.TwoWayProperty
@@ -48,7 +50,12 @@ internal enum class WearFontScale(val percent: Int) {
 /**
  * A model for the [UiSettingsPanel] with bindable properties for getting and setting various Android settings.
  */
-internal class UiSettingsModel(screenSize: Dimension, physicalDensity: Int, api: Int, val deviceType: DeviceType) {
+internal class UiSettingsModel(
+    screenSize: Dimension,
+    physicalDensity: Int,
+    api: Int,
+    val deviceType: DeviceType
+) : UiDataProvider {
     private val densities = GoogleDensityRange.computeDensityRange(screenSize, physicalDensity)
 
     val inDarkMode: TwoWayProperty<Boolean> = DefaultTwoWayProperty(false)
@@ -72,8 +79,11 @@ internal class UiSettingsModel(screenSize: Dimension, physicalDensity: Int, api:
 
     val dontKeepActivities: TwoWayProperty<Boolean> = DefaultTwoWayProperty(false)
     var runAdbCommand: (String) -> Unit = {}
-    var screenshotAction: () -> Unit = {}
-    var screenRecordAction: () -> Unit = {}
+    var uiDataSnapshotCallback: ((DataSink) -> Unit)? = null
+
+    override fun uiDataSnapshot(sink: DataSink) {
+        uiDataSnapshotCallback?.invoke(sink)
+    }
 
     /***
      * If font scale or density is not settable, we are likely connected to an OEM device that has

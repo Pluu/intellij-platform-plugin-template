@@ -10,16 +10,11 @@ import com.android.adblib.shellAsLines
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.tools.idea.adblib.AdbLibService
 import com.android.tools.idea.concurrency.createCoroutineScope
-import com.android.tools.idea.ui.screenrecording.ScreenRecorderAction
 import com.android.tools.idea.ui.screenrecording.ScreenRecordingParameters
-import com.android.tools.idea.ui.screenshot.ScreenshotAction
 import com.android.tools.idea.ui.screenshot.ScreenshotParameters
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.ActionUiKind
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.actionSystem.DataSink
 import com.intellij.openapi.project.Project
 import com.pluu.plugin.toolWindow.device.Device
 import com.pluu.plugin.toolWindow.device.uisettings.ui.FontScale
@@ -393,32 +388,16 @@ internal class EmulatorUiSettingsController(
 
     /**
      * References:
+     * - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:logcat/src/com/android/tools/idea/logcat/LogcatMainPanel.kt
      * - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android-adb-ui/src/com/android/tools/idea/ui/screenshot/ScreenshotAction.kt
      * - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android-adb-ui/src/com/android/tools/idea/ui/screenshot/ScreenshotParameters.kt
-     */
-    override fun takeScreenshot() {
-        val action = ScreenshotAction()
-        val dataContext = SimpleDataContext.builder()
-            .add(CommonDataKeys.PROJECT, project)
-            .add(ScreenshotParameters.DATA_KEY, device.getScreenshotParameters())
-            .build()
-        val event = AnActionEvent.createEvent(action, dataContext, null, ActionPlaces.UNKNOWN, ActionUiKind.NONE, null)
-        action.actionPerformed(event)
-    }
-
-    /**
-     * References:
      * - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android-adb-ui/src/com/android/tools/idea/ui/screenrecording/ScreenRecorderAction.kt
      * - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:android-adb-ui/src/com/android/tools/idea/ui/screenrecording/ScreenRecordingParameters.kt
      */
-    override fun startScreenRecording() {
-        val action = ScreenRecorderAction()
-        val dataContext = SimpleDataContext.builder()
-            .add(CommonDataKeys.PROJECT, project)
-            .add(ScreenRecordingParameters.DATA_KEY, device.getScreenRecordingParameters(parentDisposable))
-            .build()
-        val event = AnActionEvent.createEvent(action, dataContext, null, ActionPlaces.UNKNOWN, ActionUiKind.NONE, null)
-        action.actionPerformed(event)
+    override fun uiDataSnapshot(sink: DataSink) {
+        sink[CommonDataKeys.PROJECT] = project
+        sink[ScreenshotParameters.DATA_KEY] = device.getScreenshotParameters()
+        sink[ScreenRecordingParameters.DATA_KEY] = device.getScreenRecordingParameters(parentDisposable)
     }
 
     private fun updateResetButton() {

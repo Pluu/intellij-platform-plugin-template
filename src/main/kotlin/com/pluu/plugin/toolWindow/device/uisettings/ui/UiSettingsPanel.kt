@@ -7,6 +7,12 @@ package com.pluu.plugin.toolWindow.device.uisettings.ui
 import com.android.sdklib.deviceprovisioner.DeviceType
 import com.android.tools.adtui.common.AdtUiUtils
 import com.android.tools.adtui.common.secondaryPanelBackground
+import com.android.tools.idea.ui.screenrecording.ScreenRecorderAction
+import com.android.tools.idea.ui.screenshot.ScreenshotAction
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.DataSink
+import com.intellij.openapi.actionSystem.UiDataProvider
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.JBLabel
@@ -55,12 +61,13 @@ internal const val PERMISSION_HINT_LINE2 = "\"Developer Options\" and the device
 /**
  * Displays a picker with setting shortcuts.
  */
-internal class UiSettingsPanel : BorderLayoutPanel() {
+internal class UiSettingsPanel : BorderLayoutPanel(), UiDataProvider {
 
     private val propertyGraph = PropertyGraph()
     private var isEnableAppSchemeCommand = propertyGraph.property(false)
 
     private lateinit var adbTextFiled: JTextField
+    private var currentModel: UiSettingsModel? = null
 
     init {
         updateBackground()
@@ -80,12 +87,17 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
         }
     }
 
+    override fun uiDataSnapshot(sink: DataSink) {
+        DataSink.uiDataSnapshot(sink, currentModel)
+    }
+
     /**
      * UI 데이터 바인딩 처리
      *
      * @param model the UI settings model
      */
     fun bind(model: UiSettingsModel?) {
+        currentModel = model
         removeAll()
         if (model != null) {
             bindModel(model)
@@ -127,12 +139,24 @@ internal class UiSettingsPanel : BorderLayoutPanel() {
                 }
                 row {
                     button("Take Screenshot") {
-                        model.screenshotAction()
+                        ActionManager.getInstance().tryToExecute(
+                            ScreenshotAction(),
+                            null,
+                            this@UiSettingsPanel,
+                            ActionPlaces.TOOLWINDOW_CONTENT,
+                            true
+                        )
                     }.align(AlignX.FILL)
                 }
                 row {
                     button("Record Screen") {
-                        model.screenRecordAction()
+                        ActionManager.getInstance().tryToExecute(
+                            ScreenRecorderAction(),
+                            null,
+                            this@UiSettingsPanel,
+                            ActionPlaces.TOOLWINDOW_CONTENT,
+                            true
+                        )
                     }.align(AlignX.FILL)
                 }
             }

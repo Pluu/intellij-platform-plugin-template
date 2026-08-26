@@ -2,7 +2,12 @@ package com.pluu.plugin.toolWindow.device
 
 import com.android.sdklib.deviceprovisioner.DeviceProvisioner
 import com.android.tools.idea.concurrency.createCoroutineScope
+import com.android.tools.idea.ui.screenrecording.ScreenRecordingParameters
+import com.android.tools.idea.ui.screenshot.ScreenshotParameters
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataSink
+import com.intellij.openapi.actionSystem.UiDataProvider
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
@@ -20,7 +25,7 @@ import javax.swing.ScrollPaneConstants
 class DeviceManagerExplorer(
     val project: Project,
     deviceProvisioner: DeviceProvisioner
-) : JPanel(), Disposable {
+) : JPanel(), Disposable, UiDataProvider {
 
     private val coroutineScope = createCoroutineScope()
     private val emulators = mutableMapOf<Device, EmulatorUiSettingsController>()
@@ -88,6 +93,18 @@ class DeviceManagerExplorer(
 
         coroutineScope.launch(Dispatchers.Main) {
             controller.populateModel()
+        }
+    }
+
+    /**
+     * References:
+     * - https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:logcat/src/com/android/tools/idea/logcat/LogcatMainPanel.kt
+     */
+    override fun uiDataSnapshot(sink: DataSink) {
+        sink[CommonDataKeys.PROJECT] = project
+        latestDevice?.let { device ->
+            sink[ScreenshotParameters.DATA_KEY] = device.getScreenshotParameters()
+            sink[ScreenRecordingParameters.DATA_KEY] = device.getScreenRecordingParameters(this)
         }
     }
 
