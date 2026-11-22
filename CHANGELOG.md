@@ -4,21 +4,27 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add `out` directory to `.gitignore`.
+
 ### Changed
 
+- Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.20.1`
 - GitHub Actions - migrate the deprecated `jlumbroso/free-disk-space` input to `preinstalled-runtimes`
-- Dependencies - upgrade IntelliJ IDEA to `2026.2.3` (minimum platform `262`, Java `25`)
+- Dependencies - upgrade IntelliJ IDEA to `2026.2.5` (minimum platform `262`, Java `25`)
 - Dependencies - upgrade `org.jetbrains.kotlin.jvm` to `2.4.21`
-- Upgrade Gradle Wrapper to `9.8.1`
-- Update `intellijIdea` to `2025.3.6.1`
+- Upgrade Gradle Wrapper to `9.9.2`
+- Use JetBrains Runtime 21 (`jbr-21`) for the IDE Gradle JVM
 - Dependencies (GitHub Actions) - upgrade `ad-m/github-push-action` to `v1.3.0`
 - Dependencies (GitHub Actions) - upgrade `jlumbroso/free-disk-space` to `v2.0.0`
 - Dependencies (GitHub Actions) - upgrade `actions/setup-java` to `v6`
 - Dependencies (GitHub Actions) - upgrade `actions/checkout` to `v7`
-- Dependencies - upgrade IntelliJ IDEA to `2025.2.6.3`
-- Dependencies - upgrade `org.jetbrains.kotlin.jvm` to `2.4.20`
-- Dependencies - upgrade `org.jetbrains.intellij.platform` to `2.19.0`
-- Upgrade Gradle Wrapper to `9.8.0`
+
+### Fixed
+
+- GitHub Actions - avoid archiving the plugin distribution ZIP twice when uploading build artifacts
+- Fix the IntelliJ Platform UI Guidelines link in `README.md`
 
 ## [2.6.0] - 2026-05-04
 

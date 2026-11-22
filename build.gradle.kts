@@ -11,9 +11,8 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-//        intellijIdea("2026.2.3")
+//        intellijIdea("2026.2.5")
         testFramework(TestFrameworkType.Platform)
-//        testBundledPlugins("com.intellij.modules.ultimate")
 
         bundledPlugins("org.jetbrains.android")
         val studioCompilePath = providers.gradleProperty("StudioCompilePath")
